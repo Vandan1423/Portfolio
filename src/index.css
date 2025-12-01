@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Google Fonts Import */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* Tailwind v4 Custom Theme Variables */
+@theme {
+    /* Custom Colors */
+    --color-deep-space: #0a0e27;
+    --color-nebula-purple: #6366f1;
+    --color-star-blue: #3b82f6;
+    --color-comet-cyan: #06b6d4;
+    --color-supernova-pink: #ec4899;
+    --color-moon-white: #f8fafc;
+    --color-asteroid-gray: #64748b;
+
+    /* Custom Fonts */
+    --font-heading: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+}
+
+/* Global Resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-deep-space);
+    color: var(--color-moon-white);
+    overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-deep-space);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-nebula-purple);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #818cf8;
+}
+
+/* Hide 3D canvas on mobile (performance) */
+@media (max-width: 768px) {
+    canvas {
+        display: none !important;
+    }
+}
