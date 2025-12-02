@@ -19,7 +19,7 @@ export const skillCategories = [
         skills: [
             { name: "Node.js"},
             { name: "Express.js"},
-            { name: "RESTful APIs"},
+            { name: "API Development" },
         ],
     },
     {
@@ -41,6 +41,29 @@ export const skillCategories = [
         ],
     },
     {
+        category: "Data Structures & Algorithms",
+        icon: "FaCogs",
+        skills: [
+            { name: "Arrays & Strings"},
+            { name: "Linked Lists"},
+            { name: "Stacks & Queues"},
+            { name: "Trees"},
+            { name: "Graphs"},
+            { name: "Sorting Algorithms"},
+            { name: "Searching Algorithms"},
+            { name: "Dynamic Programming"},
+        ],
+    },
+    {
+        category: "Deployment & Cloud",
+        icon: "FaCloud",
+        skills: [
+            { name: "Vercel"},
+            { name: "Render"},
+            { name: "Cloudinary"},
+        ],
+    },
+    {
         category: "Tools & Version Control",
         icon: "FaGitAlt",
         skills: [
@@ -48,6 +71,17 @@ export const skillCategories = [
             { name: "VS Code"},
             { name: "Terminal/CLI"},
             { name: "npm/npx"},
+        ],
+    },
+    {
+        category: "Other Technical Skills",
+        icon: "FaTools",
+        skills: [
+            { name: "RESTful API Design"},
+            { name: "MVC Architecture"},
+            { name: "Authentication & Authorization"},
+            { name: "Responsive Web Design"},
+            { name: "Debugging & Testing"},
         ],
     },
     {
