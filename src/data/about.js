@@ -1,7 +1,7 @@
 export const aboutData = {
     name: "Vandan Nagori",
     title: "Full-Stack Developer",
-    location: "IIT Indore, India",
+    location: "IIT Indore, Madhya Pradesh, India",
     tagline: "Building scalable web applications with modern technologies",
 
     bio: [

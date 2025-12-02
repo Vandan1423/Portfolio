@@ -9,15 +9,16 @@
 ## 📋 TABLE OF CONTENTS
 
 1. [Week 1: Foundation & Cockpit Experience](#week-1-foundation--cockpit-experience)
-   - Days 1-2: Project Setup & Data
-   - Days 3-4: Cockpit Interior & Launch Sequence
-   - Days 5-7: Third-Person View & Free Exploration
+
+    - Days 1-2: Project Setup & Data
+    - Days 3-4: Cockpit Interior & Launch Sequence
+    - Days 5-7: Third-Person View & Free Exploration
 
 2. [Week 2: Navigation & Content](#week-2-navigation--content)
-   - Days 8-9: Navigation Dashboard & Scene Management
-   - Days 10-11: Wormhole Travel & Multiple Solar Systems
-   - Days 12-13: Planet Landing & Content Pages
-   - Day 14: Polish, Deploy & Launch
+    - Days 8-9: Navigation Dashboard & Scene Management
+    - Days 10-11: Wormhole Travel & Multiple Solar Systems
+    - Days 12-13: Planet Landing & Content Pages
+    - Day 14: Polish, Deploy & Launch
 
 ---
 
@@ -30,19 +31,23 @@
 ### Task 1: Create Project Structure (30 min)
 
 **Step 1.1: Open Terminal**
+
 1. Navigate to your projects folder
 2. Run this command exactly:
+
 ```bash
 npm create vite@latest space-portfolio -- --template react
 ```
 
 3. When prompted, type `y` and press Enter
 4. Navigate into project:
+
 ```bash
 cd space-portfolio
 ```
 
 **Step 1.2: Install Base Dependencies**
+
 ```bash
 npm install
 ```
@@ -50,6 +55,7 @@ npm install
 **Step 1.3: Install Required Packages**
 
 Run this single command (copy entire block):
+
 ```bash
 npm install three @react-three/fiber @react-three/drei framer-motion react-icons @emailjs/browser tailwindcss @tailwindcss/vite
 ```
@@ -59,13 +65,13 @@ npm install three @react-three/fiber @react-three/drei framer-motion react-icons
 Open `vite.config.js` and add the Tailwind plugin:
 
 ```javascript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-})
+    plugins: [react(), tailwindcss()],
+});
 ```
 
 **Checkpoint:** Run `npm run dev` - you should see the default Vite page at `http://localhost:5173`
@@ -84,78 +90,84 @@ export default defineConfig({
 @import "tailwindcss";
 
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
 
 /* Tailwind v4 Custom Theme Variables */
 @theme {
-  /* Custom Colors */
-  --color-deep-space: #0a0e27;
-  --color-nebula-purple: #6366f1;
-  --color-star-blue: #3b82f6;
-  --color-comet-cyan: #06b6d4;
-  --color-supernova-pink: #ec4899;
-  --color-moon-white: #f8fafc;
-  --color-asteroid-gray: #64748b;
+    /* Custom Colors */
+    --color-deep-space: #0a0e27;
+    --color-nebula-purple: #6366f1;
+    --color-star-blue: #3b82f6;
+    --color-comet-cyan: #06b6d4;
+    --color-supernova-pink: #ec4899;
+    --color-moon-white: #f8fafc;
+    --color-asteroid-gray: #64748b;
 
-  /* Custom Fonts */
-  --font-heading: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
+    /* Custom Fonts */
+    --font-heading: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
 }
 
 /* Global Resets */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 
 body {
-  font-family: var(--font-body);
-  background-color: var(--color-deep-space);
-  color: var(--color-moon-white);
-  overflow-x: hidden;
+    font-family: var(--font-body);
+    background-color: var(--color-deep-space);
+    color: var(--color-moon-white);
+    overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-deep-space);
+    background: var(--color-deep-space);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-nebula-purple);
-  border-radius: 5px;
+    background: var(--color-nebula-purple);
+    border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #818cf8;
+    background: #818cf8;
 }
 
 /* Hide 3D canvas on mobile (performance) */
 @media (max-width: 768px) {
-  canvas {
-    display: none !important;
-  }
+    canvas {
+        display: none !important;
+    }
 }
 ```
 
 **Step 2.4: Save the file**
 
 **How to use custom colors in your components:**
-- Tailwind v4 automatically generates utility classes from @theme variables
-- Use them like: `bg-deep-space`, `text-nebula-purple`, `border-star-blue`
-- Use fonts like: `font-heading`, `font-body`
+
+-   Tailwind v4 automatically generates utility classes from @theme variables
+-   Use them like: `bg-deep-space`, `text-nebula-purple`, `border-star-blue`
+-   Use fonts like: `font-heading`, `font-body`
 
 ---
 
@@ -182,6 +194,7 @@ h1, h2, h3, h4, h5, h6 {
 4. Right-click `public` → New Folder → Type `sounds` → Enter (optional for audio)
 
 **Final structure should look like:**
+
 ```
 src/
 ├── components/
@@ -208,6 +221,7 @@ public/
 **Step 4.1: Initialize Git**
 
 In terminal (make sure you're in project root):
+
 ```bash
 git init
 ```
@@ -215,13 +229,15 @@ git init
 **Step 4.2: Check `.gitignore` file**
 
 Open `.gitignore` - it should already include:
-- `node_modules`
-- `dist`
-- `.env.local`
+
+-   `node_modules`
+-   `dist`
+-   `.env.local`
 
 If `.env.local` is missing, add it on a new line.
 
 **Step 4.3: First Commit**
+
 ```bash
 git add .
 git commit -m "Initial project setup with Tailwind v4 and folder structure"
@@ -239,6 +255,7 @@ git commit -m "Initial project setup with Tailwind v4 and folder structure"
 **Step 4.5: Connect to GitHub**
 
 Copy the commands shown on GitHub (replace with your actual URL):
+
 ```bash
 git remote add origin https://github.com/YOUR-USERNAME/space-portfolio.git
 git branch -M main
@@ -261,40 +278,41 @@ Right-click `data` folder → New File → Type `about.js` → Enter
 
 ```javascript
 export const aboutData = {
-  name: "Vandan Nagori",
-  title: "Full-Stack Developer",
-  location: "IIT Indore, India",
-  tagline: "Building scalable web applications with modern technologies",
+    name: "Vandan Nagori",
+    title: "Full-Stack Developer",
+    location: "IIT Indore, India",
+    tagline: "Building scalable web applications with modern technologies",
 
-  bio: [
-    "Hey! I'm Vandan, a third-year undergraduate at IIT Indore with a passion for building meaningful web applications. I specialize in full-stack development, creating solutions that combine intuitive user interfaces with robust backend systems.",
+    bio: [
+        "Hey! I'm Vandan, a third-year undergraduate at IIT Indore with a passion for building meaningful web applications. I specialize in full-stack development, creating solutions that combine intuitive user interfaces with robust backend systems.",
 
-    "I work extensively with the MERN stack (MongoDB, Express.js, React.js, Node.js) alongside modern tools and frameworks. Beyond web technologies, I'm proficient in Java and Python, which strengthen my problem-solving capabilities across different domains.",
+        "I work extensively with the MERN stack (MongoDB, Express.js, React.js, Node.js) alongside modern tools and frameworks. Beyond web technologies, I'm proficient in Java and Python, which strengthen my problem-solving capabilities across different domains.",
 
-    "As Head of Web Development for the Astronomy Club and Head of Technicals for the Gaming Club at IIT Indore, I've led technical teams in developing and maintaining live websites. These leadership roles have taught me the importance of collaboration, effective communication, and delivering results under deadlines.",
+        "As Head of Web Development for the Astronomy Club and Head of Technicals for the Gaming Club at IIT Indore, I've led technical teams in developing and maintaining live websites. These leadership roles have taught me the importance of collaboration, effective communication, and delivering results under deadlines.",
 
-    "I'm actively seeking Summer 2025 internship opportunities where I can contribute to challenging projects, work with talented teams, and grow as a full-stack developer."
-  ],
+        "I'm actively seeking Summer 2025 internship opportunities where I can contribute to challenging projects, work with talented teams, and grow as a full-stack developer.",
+    ],
 
-  stats: [
-    { label: "CGPA", value: "8.58", color: "text-nebula-purple" },
-    { label: "Projects", value: "4+", color: "text-star-blue" },
-    { label: "Leadership Roles", value: "2", color: "text-comet-cyan" },
-    { label: "Users Served", value: "500+", color: "text-supernova-pink" }
-  ],
+    stats: [
+        { label: "CGPA", value: "8.58", color: "text-nebula-purple" },
+        { label: "Projects", value: "4+", color: "text-star-blue" },
+        { label: "Leadership Roles", value: "2", color: "text-comet-cyan" },
+        { label: "Users Served", value: "500+", color: "text-supernova-pink" },
+    ],
 
-  social: {
-    github: "https://github.com/Vandan1423",
-    linkedin: "https://www.linkedin.com/in/vandan-nagori",
-    email: "vandannagori@gmail.com",
-    phone: "+91-XXXXXXXXXX" // Replace with your actual number
-  }
+    social: {
+        github: "https://github.com/Vandan1423",
+        linkedin: "https://www.linkedin.com/in/vandan-nagori",
+        email: "vandannagori@gmail.com",
+        phone: "+91-XXXXXXXXXX", // Replace with your actual number
+    },
 };
 ```
 
 **Step 5.3: Replace phone number with yours**
 
 **Step 5.4: Save file and commit:**
+
 ```bash
 git add .
 git commit -m "Add about data"
@@ -310,112 +328,138 @@ git commit -m "Add about data"
 
 ```javascript
 export const projects = [
-  {
-    id: 1,
-    title: "AirBnb Replica",
-    tagline: "Full-featured rental marketplace platform",
-    description: "Full-featured rental marketplace platform with complete booking management, user authentication, and interactive mapping functionality.",
-    features: [
-      "Secure Authentication System - Passport.js-based session authentication",
-      "Complete Listing Management - Create, edit, delete with Cloudinary uploads",
-      "Review & Rating System - Authenticated user reviews",
-      "Interactive Maps - Location mapping with navigation support",
-      "Role-Based Authorization - Owner-only edit/delete permissions"
-    ],
-    technologies: ["MongoDB", "Express.js", "Node.js", "EJS", "Bootstrap", "Passport.js", "Cloudinary", "JavaScript"],
-    category: "Full-Stack",
-    github: "https://github.com/Vandan1423/AirBnb_Replica",
-    demo: "https://airbnb-replica-6024.onrender.com/",
-    image: "/images/projects/airbnb.jpg",
-    featured: true,
-    role: "Solo Developer",
-    challenges: "Implementing secure role-based authorization ensuring only listing owners could modify their properties while maintaining seamless user experience.",
-    impact: "Successfully built a production-ready rental platform demonstrating full CRUD operations, RESTful API design, and MVC architecture."
-  },
-  {
-    id: 2,
-    title: "EduConnect - Academic Portal",
-    tagline: "Comprehensive academic management system",
-    description: "Dual role-based portals for students and faculty with real-time scheduling and resource management.",
-    features: [
-      "Dual Role Authentication - Separate login portals for students and faculty",
-      "Dynamic Timetable Management - Real-time class schedules with next-class indicators",
-      "Resource Management - Upload documents, presentations, videos, quizzes",
-      "Student Analytics Dashboard - Performance metrics and attendance tracking",
-      "Grade-Based Content Filtering - Automatic content delivery by grade level (9-12)"
-    ],
-    technologies: ["Node.js", "Express.js", "MongoDB", "Mongoose", "EJS", "Bcrypt.js", "Express Session"],
-    category: "Full-Stack",
-    github: "https://github.com/Vandan1423/Academic-Portal",
-    demo: null,
-    image: "/images/projects/educonnect.jpg",
-    featured: true,
-    role: "Solo Full-Stack Developer",
-    challenges: "Implementing role-based access control with separate session management for students and faculty while maintaining unified authentication flow.",
-    impact: "Built comprehensive dual-portal system supporting 4 grade levels with secure authentication and scalable MongoDB schema."
-  },
-  {
-    id: 3,
-    title: "Gaming Club Website - IIT Indore",
-    tagline: "Official Gaming Club platform",
-    description: "Tournament management, event registration, and member directory serving the IIT Indore gaming community.",
-    features: [
-      "Tournament Management - Live registration with active/upcoming/past tracking",
-      "Event Registration Portal - Integrated sign-up system",
-      "Dynamic Event Gallery - Photo showcase with responsive grids",
-      "Member Directory - Comprehensive team page with profiles",
-      "Responsive Modern UI - Mobile-first design"
-    ],
-    technologies: ["HTML5", "CSS3", "JavaScript", "Node.js", "Express.js"],
-    category: "Frontend",
-    github: "https://github.com/DigitalDiplomacy/gamingclubiiti",
-    demo: "https://gamingclub.vercel.app/",
-    image: "/images/projects/gaming-club.jpg",
-    featured: false,
-    role: "Frontend Developer & Team Coordinator",
-    challenges: "Coordinating with multiple team members to maintain consistent design language while implementing complex responsive layouts.",
-    impact: "Launched official website serving IIT Indore's gaming community with streamlined event registration."
-  },
-  {
-    id: 4,
-    title: "Astronomy Club Website - IIT Indore",
-    tagline: "Space-themed club platform",
-    description: "Research projects showcase, astronomy news, and club activities with immersive space-themed experience.",
-    features: [
-      "Interactive Loading - Custom 3D Earth rotation loader",
-      "Research Showcase - Ongoing astronomy projects display",
-      "Live News Feed - Curated astronomy and astrophysics updates",
-      "Activities Timeline - Stargazing sessions, workshops, seminars",
-      "Team Directory - Interactive member profile cards"
-    ],
-    technologies: ["React.js", "Tailwind CSS", "JavaScript", "Vercel"],
-    category: "Frontend",
-    github: "https://github.com/AstronomyClubIITIndore/AstronomyClub_IITIndore",
-    demo: "https://astronomy-club-iit-indore.vercel.app/",
-    image: "/images/projects/astronomy-club.jpg",
-    featured: false,
-    role: "Head of Web Development",
-    challenges: "Inheriting and refactoring existing codebase while maintaining backwards compatibility and improving UI/UX.",
-    impact: "Successfully improved website aesthetics and user experience with better engagement from club members and visitors."
-  }
+    {
+        id: 1,
+        title: "AirBnb Replica",
+        tagline: "Full-featured rental marketplace platform",
+        description:
+            "Full-featured rental marketplace platform with complete booking management, user authentication, and interactive mapping functionality.",
+        features: [
+            "Secure Authentication System - Passport.js-based session authentication",
+            "Complete Listing Management - Create, edit, delete with Cloudinary uploads",
+            "Review & Rating System - Authenticated user reviews",
+            "Interactive Maps - Location mapping with navigation support",
+            "Role-Based Authorization - Owner-only edit/delete permissions",
+        ],
+        technologies: [
+            "MongoDB",
+            "Express.js",
+            "Node.js",
+            "EJS",
+            "Bootstrap",
+            "Passport.js",
+            "Cloudinary",
+            "JavaScript",
+        ],
+        category: "Full-Stack",
+        github: "https://github.com/Vandan1423/AirBnb_Replica",
+        demo: "https://airbnb-replica-6024.onrender.com/",
+        image: "/images/projects/airbnb.jpg",
+        featured: true,
+        role: "Solo Developer",
+        challenges:
+            "Implementing secure role-based authorization ensuring only listing owners could modify their properties while maintaining seamless user experience.",
+        impact: "Successfully built a production-ready rental platform demonstrating full CRUD operations, RESTful API design, and MVC architecture.",
+    },
+    {
+        id: 2,
+        title: "EduConnect - Academic Portal",
+        tagline: "Comprehensive academic management system",
+        description:
+            "Dual role-based portals for students and faculty with real-time scheduling and resource management.",
+        features: [
+            "Dual Role Authentication - Separate login portals for students and faculty",
+            "Dynamic Timetable Management - Real-time class schedules with next-class indicators",
+            "Resource Management - Upload documents, presentations, videos, quizzes",
+            "Student Analytics Dashboard - Performance metrics and attendance tracking",
+            "Grade-Based Content Filtering - Automatic content delivery by grade level (9-12)",
+        ],
+        technologies: [
+            "Node.js",
+            "Express.js",
+            "MongoDB",
+            "Mongoose",
+            "EJS",
+            "Bcrypt.js",
+            "Express Session",
+        ],
+        category: "Full-Stack",
+        github: "https://github.com/Vandan1423/Academic-Portal",
+        demo: null,
+        image: "/images/projects/educonnect.jpg",
+        featured: true,
+        role: "Solo Full-Stack Developer",
+        challenges:
+            "Implementing role-based access control with separate session management for students and faculty while maintaining unified authentication flow.",
+        impact: "Built comprehensive dual-portal system supporting 4 grade levels with secure authentication and scalable MongoDB schema.",
+    },
+    {
+        id: 3,
+        title: "Gaming Club Website - IIT Indore",
+        tagline: "Official Gaming Club platform",
+        description:
+            "Tournament management, event registration, and member directory serving the IIT Indore gaming community.",
+        features: [
+            "Tournament Management - Live registration with active/upcoming/past tracking",
+            "Event Registration Portal - Integrated sign-up system",
+            "Dynamic Event Gallery - Photo showcase with responsive grids",
+            "Member Directory - Comprehensive team page with profiles",
+            "Responsive Modern UI - Mobile-first design",
+        ],
+        technologies: ["HTML5", "CSS3", "JavaScript", "Node.js", "Express.js"],
+        category: "Frontend",
+        github: "https://github.com/DigitalDiplomacy/gamingclubiiti",
+        demo: "https://gamingclub.vercel.app/",
+        image: "/images/projects/gaming-club.jpg",
+        featured: false,
+        role: "Frontend Developer & Team Coordinator",
+        challenges:
+            "Coordinating with multiple team members to maintain consistent design language while implementing complex responsive layouts.",
+        impact: "Launched official website serving IIT Indore's gaming community with streamlined event registration.",
+    },
+    {
+        id: 4,
+        title: "Astronomy Club Website - IIT Indore",
+        tagline: "Space-themed club platform",
+        description:
+            "Research projects showcase, astronomy news, and club activities with immersive space-themed experience.",
+        features: [
+            "Interactive Loading - Custom 3D Earth rotation loader",
+            "Research Showcase - Ongoing astronomy projects display",
+            "Live News Feed - Curated astronomy and astrophysics updates",
+            "Activities Timeline - Stargazing sessions, workshops, seminars",
+            "Team Directory - Interactive member profile cards",
+        ],
+        technologies: ["React.js", "Tailwind CSS", "JavaScript", "Vercel"],
+        category: "Frontend",
+        github: "https://github.com/AstronomyClubIITIndore/AstronomyClub_IITIndore",
+        demo: "https://astronomy-club-iit-indore.vercel.app/",
+        image: "/images/projects/astronomy-club.jpg",
+        featured: false,
+        role: "Head of Web Development",
+        challenges:
+            "Inheriting and refactoring existing codebase while maintaining backwards compatibility and improving UI/UX.",
+        impact: "Successfully improved website aesthetics and user experience with better engagement from club members and visitors.",
+    },
 ];
 
 // Helper functions
 export const getFeaturedProjects = () => {
-  return projects.filter(project => project.featured);
+    return projects.filter((project) => project.featured);
 };
 
 export const getProjectsByCategory = (category) => {
-  if (category === "All") return projects;
-  return projects.filter(project => project.category === category);
+    if (category === "All") return projects;
+    return projects.filter((project) => project.category === category);
 };
 
 export const getProjectById = (id) => {
-  return projects.find(project => project.id === parseInt(id));
+    return projects.find((project) => project.id === parseInt(id));
 };
 ```
 
 **Step 6.3: Save and commit:**
+
 ```bash
 git add .
 git commit -m "Add projects data with helper functions"
@@ -431,79 +475,73 @@ git commit -m "Add projects data with helper functions"
 
 ```javascript
 export const skillCategories = [
-  {
-    category: "Frontend Development",
-    icon: "FaReact",
-    skills: [
-      { name: "React.js", level: 90 },
-      { name: "JavaScript (ES6+)", level: 92 },
-      { name: "HTML5", level: 95 },
-      { name: "CSS3", level: 90 },
-      { name: "Tailwind CSS", level: 88 },
-      { name: "Bootstrap", level: 85 },
-      { name: "Redux", level: 75 },
-      { name: "EJS", level: 85 }
-    ]
-  },
-  {
-    category: "Backend Development",
-    icon: "FaServer",
-    skills: [
-      { name: "Node.js", level: 90 },
-      { name: "Express.js", level: 92 },
-      { name: "RESTful APIs", level: 90 }
-    ]
-  },
-  {
-    category: "Database",
-    icon: "FaDatabase",
-    skills: [
-      { name: "MongoDB", level: 88 },
-      { name: "Mongoose ODM", level: 85 },
-      { name: "SQL", level: 75 }
-    ]
-  },
-  {
-    category: "Programming Languages",
-    icon: "FaCode",
-    skills: [
-      { name: "JavaScript", level: 92 },
-      { name: "Java", level: 80 },
-      { name: "Python", level: 78 }
-    ]
-  },
-  {
-    category: "Tools & Version Control",
-    icon: "FaGitAlt",
-    skills: [
-      { name: "Git/GitHub", level: 90 },
-      { name: "VS Code", level: 95 },
-      { name: "Terminal/CLI", level: 85 },
-      { name: "npm/npx", level: 88 }
-    ]
-  },
-  {
-    category: "Currently Learning",
-    icon: "FaLightbulb",
-    skills: [
-      { name: "TypeScript", level: 60 },
-      { name: "Next.js", level: 55 },
-      { name: "Docker", level: 50 }
-    ]
-  }
+    {
+        category: "Frontend Development",
+        icon: "FaReact",
+        skills: [
+            { name: "React.js" },
+            { name: "JavaScript (ES6+)" },
+            { name: "HTML5" },
+            { name: "CSS3" },
+            { name: "Tailwind CSS" },
+            { name: "Bootstrap" },
+            { name: "Redux" },
+            { name: "EJS" },
+        ],
+    },
+    {
+        category: "Backend Development",
+        icon: "FaServer",
+        skills: [
+            { name: "Node.js"},
+            { name: "Express.js"},
+            { name: "RESTful APIs"},
+        ],
+    },
+    {
+        category: "Database",
+        icon: "FaDatabase",
+        skills: [
+            { name: "MongoDB"},
+            { name: "Mongoose ODM"},
+            { name: "SQL"},
+        ],
+    },
+    {
+        category: "Programming Languages",
+        icon: "FaCode",
+        skills: [
+            { name: "JavaScript"},
+            { name: "Java"},
+            { name: "Python"},
+        ],
+    },
+    {
+        category: "Tools & Version Control",
+        icon: "FaGitAlt",
+        skills: [
+            { name: "Git/GitHub"},
+            { name: "VS Code"},
+            { name: "Terminal/CLI"},
+            { name: "npm/npx"},
+        ],
+    },
+    {
+        category: "Currently Learning",
+        icon: "FaLightbulb",
+        skills: [
+            { name: "TypeScript"},
+            { name: "Next.js"},
+            { name: "Docker"},
+        ],
+    },
 ];
 
 // Helper functions
-export const allSkills = skillCategories.flatMap(cat => cat.skills);
-
-export const getTopSkills = (count = 5) => {
-  return allSkills
-    .sort((a, b) => b.level - a.level)
-    .slice(0, count);
-};
-```
+export const allSkills = skillCategories.flatMap((cat) => cat.skills);
 
 **Step 7.3: Save and commit:**
+
 ```bash
 git add .
 git commit -m "Add skills data with categories"
@@ -519,94 +557,123 @@ git commit -m "Add skills data with categories"
 
 ```javascript
 export const experiences = [
-  {
-    id: 1,
-    type: "research",
-    title: "Research Intern",
-    organization: "PRIUS Fellowship - IIT Indore",
-    duration: "2024",
-    description: "Worked under the PRIUS Fellowship program to classify galaxies as passive or star-forming using extensive COSMOS survey data.",
-    responsibilities: [
-      "Utilized EAZY-py Python library for photometric redshift estimation",
-      "Generated UVJ (U-V vs V-J color) diagrams for systematic galaxy classification",
-      "Performed comprehensive data preprocessing including cleaning and normalization",
-      "Conducted output analysis to validate classification accuracy",
-      "Applied statistical methods to distinguish between galaxy populations"
-    ],
-    technologies: ["Python", "EAZY-py", "Data Analysis", "Statistical Modeling"],
-    icon: "FaFlask",
-    certificate: null,
-    output: null
-  },
-  {
-    id: 2,
-    type: "competition",
-    title: "Participant",
-    organization: "ISRO-NRSC National Challenge",
-    duration: "2024",
-    description: "Developed machine learning solutions for automated cloud and shadow detection using satellite TOA reflectance data.",
-    responsibilities: [
-      "Performed advanced preprocessing on satellite imagery",
-      "Implemented UNet-based deep learning architecture for semantic segmentation",
-      "Developed end-to-end training pipelines with data augmentation",
-      "Fine-tuned model hyperparameters to improve detection accuracy",
-      "Evaluated model performance using IoU and precision-recall curves"
-    ],
-    technologies: ["Python", "Machine Learning", "UNet", "Computer Vision", "Deep Learning"],
-    icon: "FaSatellite",
-    certificate: null,
-    output: null
-  },
-  {
-    id: 3,
-    type: "leadership",
-    title: "Head of Web Development",
-    organization: "Astronomy Club, IIT Indore",
-    duration: "July 2023 - July 2025",
-    description: "Leading web development initiatives for the Astronomy Club, managing official website and digital presence.",
-    responsibilities: [
-      "Lead development and maintenance of official website using React.js",
-      "Oversee content updates for events, workshops, and activities",
-      "Manage website deployment on Vercel ensuring 99%+ uptime",
-      "Collaborate with club members to implement new features",
-      "Conduct UI/UX improvements based on user feedback",
-      "Train and mentor junior team members"
-    ],
-    technologies: ["React.js", "Tailwind CSS", "JavaScript", "Vercel", "Git/GitHub"],
-    icon: "FaRocket",
-    certificate: null,
-    output: "https://astronomy-club-iit-indore.vercel.app/"
-  },
-  {
-    id: 4,
-    type: "leadership",
-    title: "Head of Technicals",
-    organization: "Gaming Club, IIT Indore",
-    duration: "December 2024 - April 2025",
-    description: "Leading technical operations, website development, and tournament infrastructure for the Gaming Club.",
-    responsibilities: [
-      "Oversee technical aspects including website maintenance",
-      "Lead development team in building tournament systems",
-      "Coordinate technical requirements for gaming events",
-      "Manage technical infrastructure during live events",
-      "Implement tournament registration portal with real-time updates",
-      "Troubleshoot technical issues ensuring seamless experience"
-    ],
-    technologies: ["HTML", "CSS", "JavaScript", "Node.js", "Express.js", "React.js"],
-    icon: "FaGamepad",
-    certificate: null,
-    output: "https://gamingclub.vercel.app/"
-  }
+    {
+        id: 1,
+        type: "research",
+        title: "Research Intern",
+        organization: "PRIUS Fellowship - IIT Indore",
+        duration: "2024",
+        description:
+            "Worked under the PRIUS Fellowship program to classify galaxies as passive or star-forming using extensive COSMOS survey data.",
+        responsibilities: [
+            "Utilized EAZY-py Python library for photometric redshift estimation",
+            "Generated UVJ (U-V vs V-J color) diagrams for systematic galaxy classification",
+            "Performed comprehensive data preprocessing including cleaning and normalization",
+            "Conducted output analysis to validate classification accuracy",
+            "Applied statistical methods to distinguish between galaxy populations",
+        ],
+        technologies: [
+            "Python",
+            "EAZY-py",
+            "Data Analysis",
+            "Statistical Modeling",
+        ],
+        icon: "FaFlask",
+        certificate: null,
+        output: null,
+    },
+    {
+        id: 2,
+        type: "competition",
+        title: "Participant",
+        organization: "ISRO-NRSC National Challenge",
+        duration: "2024",
+        description:
+            "Developed machine learning solutions for automated cloud and shadow detection using satellite TOA reflectance data.",
+        responsibilities: [
+            "Performed advanced preprocessing on satellite imagery",
+            "Implemented UNet-based deep learning architecture for semantic segmentation",
+            "Developed end-to-end training pipelines with data augmentation",
+            "Fine-tuned model hyperparameters to improve detection accuracy",
+            "Evaluated model performance using IoU and precision-recall curves",
+        ],
+        technologies: [
+            "Python",
+            "Machine Learning",
+            "UNet",
+            "Computer Vision",
+            "Deep Learning",
+        ],
+        icon: "FaSatellite",
+        certificate: null,
+        output: null,
+    },
+    {
+        id: 3,
+        type: "leadership",
+        title: "Head of Web Development",
+        organization: "Astronomy Club, IIT Indore",
+        duration: "July 2023 - July 2025",
+        description:
+            "Leading web development initiatives for the Astronomy Club, managing official website and digital presence.",
+        responsibilities: [
+            "Lead development and maintenance of official website using React.js",
+            "Oversee content updates for events, workshops, and activities",
+            "Manage website deployment on Vercel ensuring 99%+ uptime",
+            "Collaborate with club members to implement new features",
+            "Conduct UI/UX improvements based on user feedback",
+            "Train and mentor junior team members",
+        ],
+        technologies: [
+            "React.js",
+            "Tailwind CSS",
+            "JavaScript",
+            "Vercel",
+            "Git/GitHub",
+        ],
+        icon: "FaRocket",
+        certificate: null,
+        output: "https://astronomy-club-iit-indore.vercel.app/",
+    },
+    {
+        id: 4,
+        type: "leadership",
+        title: "Head of Technicals",
+        organization: "Gaming Club, IIT Indore",
+        duration: "December 2024 - April 2025",
+        description:
+            "Leading technical operations, website development, and tournament infrastructure for the Gaming Club.",
+        responsibilities: [
+            "Oversee technical aspects including website maintenance",
+            "Lead development team in building tournament systems",
+            "Coordinate technical requirements for gaming events",
+            "Manage technical infrastructure during live events",
+            "Implement tournament registration portal with real-time updates",
+            "Troubleshoot technical issues ensuring seamless experience",
+        ],
+        technologies: [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "Node.js",
+            "Express.js",
+            "React.js",
+        ],
+        icon: "FaGamepad",
+        certificate: null,
+        output: "https://gamingclub.vercel.app/",
+    },
 ];
 
 // Helper functions
 export const getExperiencesByType = (type) => {
-  if (type === "All") return experiences;
-  return experiences.filter(exp => exp.type === type);
+    if (type === "All") return experiences;
+    return experiences.filter((exp) => exp.type === type);
 };
 ```
 
 **Step 8.3: Save and commit:**
+
 ```bash
 git add .
 git commit -m "Add experience data"
@@ -627,37 +694,37 @@ This is where we build the **MOST UNIQUE** part of your portfolio - the first-pe
 **Step 9.2: Copy this content:**
 
 ```javascript
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 /**
  * Custom hook to manage camera perspectives
  * Handles transitions between first-person (cockpit) and third-person (exploration) views
  */
 export const useCameraController = () => {
-  const [cameraMode, setCameraMode] = useState('first-person'); // 'first-person' or 'third-person'
-  const [isTransitioning, setIsTransitioning] = useState(false);
+    const [cameraMode, setCameraMode] = useState("first-person"); // 'first-person' or 'third-person'
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Camera positions for different modes
-  const cameraPositions = {
-    'first-person-cockpit': { position: [0, 0, 0], target: [0, 0, -5] }, // Inside cockpit looking forward
-    'third-person-exploration': { position: [0, 5, 10], target: [0, 0, 0] }, // Behind spacecraft
-    'navigation-view': { position: [0, 0, 0], target: [0, 0, -2] } // Cockpit with dashboard focus
-  };
+    // Camera positions for different modes
+    const cameraPositions = {
+        "first-person-cockpit": { position: [0, 0, 0], target: [0, 0, -5] }, // Inside cockpit looking forward
+        "third-person-exploration": { position: [0, 5, 10], target: [0, 0, 0] }, // Behind spacecraft
+        "navigation-view": { position: [0, 0, 0], target: [0, 0, -2] }, // Cockpit with dashboard focus
+    };
 
-  const switchCamera = useCallback((newMode) => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCameraMode(newMode);
-      setIsTransitioning(false);
-    }, 1000); // 1 second transition
-  }, []);
+    const switchCamera = useCallback((newMode) => {
+        setIsTransitioning(true);
+        setTimeout(() => {
+            setCameraMode(newMode);
+            setIsTransitioning(false);
+        }, 1000); // 1 second transition
+    }, []);
 
-  return {
-    cameraMode,
-    isTransitioning,
-    switchCamera,
-    cameraPositions
-  };
+    return {
+        cameraMode,
+        isTransitioning,
+        switchCamera,
+        cameraPositions,
+    };
 };
 ```
 
@@ -678,48 +745,49 @@ export const useCameraController = () => {
  */
 
 export const SCENES = {
-  LAUNCH_PAD: 'launch_pad',
-  HOME_SYSTEM: 'home_system',
-  PROJECTS_SYSTEM: 'projects_system',
-  WORMHOLE: 'wormhole_travel'
+    LAUNCH_PAD: "launch_pad",
+    HOME_SYSTEM: "home_system",
+    PROJECTS_SYSTEM: "projects_system",
+    WORMHOLE: "wormhole_travel",
 };
 
 export class SceneManager {
-  constructor() {
-    this.currentScene = SCENES.LAUNCH_PAD;
-    this.previousScene = null;
-    this.isTransitioning = false;
-  }
-
-  switchScene(newScene, callback) {
-    if (this.isTransitioning) return;
-
-    this.isTransitioning = true;
-    this.previousScene = this.currentScene;
-
-    // Simulate scene transition
-    setTimeout(() => {
-      this.currentScene = newScene;
-      this.isTransitioning = false;
-      if (callback) callback();
-    }, 2000); // 2 second transition
-  }
-
-  getCurrentScene() {
-    return this.currentScene;
-  }
-
-  goBack() {
-    if (this.previousScene) {
-      this.switchScene(this.previousScene);
+    constructor() {
+        this.currentScene = SCENES.LAUNCH_PAD;
+        this.previousScene = null;
+        this.isTransitioning = false;
     }
-  }
+
+    switchScene(newScene, callback) {
+        if (this.isTransitioning) return;
+
+        this.isTransitioning = true;
+        this.previousScene = this.currentScene;
+
+        // Simulate scene transition
+        setTimeout(() => {
+            this.currentScene = newScene;
+            this.isTransitioning = false;
+            if (callback) callback();
+        }, 2000); // 2 second transition
+    }
+
+    getCurrentScene() {
+        return this.currentScene;
+    }
+
+    goBack() {
+        if (this.previousScene) {
+            this.switchScene(this.previousScene);
+        }
+    }
 }
 
 export const sceneManager = new SceneManager();
 ```
 
 **Step 10.3: Save and commit:**
+
 ```bash
 git add .
 git commit -m "Add camera controller hook and scene manager"
@@ -814,9 +882,10 @@ Export as default component.
 **Step 12.2: Wait for component to be created**
 
 **Step 12.3: Test the launch sequence:**
-- Create a test button to trigger launch
-- Watch the animation sequence
-- Verify it completes and calls onComplete callback
+
+-   Create a test button to trigger launch
+-   Watch the animation sequence
+-   Verify it completes and calls onComplete callback
 
 ---
 
@@ -829,96 +898,107 @@ Now we'll create the main scene that combines cockpit + launch sequence.
 **Step 13.2: Copy this structure:**
 
 ```javascript
-import { Canvas } from '@react-three/fiber';
-import { useState } from 'react';
-import CockpitInterior from '../components/3D/CockpitInterior';
-import LaunchSequence from '../components/3D/LaunchSequence';
+import { Canvas } from "@react-three/fiber";
+import { useState } from "react";
+import CockpitInterior from "../components/3D/CockpitInterior";
+import LaunchSequence from "../components/3D/LaunchSequence";
 
 /**
  * Cockpit Scene - Phase 1 of portfolio experience
  * User starts here, sees first-person cockpit view
  */
 const CockpitScene = ({ onLaunchComplete }) => {
-  const [isLaunching, setIsLaunching] = useState(false);
-  const [showLaunchButton, setShowLaunchButton] = useState(true);
+    const [isLaunching, setIsLaunching] = useState(false);
+    const [showLaunchButton, setShowLaunchButton] = useState(true);
 
-  const handleLaunchClick = () => {
-    setIsLaunching(true);
-    setShowLaunchButton(false);
-  };
+    const handleLaunchClick = () => {
+        setIsLaunching(true);
+        setShowLaunchButton(false);
+    };
 
-  const handleLaunchComplete = () => {
-    // Launch animation finished, transition to next scene
-    if (onLaunchComplete) {
-      onLaunchComplete();
-    }
-  };
+    const handleLaunchComplete = () => {
+        // Launch animation finished, transition to next scene
+        if (onLaunchComplete) {
+            onLaunchComplete();
+        }
+    };
 
-  return (
-    <div className="w-full h-screen relative">
-      {/* Three.js Canvas */}
-      <Canvas
-        camera={{ position: [0, 0, 0], fov: 75 }}
-        gl={{ antialias: true }}
-      >
-        {/* Lighting */}
-        <ambientLight intensity={0.3} />
-        <pointLight position={[0, 2, 0]} intensity={0.5} color="#6366f1" />
+    return (
+        <div className="w-full h-screen relative">
+            {/* Three.js Canvas */}
+            <Canvas
+                camera={{ position: [0, 0, 0], fov: 75 }}
+                gl={{ antialias: true }}
+            >
+                {/* Lighting */}
+                <ambientLight intensity={0.3} />
+                <pointLight
+                    position={[0, 2, 0]}
+                    intensity={0.5}
+                    color="#6366f1"
+                />
 
-        {/* Cockpit Interior */}
-        <CockpitInterior
-          onLaunchClick={handleLaunchClick}
-          showLaunchButton={showLaunchButton}
-        />
+                {/* Cockpit Interior */}
+                <CockpitInterior
+                    onLaunchClick={handleLaunchClick}
+                    showLaunchButton={showLaunchButton}
+                />
 
-        {/* Launch Sequence Animation */}
-        {isLaunching && (
-          <LaunchSequence
-            isLaunching={isLaunching}
-            onComplete={handleLaunchComplete}
-          />
-        )}
-      </Canvas>
+                {/* Launch Sequence Animation */}
+                {isLaunching && (
+                    <LaunchSequence
+                        isLaunching={isLaunching}
+                        onComplete={handleLaunchComplete}
+                    />
+                )}
+            </Canvas>
 
-      {/* UI Overlay - HUD elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        {/* Top HUD */}
-        <div className="absolute top-8 left-1/2 transform -translate-x-1/2">
-          <h1 className="text-2xl font-heading text-nebula-purple">
-            CAPTAIN VANDAN'S VESSEL
-          </h1>
+            {/* UI Overlay - HUD elements */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                {/* Top HUD */}
+                <div className="absolute top-8 left-1/2 transform -translate-x-1/2">
+                    <h1 className="text-2xl font-heading text-nebula-purple">
+                        CAPTAIN VANDAN'S VESSEL
+                    </h1>
+                </div>
+
+                {/* Status Indicators */}
+                <div className="absolute top-8 right-8 space-y-2">
+                    <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-moon-white">
+                            SYSTEMS ONLINE
+                        </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-moon-white">
+                            FUEL: 100%
+                        </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-moon-white">
+                            READY FOR LAUNCH
+                        </span>
+                    </div>
+                </div>
+
+                {/* Instructions (only show before launch) */}
+                {showLaunchButton && (
+                    <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-center pointer-events-auto">
+                        <p className="text-moon-white text-lg mb-4">
+                            Press the glowing button to begin your journey
+                        </p>
+                        <p className="text-asteroid-gray text-sm">
+                            Click on the purple "INITIATE LAUNCH SEQUENCE"
+                            button in the dashboard
+                        </p>
+                    </div>
+                )}
+            </div>
         </div>
-
-        {/* Status Indicators */}
-        <div className="absolute top-8 right-8 space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-moon-white">SYSTEMS ONLINE</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-moon-white">FUEL: 100%</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-moon-white">READY FOR LAUNCH</span>
-          </div>
-        </div>
-
-        {/* Instructions (only show before launch) */}
-        {showLaunchButton && (
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-center pointer-events-auto">
-            <p className="text-moon-white text-lg mb-4">
-              Press the glowing button to begin your journey
-            </p>
-            <p className="text-asteroid-gray text-sm">
-              Click on the purple "INITIATE LAUNCH SEQUENCE" button in the dashboard
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default CockpitScene;
@@ -929,31 +1009,33 @@ export default CockpitScene;
 **Step 13.4: Update `src/App.jsx` to use CockpitScene:**
 
 ```javascript
-import { useState } from 'react';
-import CockpitScene from './scenes/CockpitScene';
+import { useState } from "react";
+import CockpitScene from "./scenes/CockpitScene";
 
 function App() {
-  const [currentPhase, setCurrentPhase] = useState('cockpit'); // 'cockpit', 'exploration', etc.
+    const [currentPhase, setCurrentPhase] = useState("cockpit"); // 'cockpit', 'exploration', etc.
 
-  const handleLaunchComplete = () => {
-    console.log("Launch complete! Transitioning to exploration mode...");
-    // We'll implement scene transition later
-    setCurrentPhase('exploration');
-  };
+    const handleLaunchComplete = () => {
+        console.log("Launch complete! Transitioning to exploration mode...");
+        // We'll implement scene transition later
+        setCurrentPhase("exploration");
+    };
 
-  return (
-    <>
-      {currentPhase === 'cockpit' && (
-        <CockpitScene onLaunchComplete={handleLaunchComplete} />
-      )}
+    return (
+        <>
+            {currentPhase === "cockpit" && (
+                <CockpitScene onLaunchComplete={handleLaunchComplete} />
+            )}
 
-      {currentPhase === 'exploration' && (
-        <div className="w-full h-screen flex items-center justify-center bg-deep-space">
-          <h1 className="text-4xl text-moon-white">Exploration Mode (Coming Soon)</h1>
-        </div>
-      )}
-    </>
-  );
+            {currentPhase === "exploration" && (
+                <div className="w-full h-screen flex items-center justify-center bg-deep-space">
+                    <h1 className="text-4xl text-moon-white">
+                        Exploration Mode (Coming Soon)
+                    </h1>
+                </div>
+            )}
+        </>
+    );
 }
 
 export default App;
@@ -966,16 +1048,18 @@ npm run dev
 ```
 
 **Testing checklist:**
-- [ ] Cockpit interior renders correctly
-- [ ] Dashboard is visible with instruments
-- [ ] Launch button glows and is clickable
-- [ ] Clicking launch button triggers animation
-- [ ] Launch sequence completes and transitions
-- [ ] HUD overlay shows correctly
-- [ ] No console errors
-- [ ] Maintains 60fps (check DevTools)
+
+-   [ ] Cockpit interior renders correctly
+-   [ ] Dashboard is visible with instruments
+-   [ ] Launch button glows and is clickable
+-   [ ] Clicking launch button triggers animation
+-   [ ] Launch sequence completes and transitions
+-   [ ] HUD overlay shows correctly
+-   [ ] No console errors
+-   [ ] Maintains 60fps (check DevTools)
 
 **Step 13.6: Commit:**
+
 ```bash
 git add .
 git commit -m "Add cockpit scene with launch sequence"
@@ -1112,12 +1196,12 @@ Export as default component.
 **Step 17.2: Copy this structure:**
 
 ```javascript
-import { Canvas } from '@react-three/fiber';
-import { Stars } from '@react-three/drei';
-import { useState } from 'react';
-import SpacecraftModel from '../components/3D/SpacecraftModel';
-import HomeSolarSystem from '../components/3D/HomeSolarSystem';
-import OrbitCamera from '../components/3D/OrbitCamera';
+import { Canvas } from "@react-three/fiber";
+import { Stars } from "@react-three/drei";
+import { useState } from "react";
+import SpacecraftModel from "../components/3D/SpacecraftModel";
+import HomeSolarSystem from "../components/3D/HomeSolarSystem";
+import OrbitCamera from "../components/3D/OrbitCamera";
 
 /**
  * Exploration Scene - Phase 2 of portfolio
@@ -1125,113 +1209,133 @@ import OrbitCamera from '../components/3D/OrbitCamera';
  * Can look around the home solar system
  */
 const ExplorationScene = ({ onEnterSpacecraft, onPlanetSelect }) => {
-  const [hoveredPlanet, setHoveredPlanet] = useState(null);
-  const [showInstructions, setShowInstructions] = useState(true);
+    const [hoveredPlanet, setHoveredPlanet] = useState(null);
+    const [showInstructions, setShowInstructions] = useState(true);
 
-  const handlePlanetClick = (planetData) => {
-    // User clicked a planet - show "travel required" message
-    setHoveredPlanet(planetData);
-  };
+    const handlePlanetClick = (planetData) => {
+        // User clicked a planet - show "travel required" message
+        setHoveredPlanet(planetData);
+    };
 
-  const handleEnterShip = () => {
-    if (onEnterSpacecraft) {
-      onEnterSpacecraft();
-    }
-  };
+    const handleEnterShip = () => {
+        if (onEnterSpacecraft) {
+            onEnterSpacecraft();
+        }
+    };
 
-  return (
-    <div className="w-full h-screen relative">
-      {/* Three.js Canvas */}
-      <Canvas
-        camera={{ position: [0, 5, 10], fov: 60 }}
-        gl={{ antialias: true }}
-      >
-        {/* Background Stars */}
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} />
+    return (
+        <div className="w-full h-screen relative">
+            {/* Three.js Canvas */}
+            <Canvas
+                camera={{ position: [0, 5, 10], fov: 60 }}
+                gl={{ antialias: true }}
+            >
+                {/* Background Stars */}
+                <Stars
+                    radius={100}
+                    depth={50}
+                    count={5000}
+                    factor={4}
+                    saturation={0}
+                />
+                {/* Lighting */}
+                <ambientLight intensity={0.2} />
+                <pointLight
+                    position={[0, 0, 0]}
+                    intensity={2}
+                    color="#FDB813"
+                />{" "}
+                {/* Sun light */}
+                {/* Orbital Camera Controller */}
+                <OrbitCamera
+                    target={[0, 0, 0]}
+                    distance={15}
+                    enableRotation={true}
+                />
+                {/* User's Spacecraft (idle animation) */}
+                <SpacecraftModel position={[0, 0, 0]} showExhaust={false} />
+                {/* Home Solar System */}
+                <HomeSolarSystem
+                    onPlanetClick={handlePlanetClick}
+                    onPortalClick={(portalData) =>
+                        console.log("Portal clicked:", portalData)
+                    }
+                />
+            </Canvas>
 
-        {/* Lighting */}
-        <ambientLight intensity={0.2} />
-        <pointLight position={[0, 0, 0]} intensity={2} color="#FDB813" /> {/* Sun light */}
-
-        {/* Orbital Camera Controller */}
-        <OrbitCamera target={[0, 0, 0]} distance={15} enableRotation={true} />
-
-        {/* User's Spacecraft (idle animation) */}
-        <SpacecraftModel
-          position={[0, 0, 0]}
-          showExhaust={false}
-        />
-
-        {/* Home Solar System */}
-        <HomeSolarSystem
-          onPlanetClick={handlePlanetClick}
-          onPortalClick={(portalData) => console.log('Portal clicked:', portalData)}
-        />
-      </Canvas>
-
-      {/* UI Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        {/* Welcome Message (fades after 5 seconds) */}
-        {showInstructions && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+            {/* UI Overlay */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                {/* Welcome Message (fades after 5 seconds) */}
+                {showInstructions && (
+                    <div
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
                           bg-deep-space/80 backdrop-blur-md p-8 rounded-lg border border-nebula-purple
-                          max-w-md text-center pointer-events-auto">
-            <h2 className="text-3xl font-heading text-nebula-purple mb-4">
-              WELCOME TO YOUR UNIVERSE
-            </h2>
-            <p className="text-moon-white mb-2">🌍 Free Exploration Mode</p>
-            <ul className="text-asteroid-gray text-sm space-y-2 mb-6">
-              <li>• Move your mouse to look around</li>
-              <li>• Hover over planets & portals</li>
-              <li>• Click to view information</li>
-            </ul>
-            <p className="text-moon-white mb-4">Ready to navigate?</p>
-            <button
-              onClick={handleEnterShip}
-              className="bg-nebula-purple text-moon-white px-6 py-3 rounded-lg
+                          max-w-md text-center pointer-events-auto"
+                    >
+                        <h2 className="text-3xl font-heading text-nebula-purple mb-4">
+                            WELCOME TO YOUR UNIVERSE
+                        </h2>
+                        <p className="text-moon-white mb-2">
+                            🌍 Free Exploration Mode
+                        </p>
+                        <ul className="text-asteroid-gray text-sm space-y-2 mb-6">
+                            <li>• Move your mouse to look around</li>
+                            <li>• Hover over planets & portals</li>
+                            <li>• Click to view information</li>
+                        </ul>
+                        <p className="text-moon-white mb-4">
+                            Ready to navigate?
+                        </p>
+                        <button
+                            onClick={handleEnterShip}
+                            className="bg-nebula-purple text-moon-white px-6 py-3 rounded-lg
                          hover:bg-purple-600 transition-colors pointer-events-auto"
-            >
-              ENTER SPACECRAFT
-            </button>
-            <button
-              onClick={() => setShowInstructions(false)}
-              className="ml-4 text-asteroid-gray hover:text-moon-white transition-colors pointer-events-auto"
-            >
-              Explore First
-            </button>
-          </div>
-        )}
+                        >
+                            ENTER SPACECRAFT
+                        </button>
+                        <button
+                            onClick={() => setShowInstructions(false)}
+                            className="ml-4 text-asteroid-gray hover:text-moon-white transition-colors pointer-events-auto"
+                        >
+                            Explore First
+                        </button>
+                    </div>
+                )}
 
-        {/* Planet Hover Info */}
-        {hoveredPlanet && (
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2
-                          bg-deep-space/90 backdrop-blur-md p-4 rounded-lg border border-star-blue">
-            <h3 className="text-xl font-heading text-star-blue">{hoveredPlanet.name}</h3>
-            <p className="text-asteroid-gray text-sm mt-2">
-              This destination requires navigation
-            </p>
-            <button
-              onClick={handleEnterShip}
-              className="mt-3 bg-star-blue text-moon-white px-4 py-2 rounded text-sm
+                {/* Planet Hover Info */}
+                {hoveredPlanet && (
+                    <div
+                        className="absolute bottom-20 left-1/2 transform -translate-x-1/2
+                          bg-deep-space/90 backdrop-blur-md p-4 rounded-lg border border-star-blue"
+                    >
+                        <h3 className="text-xl font-heading text-star-blue">
+                            {hoveredPlanet.name}
+                        </h3>
+                        <p className="text-asteroid-gray text-sm mt-2">
+                            This destination requires navigation
+                        </p>
+                        <button
+                            onClick={handleEnterShip}
+                            className="mt-3 bg-star-blue text-moon-white px-4 py-2 rounded text-sm
                          hover:bg-blue-600 transition-colors pointer-events-auto"
-            >
-              BOARD SPACECRAFT
-            </button>
-          </div>
-        )}
+                        >
+                            BOARD SPACECRAFT
+                        </button>
+                    </div>
+                )}
 
-        {/* Mini Navigation Button (always visible) */}
-        <button
-          onClick={handleEnterShip}
-          className="absolute bottom-8 right-8 bg-nebula-purple/20 backdrop-blur-md
+                {/* Mini Navigation Button (always visible) */}
+                <button
+                    onClick={handleEnterShip}
+                    className="absolute bottom-8 right-8 bg-nebula-purple/20 backdrop-blur-md
                      border border-nebula-purple text-moon-white px-6 py-3 rounded-lg
                      hover:bg-nebula-purple/40 transition-all pointer-events-auto"
-        >
-          🚀 ENTER SPACECRAFT
-        </button>
-      </div>
-    </div>
-  );
+                >
+                    🚀 ENTER SPACECRAFT
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default ExplorationScene;
@@ -1242,44 +1346,48 @@ export default ExplorationScene;
 **Step 17.4: Update App.jsx to include exploration scene:**
 
 ```javascript
-import { useState } from 'react';
-import CockpitScene from './scenes/CockpitScene';
-import ExplorationScene from './scenes/ExplorationScene';
+import { useState } from "react";
+import CockpitScene from "./scenes/CockpitScene";
+import ExplorationScene from "./scenes/ExplorationScene";
 
 function App() {
-  const [currentPhase, setCurrentPhase] = useState('cockpit');
-  // Phases: 'cockpit', 'exploration', 'navigation', 'wormhole', 'planet-view'
+    const [currentPhase, setCurrentPhase] = useState("cockpit");
+    // Phases: 'cockpit', 'exploration', 'navigation', 'wormhole', 'planet-view'
 
-  const handleLaunchComplete = () => {
-    setTimeout(() => {
-      setCurrentPhase('exploration');
-    }, 1000); // 1 second pause before showing exploration
-  };
+    const handleLaunchComplete = () => {
+        setTimeout(() => {
+            setCurrentPhase("exploration");
+        }, 1000); // 1 second pause before showing exploration
+    };
 
-  const handleEnterSpacecraft = () => {
-    setCurrentPhase('navigation'); // Will build navigation scene next week
-  };
+    const handleEnterSpacecraft = () => {
+        setCurrentPhase("navigation"); // Will build navigation scene next week
+    };
 
-  return (
-    <>
-      {currentPhase === 'cockpit' && (
-        <CockpitScene onLaunchComplete={handleLaunchComplete} />
-      )}
+    return (
+        <>
+            {currentPhase === "cockpit" && (
+                <CockpitScene onLaunchComplete={handleLaunchComplete} />
+            )}
 
-      {currentPhase === 'exploration' && (
-        <ExplorationScene
-          onEnterSpacecraft={handleEnterSpacecraft}
-          onPlanetSelect={(planet) => console.log('Selected:', planet)}
-        />
-      )}
+            {currentPhase === "exploration" && (
+                <ExplorationScene
+                    onEnterSpacecraft={handleEnterSpacecraft}
+                    onPlanetSelect={(planet) =>
+                        console.log("Selected:", planet)
+                    }
+                />
+            )}
 
-      {currentPhase === 'navigation' && (
-        <div className="w-full h-screen flex items-center justify-center bg-deep-space">
-          <h1 className="text-4xl text-moon-white">Navigation Mode (Week 2)</h1>
-        </div>
-      )}
-    </>
-  );
+            {currentPhase === "navigation" && (
+                <div className="w-full h-screen flex items-center justify-center bg-deep-space">
+                    <h1 className="text-4xl text-moon-white">
+                        Navigation Mode (Week 2)
+                    </h1>
+                </div>
+            )}
+        </>
+    );
 }
 
 export default App;
@@ -1292,19 +1400,21 @@ npm run dev
 ```
 
 **Testing checklist:**
-- [ ] Cockpit scene loads first
-- [ ] Launch button works
-- [ ] Launch animation plays
-- [ ] Transitions to exploration scene
-- [ ] Spacecraft is visible in third-person view
-- [ ] Solar system with planets renders
-- [ ] Camera rotates with mouse movement
-- [ ] Planets are hoverable
-- [ ] Clicking planet shows message
-- [ ] "Enter Spacecraft" button works
-- [ ] 60fps maintained throughout
+
+-   [ ] Cockpit scene loads first
+-   [ ] Launch button works
+-   [ ] Launch animation plays
+-   [ ] Transitions to exploration scene
+-   [ ] Spacecraft is visible in third-person view
+-   [ ] Solar system with planets renders
+-   [ ] Camera rotates with mouse movement
+-   [ ] Planets are hoverable
+-   [ ] Clicking planet shows message
+-   [ ] "Enter Spacecraft" button works
+-   [ ] 60fps maintained throughout
 
 **Step 17.6: Commit your work:**
+
 ```bash
 git add .
 git commit -m "Add exploration scene with third-person view and solar system"
@@ -1327,6 +1437,7 @@ git commit -m "Add exploration scene with third-person view and solar system"
 ✅ Scene transitions between cockpit and exploration
 
 **Current User Flow:**
+
 1. User arrives → sees cockpit interior (first-person)
 2. Clicks launch button → rocket takes off with animation
 3. Camera transitions → now outside spacecraft (third-person)
@@ -1334,12 +1445,13 @@ git commit -m "Add exploration scene with third-person view and solar system"
 5. Click "Enter Spacecraft" → ready for navigation mode
 
 **Next Week Preview:**
-- Navigation dashboard inside cockpit
-- Destination selection system
-- Wormhole travel with hyperspace effects
-- Multiple solar systems (projects, blog, etc.)
-- Planet landing sequences
-- Content pages for each planet
+
+-   Navigation dashboard inside cockpit
+-   Destination selection system
+-   Wormhole travel with hyperspace effects
+-   Multiple solar systems (projects, blog, etc.)
+-   Planet landing sequences
+-   Content pages for each planet
 
 **Take a break! You've done amazing work! 🚀**
 
@@ -1360,161 +1472,223 @@ This is a **2D UI overlay** that appears when inside the spacecraft.
 **Step 18.2: Copy this structure:**
 
 ```javascript
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { motion } from "framer-motion";
 import {
-  FaRocket,
-  FaGlobe,
-  FaBriefcase,
-  FaGraduationCap,
-  FaCode,
-  FaEnvelope,
-  FaPortrait,
-  FaBlackHole
-} from 'react-icons/fa';
+    FaRocket,
+    FaGlobe,
+    FaBriefcase,
+    FaGraduationCap,
+    FaCode,
+    FaEnvelope,
+    FaPortrait,
+    FaBlackHole,
+} from "react-icons/fa";
 
 /**
  * Navigation Dashboard - 2D UI shown in cockpit
  * Allows user to select destinations
  */
 const NavigationDashboard = ({ onDestinationSelect, onExitSpacecraft }) => {
-  const [selectedCategory, setSelectedCategory] = useState('local');
+    const [selectedCategory, setSelectedCategory] = useState("local");
 
-  // Local destinations (same solar system - short travel)
-  const localDestinations = [
-    { id: 'about', name: 'About Me Planet', icon: FaGlobe, color: 'text-star-blue', type: 'local' },
-    { id: 'experience', name: 'Experience Planet', icon: FaBriefcase, color: 'text-comet-cyan', type: 'local' },
-    { id: 'education', name: 'Education Planet', icon: FaGraduationCap, color: 'text-nebula-purple', type: 'local' },
-    { id: 'skills', name: 'Skills Planet', icon: FaCode, color: 'text-supernova-pink', type: 'local' },
-    { id: 'contact', name: 'Contact Planet', icon: FaEnvelope, color: 'text-green-400', type: 'local' }
-  ];
+    // Local destinations (same solar system - short travel)
+    const localDestinations = [
+        {
+            id: "about",
+            name: "About Me Planet",
+            icon: FaGlobe,
+            color: "text-star-blue",
+            type: "local",
+        },
+        {
+            id: "experience",
+            name: "Experience Planet",
+            icon: FaBriefcase,
+            color: "text-comet-cyan",
+            type: "local",
+        },
+        {
+            id: "education",
+            name: "Education Planet",
+            icon: FaGraduationCap,
+            color: "text-nebula-purple",
+            type: "local",
+        },
+        {
+            id: "skills",
+            name: "Skills Planet",
+            icon: FaCode,
+            color: "text-supernova-pink",
+            type: "local",
+        },
+        {
+            id: "contact",
+            name: "Contact Planet",
+            icon: FaEnvelope,
+            color: "text-green-400",
+            type: "local",
+        },
+    ];
 
-  // Portal destinations (different solar systems - wormhole travel)
-  const portalDestinations = [
-    { id: 'projects', name: 'Projects Wormhole', icon: FaRocket, color: 'text-purple-400', type: 'portal', leads: 'New System' },
-    { id: 'blog', name: 'Blog Black Hole', icon: FaBlackHole, color: 'text-gray-400', type: 'portal', leads: 'New System' },
-    { id: 'achievements', name: 'Achievements Portal', icon: FaPortrait, color: 'text-yellow-400', type: 'portal', leads: 'New System' }
-  ];
+    // Portal destinations (different solar systems - wormhole travel)
+    const portalDestinations = [
+        {
+            id: "projects",
+            name: "Projects Wormhole",
+            icon: FaRocket,
+            color: "text-purple-400",
+            type: "portal",
+            leads: "New System",
+        },
+        {
+            id: "blog",
+            name: "Blog Black Hole",
+            icon: FaBlackHole,
+            color: "text-gray-400",
+            type: "portal",
+            leads: "New System",
+        },
+        {
+            id: "achievements",
+            name: "Achievements Portal",
+            icon: FaPortrait,
+            color: "text-yellow-400",
+            type: "portal",
+            leads: "New System",
+        },
+    ];
 
-  const handleDestinationClick = (destination) => {
-    if (onDestinationSelect) {
-      onDestinationSelect(destination);
-    }
-  };
+    const handleDestinationClick = (destination) => {
+        if (onDestinationSelect) {
+            onDestinationSelect(destination);
+        }
+    };
 
-  return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      {/* Dashboard Panel */}
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-deep-space/95 backdrop-blur-md border-2 border-nebula-purple
+    return (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            {/* Dashboard Panel */}
+            <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="bg-deep-space/95 backdrop-blur-md border-2 border-nebula-purple
                    rounded-lg p-8 max-w-2xl w-full pointer-events-auto shadow-2xl"
-      >
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-heading text-nebula-purple mb-2">
-            DESTINATION SELECTION SYSTEM
-          </h2>
-          <p className="text-asteroid-gray text-sm">
-            📍 CURRENT SYSTEM: Home Solar System
-          </p>
-        </div>
+            >
+                {/* Header */}
+                <div className="text-center mb-6">
+                    <h2 className="text-3xl font-heading text-nebula-purple mb-2">
+                        DESTINATION SELECTION SYSTEM
+                    </h2>
+                    <p className="text-asteroid-gray text-sm">
+                        📍 CURRENT SYSTEM: Home Solar System
+                    </p>
+                </div>
 
-        {/* Category Tabs */}
-        <div className="flex justify-center space-x-4 mb-6">
-          <button
-            onClick={() => setSelectedCategory('local')}
-            className={`px-6 py-2 rounded-lg transition-all ${
-              selectedCategory === 'local'
-                ? 'bg-nebula-purple text-moon-white'
-                : 'bg-transparent border border-nebula-purple text-nebula-purple hover:bg-nebula-purple/20'
-            }`}
-          >
-            Local Destinations
-          </button>
-          <button
-            onClick={() => setSelectedCategory('portals')}
-            className={`px-6 py-2 rounded-lg transition-all ${
-              selectedCategory === 'portals'
-                ? 'bg-supernova-pink text-moon-white'
-                : 'bg-transparent border border-supernova-pink text-supernova-pink hover:bg-supernova-pink/20'
-            }`}
-          >
-            Portal Jumps
-          </button>
-        </div>
+                {/* Category Tabs */}
+                <div className="flex justify-center space-x-4 mb-6">
+                    <button
+                        onClick={() => setSelectedCategory("local")}
+                        className={`px-6 py-2 rounded-lg transition-all ${
+                            selectedCategory === "local"
+                                ? "bg-nebula-purple text-moon-white"
+                                : "bg-transparent border border-nebula-purple text-nebula-purple hover:bg-nebula-purple/20"
+                        }`}
+                    >
+                        Local Destinations
+                    </button>
+                    <button
+                        onClick={() => setSelectedCategory("portals")}
+                        className={`px-6 py-2 rounded-lg transition-all ${
+                            selectedCategory === "portals"
+                                ? "bg-supernova-pink text-moon-white"
+                                : "bg-transparent border border-supernova-pink text-supernova-pink hover:bg-supernova-pink/20"
+                        }`}
+                    >
+                        Portal Jumps
+                    </button>
+                </div>
 
-        {/* Destinations List */}
-        <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
-          {selectedCategory === 'local' && (
-            <>
-              <p className="text-xs text-asteroid-gray mb-4">
-                ──────── LOCAL DESTINATIONS (Same System) ────────
-              </p>
-              {localDestinations.map((dest) => (
-                <button
-                  key={dest.id}
-                  onClick={() => handleDestinationClick(dest)}
-                  className="w-full flex items-center justify-between p-4 rounded-lg
+                {/* Destinations List */}
+                <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
+                    {selectedCategory === "local" && (
+                        <>
+                            <p className="text-xs text-asteroid-gray mb-4">
+                                ──────── LOCAL DESTINATIONS (Same System)
+                                ────────
+                            </p>
+                            {localDestinations.map((dest) => (
+                                <button
+                                    key={dest.id}
+                                    onClick={() => handleDestinationClick(dest)}
+                                    className="w-full flex items-center justify-between p-4 rounded-lg
                              bg-deep-space border border-star-blue/30
                              hover:border-star-blue hover:bg-star-blue/10
                              transition-all group"
-                >
-                  <div className="flex items-center space-x-4">
-                    <dest.icon className={`text-2xl ${dest.color}`} />
-                    <span className="text-moon-white font-medium">{dest.name}</span>
-                  </div>
-                  <span className="text-xs text-asteroid-gray group-hover:text-star-blue">
-                    10-15s travel →
-                  </span>
-                </button>
-              ))}
-            </>
-          )}
+                                >
+                                    <div className="flex items-center space-x-4">
+                                        <dest.icon
+                                            className={`text-2xl ${dest.color}`}
+                                        />
+                                        <span className="text-moon-white font-medium">
+                                            {dest.name}
+                                        </span>
+                                    </div>
+                                    <span className="text-xs text-asteroid-gray group-hover:text-star-blue">
+                                        10-15s travel →
+                                    </span>
+                                </button>
+                            ))}
+                        </>
+                    )}
 
-          {selectedCategory === 'portals' && (
-            <>
-              <p className="text-xs text-asteroid-gray mb-4">
-                ─────── PORTAL JUMPS (Different Systems) ──────
-              </p>
-              {portalDestinations.map((dest) => (
-                <button
-                  key={dest.id}
-                  onClick={() => handleDestinationClick(dest)}
-                  className="w-full flex items-center justify-between p-4 rounded-lg
+                    {selectedCategory === "portals" && (
+                        <>
+                            <p className="text-xs text-asteroid-gray mb-4">
+                                ─────── PORTAL JUMPS (Different Systems) ──────
+                            </p>
+                            {portalDestinations.map((dest) => (
+                                <button
+                                    key={dest.id}
+                                    onClick={() => handleDestinationClick(dest)}
+                                    className="w-full flex items-center justify-between p-4 rounded-lg
                              bg-deep-space border border-supernova-pink/30
                              hover:border-supernova-pink hover:bg-supernova-pink/10
                              transition-all group"
-                >
-                  <div className="flex items-center space-x-4">
-                    <dest.icon className={`text-2xl ${dest.color}`} />
-                    <div className="text-left">
-                      <p className="text-moon-white font-medium">{dest.name}</p>
-                      <p className="text-xs text-asteroid-gray">────► {dest.leads}</p>
-                    </div>
-                  </div>
-                  <span className="text-xs text-asteroid-gray group-hover:text-supernova-pink">
-                    20-30s travel →
-                  </span>
-                </button>
-              ))}
-            </>
-          )}
-        </div>
+                                >
+                                    <div className="flex items-center space-x-4">
+                                        <dest.icon
+                                            className={`text-2xl ${dest.color}`}
+                                        />
+                                        <div className="text-left">
+                                            <p className="text-moon-white font-medium">
+                                                {dest.name}
+                                            </p>
+                                            <p className="text-xs text-asteroid-gray">
+                                                ────► {dest.leads}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <span className="text-xs text-asteroid-gray group-hover:text-supernova-pink">
+                                        20-30s travel →
+                                    </span>
+                                </button>
+                            ))}
+                        </>
+                    )}
+                </div>
 
-        {/* Exit Button */}
-        <div className="text-center pt-4 border-t border-asteroid-gray/30">
-          <button
-            onClick={onExitSpacecraft}
-            className="text-asteroid-gray hover:text-moon-white transition-colors"
-          >
-            EXIT SPACECRAFT
-          </button>
+                {/* Exit Button */}
+                <div className="text-center pt-4 border-t border-asteroid-gray/30">
+                    <button
+                        onClick={onExitSpacecraft}
+                        className="text-asteroid-gray hover:text-moon-white transition-colors"
+                    >
+                        EXIT SPACECRAFT
+                    </button>
+                </div>
+            </motion.div>
         </div>
-      </motion.div>
-    </div>
-  );
+    );
 };
 
 export default NavigationDashboard;
@@ -1531,57 +1705,64 @@ export default NavigationDashboard;
 **Step 19.2: Copy this structure:**
 
 ```javascript
-import { Canvas } from '@react-three/fiber';
-import { useState } from 'react';
-import CockpitInterior from '../components/3D/CockpitInterior';
-import NavigationDashboard from '../components/UI/NavigationDashboard';
+import { Canvas } from "@react-three/fiber";
+import { useState } from "react";
+import CockpitInterior from "../components/3D/CockpitInterior";
+import NavigationDashboard from "../components/UI/NavigationDashboard";
 
 /**
  * Navigation Scene - Phase 3
  * User is back inside cockpit, viewing navigation dashboard
  */
 const NavigationScene = ({ onExitSpacecraft, onDestinationSelect }) => {
+    const handleExit = () => {
+        if (onExitSpacecraft) {
+            onExitSpacecraft();
+        }
+    };
 
-  const handleExit = () => {
-    if (onExitSpacecraft) {
-      onExitSpacecraft();
-    }
-  };
+    const handleDestinationSelect = (destination) => {
+        console.log("Navigating to:", destination);
+        if (onDestinationSelect) {
+            onDestinationSelect(destination);
+        }
+    };
 
-  const handleDestinationSelect = (destination) => {
-    console.log('Navigating to:', destination);
-    if (onDestinationSelect) {
-      onDestinationSelect(destination);
-    }
-  };
+    return (
+        <div className="w-full h-screen relative">
+            {/* 3D Cockpit Background */}
+            <Canvas
+                camera={{ position: [0, 0, 0], fov: 75 }}
+                gl={{ antialias: true }}
+            >
+                <ambientLight intensity={0.3} />
+                <pointLight
+                    position={[0, 2, 0]}
+                    intensity={0.5}
+                    color="#6366f1"
+                />
 
-  return (
-    <div className="w-full h-screen relative">
-      {/* 3D Cockpit Background */}
-      <Canvas
-        camera={{ position: [0, 0, 0], fov: 75 }}
-        gl={{ antialias: true }}
-      >
-        <ambientLight intensity={0.3} />
-        <pointLight position={[0, 2, 0]} intensity={0.5} color="#6366f1" />
+                {/* Show cockpit interior (no launch button) */}
+                <CockpitInterior showLaunchButton={false} />
+            </Canvas>
 
-        {/* Show cockpit interior (no launch button) */}
-        <CockpitInterior showLaunchButton={false} />
-      </Canvas>
+            {/* Navigation Dashboard Overlay */}
+            <NavigationDashboard
+                onDestinationSelect={handleDestinationSelect}
+                onExitSpacecraft={handleExit}
+            />
 
-      {/* Navigation Dashboard Overlay */}
-      <NavigationDashboard
-        onDestinationSelect={handleDestinationSelect}
-        onExitSpacecraft={handleExit}
-      />
-
-      {/* System Status HUD */}
-      <div className="absolute top-8 right-8 text-right pointer-events-none">
-        <p className="text-green-400 text-sm mb-1">✓ NAVIGATION SYSTEM ACTIVATED</p>
-        <p className="text-asteroid-gray text-xs">Awaiting destination selection...</p>
-      </div>
-    </div>
-  );
+            {/* System Status HUD */}
+            <div className="absolute top-8 right-8 text-right pointer-events-none">
+                <p className="text-green-400 text-sm mb-1">
+                    ✓ NAVIGATION SYSTEM ACTIVATED
+                </p>
+                <p className="text-asteroid-gray text-xs">
+                    Awaiting destination selection...
+                </p>
+            </div>
+        </div>
+    );
 };
 
 export default NavigationScene;
@@ -1593,28 +1774,32 @@ Add navigation scene to your phase switching:
 
 ```javascript
 // In App.jsx, add this to your phase rendering:
-{currentPhase === 'navigation' && (
-  <NavigationScene
-    onExitSpacecraft={() => setCurrentPhase('exploration')}
-    onDestinationSelect={(dest) => {
-      console.log('Traveling to:', dest);
-      if (dest.type === 'portal') {
-        setCurrentPhase('wormhole'); // Trigger wormhole travel
-      } else {
-        setCurrentPhase('traveling'); // Local planet travel
-      }
-    }}
-  />
-)}
+{
+    currentPhase === "navigation" && (
+        <NavigationScene
+            onExitSpacecraft={() => setCurrentPhase("exploration")}
+            onDestinationSelect={(dest) => {
+                console.log("Traveling to:", dest);
+                if (dest.type === "portal") {
+                    setCurrentPhase("wormhole"); // Trigger wormhole travel
+                } else {
+                    setCurrentPhase("traveling"); // Local planet travel
+                }
+            }}
+        />
+    );
+}
 ```
 
 **Step 19.4: Test:**
-- Enter spacecraft from exploration mode
-- Should see navigation dashboard
-- Click on destinations
-- Exit spacecraft works
+
+-   Enter spacecraft from exploration mode
+-   Should see navigation dashboard
+-   Click on destinations
+-   Exit spacecraft works
 
 **Commit:**
+
 ```bash
 git add .
 git commit -m "Add navigation scene with destination selection dashboard"
@@ -1810,62 +1995,70 @@ Export as default component.
 **Step 23.1: Create file `src/scenes/WormholeScene.jsx`**
 
 ```javascript
-import { Canvas } from '@react-three/fiber';
-import WormholeTravel from '../components/3D/WormholeTravel';
-import { useState } from 'react';
+import { Canvas } from "@react-three/fiber";
+import WormholeTravel from "../components/3D/WormholeTravel";
+import { useState } from "react";
 
 /**
  * Wormhole Scene - Shows during portal jump
  */
 const WormholeScene = ({ destination, onArrival }) => {
-  const [stage, setStage] = useState('departure'); // Track which stage of travel
+    const [stage, setStage] = useState("departure"); // Track which stage of travel
 
-  const handleComplete = () => {
-    if (onArrival) {
-      onArrival(destination);
-    }
-  };
+    const handleComplete = () => {
+        if (onArrival) {
+            onArrival(destination);
+        }
+    };
 
-  return (
-    <div className="w-full h-screen relative bg-black">
-      {/* Full 3D Wormhole Experience */}
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 90 }} // Wide FOV for immersion
-        gl={{ antialias: true }}
-      >
-        <WormholeTravel
-          destination={destination}
-          onComplete={handleComplete}
-          isActive={true}
-        />
-      </Canvas>
+    return (
+        <div className="w-full h-screen relative bg-black">
+            {/* Full 3D Wormhole Experience */}
+            <Canvas
+                camera={{ position: [0, 0, 5], fov: 90 }} // Wide FOV for immersion
+                gl={{ antialias: true }}
+            >
+                <WormholeTravel
+                    destination={destination}
+                    onComplete={handleComplete}
+                    isActive={true}
+                />
+            </Canvas>
 
-      {/* Minimal HUD (travel info) */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2
-                      text-center pointer-events-none">
-        <div className="bg-deep-space/50 backdrop-blur-sm px-6 py-3 rounded-lg
-                        border border-nebula-purple/50">
-          <p className="text-nebula-purple font-heading text-xl">
-            HYPERSPACE JUMP IN PROGRESS
-          </p>
-          <p className="text-asteroid-gray text-sm mt-1">
-            Destination: {destination?.name || 'Unknown'}
-          </p>
-        </div>
-      </div>
+            {/* Minimal HUD (travel info) */}
+            <div
+                className="absolute top-8 left-1/2 transform -translate-x-1/2
+                      text-center pointer-events-none"
+            >
+                <div
+                    className="bg-deep-space/50 backdrop-blur-sm px-6 py-3 rounded-lg
+                        border border-nebula-purple/50"
+                >
+                    <p className="text-nebula-purple font-heading text-xl">
+                        HYPERSPACE JUMP IN PROGRESS
+                    </p>
+                    <p className="text-asteroid-gray text-sm mt-1">
+                        Destination: {destination?.name || "Unknown"}
+                    </p>
+                </div>
+            </div>
 
-      {/* Speed Indicator */}
-      <div className="absolute bottom-8 left-8 pointer-events-none">
-        <p className="text-moon-white text-sm mb-1">VELOCITY</p>
-        <div className="w-48 h-2 bg-asteroid-gray/30 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-nebula-purple to-supernova-pink
+            {/* Speed Indicator */}
+            <div className="absolute bottom-8 left-8 pointer-events-none">
+                <p className="text-moon-white text-sm mb-1">VELOCITY</p>
+                <div className="w-48 h-2 bg-asteroid-gray/30 rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-gradient-to-r from-nebula-purple to-supernova-pink
                           animate-pulse"
-               style={{ width: '95%' }}></div>
+                        style={{ width: "95%" }}
+                    ></div>
+                </div>
+                <p className="text-xs text-asteroid-gray mt-1">
+                    0.99c (Near Light Speed)
+                </p>
+            </div>
         </div>
-        <p className="text-xs text-asteroid-gray mt-1">0.99c (Near Light Speed)</p>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default WormholeScene;
@@ -1874,19 +2067,22 @@ export default WormholeScene;
 **Step 23.2: Add to App.jsx phase switching:**
 
 ```javascript
-{currentPhase === 'wormhole' && (
-  <WormholeScene
-    destination={selectedDestination} // Store this when user selects portal
-    onArrival={(dest) => {
-      // Arrived in new system
-      setCurrentPhase('new-system');
-      setCurrentSystem(dest.id); // Track which system we're in
-    }}
-  />
-)}
+{
+    currentPhase === "wormhole" && (
+        <WormholeScene
+            destination={selectedDestination} // Store this when user selects portal
+            onArrival={(dest) => {
+                // Arrived in new system
+                setCurrentPhase("new-system");
+                setCurrentSystem(dest.id); // Track which system we're in
+            }}
+        />
+    );
+}
 ```
 
 **Commit:**
+
 ```bash
 git add .
 git commit -m "Add wormhole travel sequence component and scene"
@@ -1928,54 +2124,75 @@ Export as default component.
 **Step 24.2: Create wrapper scene `src/scenes/ProjectsSystemScene.jsx`:**
 
 ```javascript
-import { Canvas } from '@react-three/fiber';
-import { Stars } from '@react-three/drei';
-import ProjectsSolarSystem from '../components/3D/ProjectsSolarSystem';
-import SpacecraftModel from '../components/3D/SpacecraftModel';
-import OrbitCamera from '../components/3D/OrbitCamera';
+import { Canvas } from "@react-three/fiber";
+import { Stars } from "@react-three/drei";
+import ProjectsSolarSystem from "../components/3D/ProjectsSolarSystem";
+import SpacecraftModel from "../components/3D/SpacecraftModel";
+import OrbitCamera from "../components/3D/OrbitCamera";
 
 const ProjectsSystemScene = ({ onProjectSelect, onOpenNavigation }) => {
-  return (
-    <div className="w-full h-screen relative">
-      <Canvas camera={{ position: [0, 10, 20], fov: 60 }}>
-        {/* Different colored stars for new system */}
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={0.5} />
+    return (
+        <div className="w-full h-screen relative">
+            <Canvas camera={{ position: [0, 10, 20], fov: 60 }}>
+                {/* Different colored stars for new system */}
+                <Stars
+                    radius={100}
+                    depth={50}
+                    count={5000}
+                    factor={4}
+                    saturation={0}
+                    fade
+                    speed={0.5}
+                />
 
-        {/* Warmer ambient light */}
-        <ambientLight intensity={0.3} color="#FFA500" />
-        <pointLight position={[0, 0, 0]} intensity={3} color="#FF8C00" />
+                {/* Warmer ambient light */}
+                <ambientLight intensity={0.3} color="#FFA500" />
+                <pointLight
+                    position={[0, 0, 0]}
+                    intensity={3}
+                    color="#FF8C00"
+                />
 
-        <OrbitCamera target={[0, 0, 0]} distance={20} enableRotation={true} />
+                <OrbitCamera
+                    target={[0, 0, 0]}
+                    distance={20}
+                    enableRotation={true}
+                />
 
-        <SpacecraftModel position={[0, 0, 0]} showExhaust={false} />
+                <SpacecraftModel position={[0, 0, 0]} showExhaust={false} />
 
-        <ProjectsSolarSystem onProjectClick={onProjectSelect} />
-      </Canvas>
+                <ProjectsSolarSystem onProjectClick={onProjectSelect} />
+            </Canvas>
 
-      {/* UI Overlay */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2">
-        <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-orange-500">
-          <p className="text-orange-400 font-heading text-xl">PROJECTS SOLAR SYSTEM</p>
-          <p className="text-xs text-asteroid-gray mt-1">Select a project planet to view details</p>
-        </div>
-      </div>
+            {/* UI Overlay */}
+            <div className="absolute top-8 left-1/2 transform -translate-x-1/2">
+                <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-orange-500">
+                    <p className="text-orange-400 font-heading text-xl">
+                        PROJECTS SOLAR SYSTEM
+                    </p>
+                    <p className="text-xs text-asteroid-gray mt-1">
+                        Select a project planet to view details
+                    </p>
+                </div>
+            </div>
 
-      <button
-        onClick={onOpenNavigation}
-        className="absolute bottom-8 right-8 bg-nebula-purple/20 backdrop-blur-md
+            <button
+                onClick={onOpenNavigation}
+                className="absolute bottom-8 right-8 bg-nebula-purple/20 backdrop-blur-md
                    border border-nebula-purple px-6 py-3 rounded-lg
                    hover:bg-nebula-purple/40 transition-all"
-      >
-        🚀 NAVIGATION
-      </button>
-    </div>
-  );
+            >
+                🚀 NAVIGATION
+            </button>
+        </div>
+    );
 };
 
 export default ProjectsSystemScene;
 ```
 
 **Commit:**
+
 ```bash
 git add .
 git commit -m "Add projects solar system scene"
@@ -2041,186 +2258,219 @@ These are **regular React components** (not 3D) that show detailed information.
 This shows when user lands on a project planet.
 
 ```javascript
-import { motion } from 'framer-motion';
-import { FaGithub, FaExternalLinkAlt, FaTimes } from 'react-icons/fa';
-import { getProjectById } from '../../data/projects';
+import { motion } from "framer-motion";
+import { FaGithub, FaExternalLinkAlt, FaTimes } from "react-icons/fa";
+import { getProjectById } from "../../data/projects";
 
 /**
  * Project Detail Page - Shows after landing on a project planet
  */
 const ProjectDetailPage = ({ projectId, onClose }) => {
-  const project = getProjectById(projectId);
+    const project = getProjectById(projectId);
 
-  if (!project) return null;
+    if (!project) return null;
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-deep-space/95 backdrop-blur-sm z-50 overflow-y-auto"
-    >
-      <div className="min-h-screen py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="fixed top-8 right-8 text-moon-white hover:text-nebula-purple
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-deep-space/95 backdrop-blur-sm z-50 overflow-y-auto"
+        >
+            <div className="min-h-screen py-12 px-4">
+                <div className="max-w-6xl mx-auto">
+                    {/* Close Button */}
+                    <button
+                        onClick={onClose}
+                        className="fixed top-8 right-8 text-moon-white hover:text-nebula-purple
                        transition-colors z-50"
-          >
-            <FaTimes className="text-3xl" />
-          </button>
+                    >
+                        <FaTimes className="text-3xl" />
+                    </button>
 
-          {/* Project Header */}
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-center mb-12"
-          >
-            <h1 className="text-5xl font-heading text-nebula-purple mb-4">
-              {project.title}
-            </h1>
-            <p className="text-xl text-asteroid-gray">{project.tagline}</p>
+                    {/* Project Header */}
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-center mb-12"
+                    >
+                        <h1 className="text-5xl font-heading text-nebula-purple mb-4">
+                            {project.title}
+                        </h1>
+                        <p className="text-xl text-asteroid-gray">
+                            {project.tagline}
+                        </p>
 
-            {/* Category Badge */}
-            <span className="inline-block mt-4 px-4 py-2 bg-nebula-purple/20
-                           border border-nebula-purple rounded-full text-sm">
-              {project.category}
-            </span>
-          </motion.div>
+                        {/* Category Badge */}
+                        <span
+                            className="inline-block mt-4 px-4 py-2 bg-nebula-purple/20
+                           border border-nebula-purple rounded-full text-sm"
+                        >
+                            {project.category}
+                        </span>
+                    </motion.div>
 
-          {/* Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Preview */}
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="lg:col-span-1"
-            >
-              <div className="bg-asteroid-gray/10 rounded-lg overflow-hidden border border-asteroid-gray/30">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-auto"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/400x300?text=' + project.title;
-                  }}
-                />
-              </div>
+                    {/* Content Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Left Column - Preview */}
+                        <motion.div
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="lg:col-span-1"
+                        >
+                            <div className="bg-asteroid-gray/10 rounded-lg overflow-hidden border border-asteroid-gray/30">
+                                <img
+                                    src={project.image}
+                                    alt={project.title}
+                                    className="w-full h-auto"
+                                    onError={(e) => {
+                                        e.target.src =
+                                            "https://via.placeholder.com/400x300?text=" +
+                                            project.title;
+                                    }}
+                                />
+                            </div>
 
-              {/* Links */}
-              <div className="mt-6 space-y-3">
-                {project.demo && (
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center space-x-2 w-full
+                            {/* Links */}
+                            <div className="mt-6 space-y-3">
+                                {project.demo && (
+                                    <a
+                                        href={project.demo}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-center space-x-2 w-full
                              bg-nebula-purple text-moon-white px-6 py-3 rounded-lg
                              hover:bg-purple-600 transition-colors"
-                  >
-                    <FaExternalLinkAlt />
-                    <span>LIVE DEMO</span>
-                  </a>
-                )}
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center space-x-2 w-full
+                                    >
+                                        <FaExternalLinkAlt />
+                                        <span>LIVE DEMO</span>
+                                    </a>
+                                )}
+                                <a
+                                    href={project.github}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center space-x-2 w-full
                            border border-moon-white text-moon-white px-6 py-3 rounded-lg
                            hover:bg-moon-white hover:text-deep-space transition-colors"
-                >
-                  <FaGithub />
-                  <span>VIEW CODE</span>
-                </a>
-              </div>
-            </motion.div>
+                                >
+                                    <FaGithub />
+                                    <span>VIEW CODE</span>
+                                </a>
+                            </div>
+                        </motion.div>
 
-            {/* Right Column - Details */}
-            <motion.div
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="lg:col-span-2 space-y-8"
-            >
-              {/* Description */}
-              <div>
-                <h2 className="text-2xl font-heading text-star-blue mb-4">Overview</h2>
-                <p className="text-moon-white leading-relaxed">{project.description}</p>
-              </div>
+                        {/* Right Column - Details */}
+                        <motion.div
+                            initial={{ x: 20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                            className="lg:col-span-2 space-y-8"
+                        >
+                            {/* Description */}
+                            <div>
+                                <h2 className="text-2xl font-heading text-star-blue mb-4">
+                                    Overview
+                                </h2>
+                                <p className="text-moon-white leading-relaxed">
+                                    {project.description}
+                                </p>
+                            </div>
 
-              {/* Features */}
-              <div>
-                <h2 className="text-2xl font-heading text-comet-cyan mb-4">✨ Key Features</h2>
-                <ul className="space-y-3">
-                  {project.features.map((feature, index) => (
-                    <li key={index} className="flex items-start space-x-3">
-                      <span className="text-comet-cyan mt-1">▹</span>
-                      <span className="text-moon-white">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                            {/* Features */}
+                            <div>
+                                <h2 className="text-2xl font-heading text-comet-cyan mb-4">
+                                    ✨ Key Features
+                                </h2>
+                                <ul className="space-y-3">
+                                    {project.features.map((feature, index) => (
+                                        <li
+                                            key={index}
+                                            className="flex items-start space-x-3"
+                                        >
+                                            <span className="text-comet-cyan mt-1">
+                                                ▹
+                                            </span>
+                                            <span className="text-moon-white">
+                                                {feature}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
 
-              {/* Tech Stack */}
-              <div>
-                <h2 className="text-2xl font-heading text-supernova-pink mb-4">🛠️ Technologies Used</h2>
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-supernova-pink/10 border border-supernova-pink/30
+                            {/* Tech Stack */}
+                            <div>
+                                <h2 className="text-2xl font-heading text-supernova-pink mb-4">
+                                    🛠️ Technologies Used
+                                </h2>
+                                <div className="flex flex-wrap gap-2">
+                                    {project.technologies.map((tech, index) => (
+                                        <span
+                                            key={index}
+                                            className="px-3 py-1 bg-supernova-pink/10 border border-supernova-pink/30
                                rounded-full text-sm text-moon-white"
+                                        >
+                                            {tech}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Role & Challenges */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 className="text-xl font-heading text-nebula-purple mb-3">
+                                        My Role
+                                    </h3>
+                                    <p className="text-asteroid-gray">
+                                        {project.role}
+                                    </p>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-heading text-nebula-purple mb-3">
+                                        Challenges
+                                    </h3>
+                                    <p className="text-asteroid-gray">
+                                        {project.challenges}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Impact */}
+                            <div>
+                                <h2 className="text-2xl font-heading text-green-400 mb-4">
+                                    🎯 Impact & Results
+                                </h2>
+                                <p className="text-moon-white leading-relaxed">
+                                    {project.impact}
+                                </p>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Back Button */}
+                    <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="text-center mt-12"
                     >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Role & Challenges */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-xl font-heading text-nebula-purple mb-3">My Role</h3>
-                  <p className="text-asteroid-gray">{project.role}</p>
-                </div>
-                <div>
-                  <h3 className="text-xl font-heading text-nebula-purple mb-3">Challenges</h3>
-                  <p className="text-asteroid-gray">{project.challenges}</p>
-                </div>
-              </div>
-
-              {/* Impact */}
-              <div>
-                <h2 className="text-2xl font-heading text-green-400 mb-4">🎯 Impact & Results</h2>
-                <p className="text-moon-white leading-relaxed">{project.impact}</p>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Back Button */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-center mt-12"
-          >
-            <button
-              onClick={onClose}
-              className="px-8 py-3 border border-nebula-purple text-nebula-purple
+                        <button
+                            onClick={onClose}
+                            className="px-8 py-3 border border-nebula-purple text-nebula-purple
                        rounded-lg hover:bg-nebula-purple hover:text-moon-white
                        transition-colors"
-            >
-              ◄ BACK TO PROJECTS SYSTEM
-            </button>
-          </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  );
+                        >
+                            ◄ BACK TO PROJECTS SYSTEM
+                        </button>
+                    </motion.div>
+                </div>
+            </div>
+        </motion.div>
+    );
 };
 
 export default ProjectDetailPage;
@@ -2228,14 +2478,15 @@ export default ProjectDetailPage;
 
 **Step 26.2: Create similar pages for other content:**
 
-- `AboutMePage.jsx` - Shows your about info
-- `SkillsPage.jsx` - Shows skills with progress bars
-- `ExperiencePage.jsx` - Shows timeline of experiences
-- `ContactPage.jsx` - Shows contact form and info
+-   `AboutMePage.jsx` - Shows your about info
+-   `SkillsPage.jsx` - Shows skills with progress bars
+-   `ExperiencePage.jsx` - Shows timeline of experiences
+-   `ContactPage.jsx` - Shows contact form and info
 
 (These follow same pattern as ProjectDetailPage but with different data)
 
 **Commit:**
+
 ```bash
 git add .
 git commit -m "Add content pages for planets"
@@ -2250,113 +2501,114 @@ git commit -m "Add content pages for planets"
 **Step 27.1: Update `src/App.jsx` with complete flow:**
 
 ```javascript
-import { useState } from 'react';
-import CockpitScene from './scenes/CockpitScene';
-import ExplorationScene from './scenes/ExplorationScene';
-import NavigationScene from './scenes/NavigationScene';
-import WormholeScene from './scenes/WormholeScene';
-import ProjectsSystemScene from './scenes/ProjectsSystemScene';
-import ProjectDetailPage from './components/UI/ProjectDetailPage';
+import { useState } from "react";
+import CockpitScene from "./scenes/CockpitScene";
+import ExplorationScene from "./scenes/ExplorationScene";
+import NavigationScene from "./scenes/NavigationScene";
+import WormholeScene from "./scenes/WormholeScene";
+import ProjectsSystemScene from "./scenes/ProjectsSystemScene";
+import ProjectDetailPage from "./components/UI/ProjectDetailPage";
 // Import other content pages...
 
 function App() {
-  const [currentPhase, setCurrentPhase] = useState('cockpit');
-  const [selectedDestination, setSelectedDestination] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [currentSystem, setCurrentSystem] = useState('home');
+    const [currentPhase, setCurrentPhase] = useState("cockpit");
+    const [selectedDestination, setSelectedDestination] = useState(null);
+    const [selectedProject, setSelectedProject] = useState(null);
+    const [currentSystem, setCurrentSystem] = useState("home");
 
-  // Phase: cockpit, exploration, navigation, wormhole, projects-system, project-detail
+    // Phase: cockpit, exploration, navigation, wormhole, projects-system, project-detail
 
-  const handleLaunchComplete = () => {
-    setTimeout(() => setCurrentPhase('exploration'), 1000);
-  };
+    const handleLaunchComplete = () => {
+        setTimeout(() => setCurrentPhase("exploration"), 1000);
+    };
 
-  const handleEnterSpacecraft = () => {
-    setCurrentPhase('navigation');
-  };
+    const handleEnterSpacecraft = () => {
+        setCurrentPhase("navigation");
+    };
 
-  const handleDestinationSelect = (destination) => {
-    setSelectedDestination(destination);
+    const handleDestinationSelect = (destination) => {
+        setSelectedDestination(destination);
 
-    if (destination.type === 'portal') {
-      // Portal jump - trigger wormhole
-      setCurrentPhase('wormhole');
-    } else {
-      // Local planet - direct travel (could add local travel animation)
-      setCurrentPhase('planet-content');
-    }
-  };
+        if (destination.type === "portal") {
+            // Portal jump - trigger wormhole
+            setCurrentPhase("wormhole");
+        } else {
+            // Local planet - direct travel (could add local travel animation)
+            setCurrentPhase("planet-content");
+        }
+    };
 
-  const handleWormholeComplete = () => {
-    // Arrived in new system
-    if (selectedDestination.id === 'projects') {
-      setCurrentSystem('projects');
-      setCurrentPhase('projects-system');
-    }
-    // Add other system destinations here
-  };
+    const handleWormholeComplete = () => {
+        // Arrived in new system
+        if (selectedDestination.id === "projects") {
+            setCurrentSystem("projects");
+            setCurrentPhase("projects-system");
+        }
+        // Add other system destinations here
+    };
 
-  const handleProjectSelect = (project) => {
-    setSelectedProject(project.id);
-    setCurrentPhase('project-detail');
-  };
+    const handleProjectSelect = (project) => {
+        setSelectedProject(project.id);
+        setCurrentPhase("project-detail");
+    };
 
-  const handleBackToSystem = () => {
-    if (currentSystem === 'projects') {
-      setCurrentPhase('projects-system');
-    } else {
-      setCurrentPhase('exploration');
-    }
-  };
+    const handleBackToSystem = () => {
+        if (currentSystem === "projects") {
+            setCurrentPhase("projects-system");
+        } else {
+            setCurrentPhase("exploration");
+        }
+    };
 
-  return (
-    <>
-      {currentPhase === 'cockpit' && (
-        <CockpitScene onLaunchComplete={handleLaunchComplete} />
-      )}
+    return (
+        <>
+            {currentPhase === "cockpit" && (
+                <CockpitScene onLaunchComplete={handleLaunchComplete} />
+            )}
 
-      {currentPhase === 'exploration' && (
-        <ExplorationScene
-          onEnterSpacecraft={handleEnterSpacecraft}
-          onPlanetSelect={(planet) => console.log('Planet:', planet)}
-        />
-      )}
+            {currentPhase === "exploration" && (
+                <ExplorationScene
+                    onEnterSpacecraft={handleEnterSpacecraft}
+                    onPlanetSelect={(planet) => console.log("Planet:", planet)}
+                />
+            )}
 
-      {currentPhase === 'navigation' && (
-        <NavigationScene
-          onExitSpacecraft={() => setCurrentPhase('exploration')}
-          onDestinationSelect={handleDestinationSelect}
-        />
-      )}
+            {currentPhase === "navigation" && (
+                <NavigationScene
+                    onExitSpacecraft={() => setCurrentPhase("exploration")}
+                    onDestinationSelect={handleDestinationSelect}
+                />
+            )}
 
-      {currentPhase === 'wormhole' && (
-        <WormholeScene
-          destination={selectedDestination}
-          onArrival={handleWormholeComplete}
-        />
-      )}
+            {currentPhase === "wormhole" && (
+                <WormholeScene
+                    destination={selectedDestination}
+                    onArrival={handleWormholeComplete}
+                />
+            )}
 
-      {currentPhase === 'projects-system' && (
-        <ProjectsSystemScene
-          onProjectSelect={handleProjectSelect}
-          onOpenNavigation={() => setCurrentPhase('navigation')}
-        />
-      )}
+            {currentPhase === "projects-system" && (
+                <ProjectsSystemScene
+                    onProjectSelect={handleProjectSelect}
+                    onOpenNavigation={() => setCurrentPhase("navigation")}
+                />
+            )}
 
-      {currentPhase === 'project-detail' && (
-        <ProjectDetailPage
-          projectId={selectedProject}
-          onClose={handleBackToSystem}
-        />
-      )}
-    </>
-  );
+            {currentPhase === "project-detail" && (
+                <ProjectDetailPage
+                    projectId={selectedProject}
+                    onClose={handleBackToSystem}
+                />
+            )}
+        </>
+    );
 }
 
 export default App;
 ```
 
 **Test the complete flow:**
+
 1. Cockpit → Launch → Exploration → Enter Spacecraft → Navigation → Select Portal → Wormhole → Projects System → Select Project → View Details → Back
 
 **Checkpoint:** Complete navigation flow works end-to-end!
@@ -2368,58 +2620,61 @@ export default App;
 **Step 28.1: Create `src/components/Shared/LoadingScreen.jsx`:**
 
 ```javascript
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const LoadingScreen = ({ onComplete }) => {
-  const [progress, setProgress] = useState(0);
+    const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            if (onComplete) onComplete();
-          }, 500);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 150);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setProgress((prev) => {
+                if (prev >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        if (onComplete) onComplete();
+                    }, 500);
+                    return 100;
+                }
+                return prev + 10;
+            });
+        }, 150);
 
-    return () => clearInterval(interval);
-  }, [onComplete]);
+        return () => clearInterval(interval);
+    }, [onComplete]);
 
-  return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-deep-space flex items-center justify-center z-50"
-    >
-      <div className="text-center">
-        <h1 className="text-6xl font-heading text-nebula-purple mb-8">
-          VANDAN.
-        </h1>
+    return (
+        <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-deep-space flex items-center justify-center z-50"
+        >
+            <div className="text-center">
+                <h1 className="text-6xl font-heading text-nebula-purple mb-8">
+                    VANDAN.
+                </h1>
 
-        <div className="w-64 h-2 bg-asteroid-gray/30 rounded-full overflow-hidden mb-4">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            className="h-full bg-gradient-to-r from-nebula-purple to-supernova-pink"
-          />
-        </div>
+                <div className="w-64 h-2 bg-asteroid-gray/30 rounded-full overflow-hidden mb-4">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress}%` }}
+                        className="h-full bg-gradient-to-r from-nebula-purple to-supernova-pink"
+                    />
+                </div>
 
-        <p className="text-asteroid-gray text-sm">{progress}% SYSTEMS INITIALIZED</p>
-      </div>
-    </motion.div>
-  );
+                <p className="text-asteroid-gray text-sm">
+                    {progress}% SYSTEMS INITIALIZED
+                </p>
+            </div>
+        </motion.div>
+    );
 };
 
 export default LoadingScreen;
 ```
 
 **Add to App.jsx:**
+
 ```javascript
 const [isLoading, setIsLoading] = useState(true);
 
@@ -2438,30 +2693,31 @@ const [isLoading, setIsLoading] = useState(true);
 **Create `src/components/Shared/ScrollProgress.jsx`:**
 
 ```javascript
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const ScrollProgress = () => {
-  const [scrollProgress, setScrollProgress] = useState(0);
+    const [scrollProgress, setScrollProgress] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
-      setScrollProgress(progress);
-    };
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalHeight =
+                document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (window.scrollY / totalHeight) * 100;
+            setScrollProgress(progress);
+        };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
-  return (
-    <div className="fixed top-0 left-0 w-full h-1 z-50 bg-transparent">
-      <div
-        className="h-full bg-gradient-to-r from-nebula-purple to-supernova-pink transition-all duration-200"
-        style={{ width: `${scrollProgress}%` }}
-      />
-    </div>
-  );
+    return (
+        <div className="fixed top-0 left-0 w-full h-1 z-50 bg-transparent">
+            <div
+                className="h-full bg-gradient-to-r from-nebula-purple to-supernova-pink transition-all duration-200"
+                style={{ width: `${scrollProgress}%` }}
+            />
+        </div>
+    );
 };
 
 export default ScrollProgress;
@@ -2474,11 +2730,13 @@ export default ScrollProgress;
 ### Task 30: Performance Optimization (1 hour)
 
 **Step 30.1: Optimize images:**
+
 1. Compress all project screenshots using TinyPNG.com
 2. Target: < 500KB per image
 3. Add to `public/images/projects/`
 
 **Step 30.2: Test performance:**
+
 ```bash
 npm run dev
 ```
@@ -2486,14 +2744,16 @@ npm run dev
 Open Chrome DevTools → Performance tab → Record for 10 seconds
 
 Check:
-- FPS stays at 60
-- No memory leaks
-- Smooth animations
+
+-   FPS stays at 60
+-   No memory leaks
+-   Smooth animations
 
 **Step 30.3: Optimize if needed:**
-- Reduce star count if FPS drops
-- Reduce particle counts
-- Simplify geometry
+
+-   Reduce star count if FPS drops
+-   Reduce particle counts
+-   Simplify geometry
 
 ---
 
@@ -2504,38 +2764,68 @@ Check:
 **Step 31.2: Update `<head>` section:**
 
 ```html
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary Meta Tags -->
-    <title>Vandan Nagori | Full-Stack Developer Portfolio</title>
-    <meta name="title" content="Vandan Nagori | Full-Stack Developer Portfolio" />
-    <meta name="description" content="Explore Vandan Nagori's 3D space-themed portfolio. Full-stack developer specializing in MERN stack, React, Node.js. IIT Indore student seeking internship opportunities." />
-    <meta name="keywords" content="Vandan Nagori, Full Stack Developer, MERN Stack, React, Node.js, Portfolio, IIT Indore, Web Development" />
-    <meta name="author" content="Vandan Nagori" />
+        <!-- Primary Meta Tags -->
+        <title>Vandan Nagori | Full-Stack Developer Portfolio</title>
+        <meta
+            name="title"
+            content="Vandan Nagori | Full-Stack Developer Portfolio"
+        />
+        <meta
+            name="description"
+            content="Explore Vandan Nagori's 3D space-themed portfolio. Full-stack developer specializing in MERN stack, React, Node.js. IIT Indore student seeking internship opportunities."
+        />
+        <meta
+            name="keywords"
+            content="Vandan Nagori, Full Stack Developer, MERN Stack, React, Node.js, Portfolio, IIT Indore, Web Development"
+        />
+        <meta name="author" content="Vandan Nagori" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://yourportfolio.vercel.app/" />
-    <meta property="og:title" content="Vandan Nagori | Full-Stack Developer Portfolio" />
-    <meta property="og:description" content="Explore my 3D space-themed portfolio featuring full-stack projects built with React, Node.js, and modern web technologies." />
-    <meta property="og:image" content="https://yourportfolio.vercel.app/images/preview.jpg" />
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://yourportfolio.vercel.app/" />
+        <meta
+            property="og:title"
+            content="Vandan Nagori | Full-Stack Developer Portfolio"
+        />
+        <meta
+            property="og:description"
+            content="Explore my 3D space-themed portfolio featuring full-stack projects built with React, Node.js, and modern web technologies."
+        />
+        <meta
+            property="og:image"
+            content="https://yourportfolio.vercel.app/images/preview.jpg"
+        />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://yourportfolio.vercel.app/" />
-    <meta property="twitter:title" content="Vandan Nagori | Full-Stack Developer Portfolio" />
-    <meta property="twitter:description" content="Explore my 3D space-themed portfolio featuring full-stack projects built with React, Node.js, and modern web technologies." />
-    <meta property="twitter:image" content="https://yourportfolio.vercel.app/images/preview.jpg" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+            property="twitter:url"
+            content="https://yourportfolio.vercel.app/"
+        />
+        <meta
+            property="twitter:title"
+            content="Vandan Nagori | Full-Stack Developer Portfolio"
+        />
+        <meta
+            property="twitter:description"
+            content="Explore my 3D space-themed portfolio featuring full-stack projects built with React, Node.js, and modern web technologies."
+        />
+        <meta
+            property="twitter:image"
+            content="https://yourportfolio.vercel.app/images/preview.jpg"
+        />
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.jsx"></script>
+    </body>
 </html>
 ```
 
@@ -2553,6 +2843,7 @@ npm run preview
 Test the preview build - everything should work.
 
 **Step 32.2: Commit all changes:**
+
 ```bash
 git add .
 git commit -m "Final polish and optimization - ready for deployment"
@@ -2573,15 +2864,16 @@ git push
 **Step 32.4: Test live site:**
 
 Visit your Vercel URL and test:
-- [ ] Cockpit loads
-- [ ] Launch sequence works
-- [ ] Exploration mode works
-- [ ] Navigation dashboard works
-- [ ] Wormhole travel works
-- [ ] Projects system loads
-- [ ] Project details show
-- [ ] All links work
-- [ ] No console errors
+
+-   [ ] Cockpit loads
+-   [ ] Launch sequence works
+-   [ ] Exploration mode works
+-   [ ] Navigation dashboard works
+-   [ ] Wormhole travel works
+-   [ ] Projects system loads
+-   [ ] Project details show
+-   [ ] All links work
+-   [ ] No console errors
 
 ---
 
@@ -2590,54 +2882,59 @@ Visit your Vercel URL and test:
 **Complete Testing Checklist:**
 
 **Functionality:**
-- [ ] Initial cockpit view renders
-- [ ] Launch sequence animation completes
-- [ ] Transitions to exploration mode
-- [ ] Spacecraft visible in 3rd person
-- [ ] Solar system planets visible
-- [ ] Enter spacecraft button works
-- [ ] Navigation dashboard shows
-- [ ] Local planet navigation works
-- [ ] Portal selection triggers wormhole
-- [ ] Wormhole animation plays smoothly
-- [ ] Arrives in new solar system
-- [ ] Project planets clickable
-- [ ] Project detail pages load
-- [ ] Back navigation works
-- [ ] All external links work
+
+-   [ ] Initial cockpit view renders
+-   [ ] Launch sequence animation completes
+-   [ ] Transitions to exploration mode
+-   [ ] Spacecraft visible in 3rd person
+-   [ ] Solar system planets visible
+-   [ ] Enter spacecraft button works
+-   [ ] Navigation dashboard shows
+-   [ ] Local planet navigation works
+-   [ ] Portal selection triggers wormhole
+-   [ ] Wormhole animation plays smoothly
+-   [ ] Arrives in new solar system
+-   [ ] Project planets clickable
+-   [ ] Project detail pages load
+-   [ ] Back navigation works
+-   [ ] All external links work
 
 **Performance:**
-- [ ] Maintains 60fps on desktop
-- [ ] Load time < 3 seconds
-- [ ] No memory leaks
-- [ ] Smooth transitions
-- [ ] No lag during animations
+
+-   [ ] Maintains 60fps on desktop
+-   [ ] Load time < 3 seconds
+-   [ ] No memory leaks
+-   [ ] Smooth transitions
+-   [ ] No lag during animations
 
 **Visual:**
-- [ ] All 3D models render correctly
-- [ ] Lighting looks good
-- [ ] Colors match design
-- [ ] UI overlays visible
-- [ ] Text readable
+
+-   [ ] All 3D models render correctly
+-   [ ] Lighting looks good
+-   [ ] Colors match design
+-   [ ] UI overlays visible
+-   [ ] Text readable
 
 **Mobile:**
-- [ ] 3D hidden on mobile (CSS rule working)
-- [ ] Fallback experience shows
-- [ ] Navigation still works
-- [ ] Content readable
+
+-   [ ] 3D hidden on mobile (CSS rule working)
+-   [ ] Fallback experience shows
+-   [ ] Navigation still works
+-   [ ] Content readable
 
 ---
 
 ### Task 34: Launch on Social Media (30 min)
 
 **Step 34.1: Create social preview image:**
+
 1. Use Canva.com
 2. Create 1200x630px image
 3. Include:
-   - Your name
-   - "3D Space Portfolio"
-   - Tech stack logos
-   - Portfolio colors
+    - Your name
+    - "3D Space Portfolio"
+    - Tech stack logos
+    - Portfolio colors
 4. Export as `preview.jpg`
 5. Upload to `public/images/`
 6. Update meta tags in index.html
@@ -2668,10 +2965,11 @@ Open to feedback and Summer 2025 internship opportunities! 🌟
 ```
 
 **Step 34.3: Share in:**
-- LinkedIn (post + update headline)
-- College groups
-- Discord/Slack communities
-- GitHub (pin repository)
+
+-   LinkedIn (post + update headline)
+-   College groups
+-   Discord/Slack communities
+-   GitHub (pin repository)
 
 ---
 
@@ -2682,43 +2980,49 @@ Open to feedback and Summer 2025 internship opportunities! 🌟
 ## 📊 WHAT YOU'VE BUILT
 
 ### **Phase 1: Cockpit Interior** ✅
-- First-person POV inside spacecraft cockpit
-- Interactive dashboard with launch button
-- Launch sequence animation
-- System status indicators
+
+-   First-person POV inside spacecraft cockpit
+-   Interactive dashboard with launch button
+-   Launch sequence animation
+-   System status indicators
 
 ### **Phase 2: Free Exploration** ✅
-- Third-person view outside spacecraft
-- Home solar system with 5 planets
-- Orbital camera controls
-- Clickable planets and portals
-- Instructions overlay
+
+-   Third-person view outside spacecraft
+-   Home solar system with 5 planets
+-   Orbital camera controls
+-   Clickable planets and portals
+-   Instructions overlay
 
 ### **Phase 3: Navigation System** ✅
-- Return to cockpit (first-person)
-- Navigation dashboard UI
-- Destination selection
-- Local vs Portal travel options
+
+-   Return to cockpit (first-person)
+-   Navigation dashboard UI
+-   Destination selection
+-   Local vs Portal travel options
 
 ### **Phase 4: Wormhole Travel** ✅
-- Hyperspace jump animation
-- Star streaking effects
-- Wormhole tunnel sequence
-- Arrival in new system
+
+-   Hyperspace jump animation
+-   Star streaking effects
+-   Wormhole tunnel sequence
+-   Arrival in new system
 
 ### **Phase 5: Content Display** ✅
-- Projects solar system
-- Planet landing animations
-- Detailed project pages
-- Interactive content
+
+-   Projects solar system
+-   Planet landing animations
+-   Detailed project pages
+-   Interactive content
 
 ### **Technical Achievements** ✅
-- Performance optimized (60fps)
-- Smooth camera transitions
-- Scene management system
-- Responsive design
-- SEO optimized
-- Production deployed
+
+-   Performance optimized (60fps)
+-   Smooth camera transitions
+-   Scene management system
+-   Responsive design
+-   SEO optimized
+-   Production deployed
 
 ---
 
@@ -2727,56 +3031,64 @@ Open to feedback and Summer 2025 internship opportunities! 🌟
 After launch, consider adding:
 
 1. **Sound Effects & Music**
-   - Cockpit ambient sounds
-   - Engine sounds
-   - Wormhole whoosh
-   - Background music
+
+    - Cockpit ambient sounds
+    - Engine sounds
+    - Wormhole whoosh
+    - Background music
 
 2. **More Solar Systems**
-   - Blog system
-   - Achievements system
-   - Gallery system
+
+    - Blog system
+    - Achievements system
+    - Gallery system
 
 3. **Enhanced Interactions**
-   - Voice commands (Web Speech API)
-   - Gamepad support
-   - VR mode (WebXR)
+
+    - Voice commands (Web Speech API)
+    - Gamepad support
+    - VR mode (WebXR)
 
 4. **Analytics**
-   - Track which planets visited most
-   - Time spent in each section
-   - User journey analytics
+
+    - Track which planets visited most
+    - Time spent in each section
+    - User journey analytics
 
 5. **Mobile Native Experience**
-   - Touch controls for 3D
-   - Simplified 3D for mobile
-   - Progressive Web App
+    - Touch controls for 3D
+    - Simplified 3D for mobile
+    - Progressive Web App
 
 ---
 
 ## 📞 TROUBLESHOOTING
 
 ### **3D Not Rendering**
-- Check browser console for Three.js errors
-- Verify @react-three/fiber installed
-- Check GPU acceleration enabled in browser
+
+-   Check browser console for Three.js errors
+-   Verify @react-three/fiber installed
+-   Check GPU acceleration enabled in browser
 
 ### **Low FPS**
-- Reduce star count (from 5000 to 3000)
-- Reduce particle counts
-- Simplify wormhole tunnel geometry
-- Check Chrome DevTools Performance tab
+
+-   Reduce star count (from 5000 to 3000)
+-   Reduce particle counts
+-   Simplify wormhole tunnel geometry
+-   Check Chrome DevTools Performance tab
 
 ### **Animations Janky**
-- Ensure using useFrame (not setInterval)
-- Check for heavy calculations in render loop
-- Use refs instead of state for animation values
+
+-   Ensure using useFrame (not setInterval)
+-   Check for heavy calculations in render loop
+-   Use refs instead of state for animation values
 
 ### **Vercel Deploy Failed**
-- Check build locally first: `npm run build`
-- Verify all imports correct (case-sensitive)
-- Check Vercel logs for specific error
-- Ensure all dependencies in package.json
+
+-   Check build locally first: `npm run build`
+-   Verify all imports correct (case-sensitive)
+-   Check Vercel logs for specific error
+-   Ensure all dependencies in package.json
 
 ---
 
@@ -2784,18 +3096,18 @@ After launch, consider adding:
 
 Before sharing your portfolio publicly:
 
-- [ ] Test on Chrome, Firefox, Safari
-- [ ] Test on mobile devices
-- [ ] All links work (GitHub, LinkedIn, etc.)
-- [ ] Resume downloads correctly
-- [ ] Contact form sends emails
-- [ ] No console errors
-- [ ] Lighthouse score > 90
-- [ ] Meta tags updated with live URL
-- [ ] Social preview image working
-- [ ] GitHub repository description updated
-- [ ] LinkedIn profile updated with portfolio link
-- [ ] Resume includes portfolio URL
+-   [ ] Test on Chrome, Firefox, Safari
+-   [ ] Test on mobile devices
+-   [ ] All links work (GitHub, LinkedIn, etc.)
+-   [ ] Resume downloads correctly
+-   [ ] Contact form sends emails
+-   [ ] No console errors
+-   [ ] Lighthouse score > 90
+-   [ ] Meta tags updated with live URL
+-   [ ] Social preview image working
+-   [ ] GitHub repository description updated
+-   [ ] LinkedIn profile updated with portfolio link
+-   [ ] Resume includes portfolio URL
 
 ---
 
@@ -2815,26 +3127,26 @@ Before sharing your portfolio publicly:
 
 Through building this portfolio, you've gained experience with:
 
-- **Three.js**: 3D graphics, geometry, materials, lighting
-- **React Three Fiber**: Declarative 3D in React
-- **Animation**: useFrame, smooth transitions, physics
-- **Camera Control**: POV switching, orbital cameras
-- **Scene Management**: Multiple scenes, transitions
-- **Performance**: 60fps optimization, instancing
-- **React Hooks**: Custom hooks, state management
-- **Framer Motion**: UI animations
-- **Tailwind CSS**: Utility-first styling
-- **Deployment**: Vercel, production builds
+-   **Three.js**: 3D graphics, geometry, materials, lighting
+-   **React Three Fiber**: Declarative 3D in React
+-   **Animation**: useFrame, smooth transitions, physics
+-   **Camera Control**: POV switching, orbital cameras
+-   **Scene Management**: Multiple scenes, transitions
+-   **Performance**: 60fps optimization, instancing
+-   **React Hooks**: Custom hooks, state management
+-   **Framer Motion**: UI animations
+-   **Tailwind CSS**: Utility-first styling
+-   **Deployment**: Vercel, production builds
 
 ---
 
 ## 📚 RESOURCES
 
-- [React Three Fiber Docs](https://docs.pmnd.rs/react-three-fiber)
-- [Three.js Docs](https://threejs.org/docs/)
-- [Drei Helpers](https://github.com/pmndrs/drei)
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
-- [Framer Motion Docs](https://www.framer.com/motion/)
+-   [React Three Fiber Docs](https://docs.pmnd.rs/react-three-fiber)
+-   [Three.js Docs](https://threejs.org/docs/)
+-   [Drei Helpers](https://github.com/pmndrs/drei)
+-   [Tailwind CSS Docs](https://tailwindcss.com/docs)
+-   [Framer Motion Docs](https://www.framer.com/motion/)
 
 ---
 
@@ -2844,5 +3156,5 @@ Through building this portfolio, you've gained experience with:
 
 ---
 
-*Created with ❤️ by Claude & Vandan*
-*May your career trajectory be as exciting as a wormhole jump! 🌌*
+_Created with ❤️ by Claude & Vandan_
+_May your career trajectory be as exciting as a wormhole jump! 🌌_
