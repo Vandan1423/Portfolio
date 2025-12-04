@@ -135,14 +135,37 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
             setTerminalLines((prev) => [
                 ...prev,
                 "INITIATING LAUNCH SEQUENCE...",
-                "COUNTDOWN: 3... 2... 1...",
-                "IGNITION!",
                 "",
             ]);
-            // Call parent callback for launch
-            if (onCommand) {
-                setTimeout(() => onCommand("launch"), 2000);
-            }
+
+            // Play countdown audio
+            const audio = new Audio("/sound/Countdown.mp3");
+            audio.play().catch((err) => console.log("Audio play failed:", err));
+
+            // Animated countdown on same line
+            let countdown = 3;
+            const countdownInterval = setInterval(() => {
+                if (countdown > 0) {
+                    setTerminalLines((prev) => {
+                        const newLines = [...prev];
+                        newLines[newLines.length - 1] = `COUNTDOWN: ${countdown}...`;
+                        return newLines;
+                    });
+                    countdown--;
+                } else {
+                    setTerminalLines((prev) => {
+                        const newLines = [...prev];
+                        newLines[newLines.length - 1] = "COUNTDOWN: GO!";
+                        return newLines;
+                    });
+                    clearInterval(countdownInterval);
+
+                    // Call parent callback for launch
+                    if (onCommand) {
+                        setTimeout(() => onCommand("launch"), 500);
+                    }
+                }
+            }, 1000);
         } else if (command === "navigate") {
             setTerminalLines((prev) => [
                 ...prev,

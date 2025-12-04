@@ -1,12 +1,17 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import CockpitInterior from "./components/3D/CockpitInterior";
+import Wormhole from "./components/3D/Wormhole";
+import LaunchSequence from "./components/3D/LaunchSequence";
+import StarSystem from "./components/3D/StarSystem";
 import "./App.css";
 
 function App() {
     const [currentPhase, setCurrentPhase] = useState("cockpit"); // 'cockpit', 'launching', 'exploration'
     const [systemStatus, setSystemStatus] = useState("READY FOR LAUNCH");
+    const spacecraftRef = useRef(); // Reference to the entire cockpit
+    const wormholeRef = useRef(); // Reference to the wormhole for FPP movement
 
     // Handle commands from the terminal
     const handleTerminalCommand = (command) => {
@@ -14,26 +19,30 @@ function App() {
 
         if (command === "launch") {
             setSystemStatus("LAUNCH INITIATED");
-            setCurrentPhase("launching");
-            // Later: trigger launch animation
+            // Start launch sequence immediately after countdown (3 seconds + 0.5s for "GO!")
             setTimeout(() => {
-                console.log("Launch sequence would start here");
-                // setCurrentPhase("exploration"); // Transition to next phase
-            }, 3000);
+                setCurrentPhase("launching");
+            }, 3500); // 3 seconds countdown + 0.5s for "GO!"
         } else if (command === "navigate") {
             setSystemStatus("NAVIGATION MODE");
-            // Later: show navigation menu in terminal or overlay
             console.log("Navigation mode activated");
         }
+    };
+
+    const handleSequenceComplete = () => {
+        setCurrentPhase("exploration");
+        setSystemStatus("EXPLORATION MODE");
+        console.log("🌟 Arrived at destination star system!");
     };
 
     return (
         <div className="w-full h-screen bg-deep-space">
             <Canvas
                 camera={{
-                    position: [0, -0.3, 0], // Adjusted to your preference
+                    position: [0, 0, 0], // FPP view from behind cockpit
                     fov: 75,
                     near: 0.1,
+                    far: 500, // Need to see far for wormhole
                 }}
                 gl={{ antialias: true }}
             >
@@ -65,7 +74,37 @@ function App() {
                     dampingFactor={0.05}
                 />
 
-                <CockpitInterior onCommand={handleTerminalCommand} />
+                {/* Cockpit - visible only in cockpit phase */}
+                {currentPhase === "cockpit" && (
+                    <group ref={spacecraftRef}>
+                        <CockpitInterior onCommand={handleTerminalCommand} />
+                    </group>
+                )}
+
+                {/* During launch - show cockpit and wormhole */}
+                {currentPhase === "launching" && (
+                    <>
+                        <group ref={spacecraftRef}>
+                            <CockpitInterior onCommand={handleTerminalCommand} />
+                        </group>
+                        {/* Wormhole wrapped in group for animation - starts 100 units away */}
+                        <group ref={wormholeRef} position={[0, 0, -100]}>
+                            <Wormhole position={[0, 0, 0]} scale={5} colorScheme="cyan" />
+                        </group>
+                        <LaunchSequence
+                            isActive={true}
+                            spacecraftRef={spacecraftRef}
+                            wormholeRef={wormholeRef}
+                            initialWormholePosition={[0, 0, -100]}
+                            onSequenceComplete={handleSequenceComplete}
+                        />
+                    </>
+                )}
+
+                {/* Exploration phase - show star system */}
+                {currentPhase === "exploration" && (
+                    <StarSystem visible={true} />
+                )}
             </Canvas>
 
             {/* HUD Overlay */}
@@ -128,21 +167,41 @@ function App() {
                     <div>SHIELD STATUS: NOMINAL</div>
                 </div>
 
-                {/* Launch Status Overlay */}
+                {/* Launch Status Overlay - Speed HUD */}
                 {currentPhase === "launching" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm pointer-events-auto">
-                        <div className="text-center">
-                            <p className="text-6xl font-heading text-orange-500 animate-pulse mb-4">
-                                🚀
-                            </p>
-                            <p className="text-3xl font-heading text-orange-500 animate-pulse">
-                                LAUNCH SEQUENCE INITIATED
-                            </p>
-                            <p className="text-sm text-asteroid-gray mt-4">
-                                Preparing for departure...
-                            </p>
+                    <>
+                        {/* Speed indicator - top right */}
+                        <div className="absolute top-8 right-8">
+                            <div className="bg-black/70 backdrop-blur-md p-4 rounded-lg border border-cyan-500/30">
+                                <p className="text-cyan-400 text-xs mb-1">VELOCITY</p>
+                                <p className="text-2xl font-bold text-white font-mono">
+                                    ACCELERATING
+                                </p>
+                                <div className="mt-2 w-32 h-1 bg-gray-700 rounded-full overflow-hidden">
+                                    <div className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 animate-pulse" />
+                                </div>
+                            </div>
                         </div>
-                    </div>
+
+                        {/* Wormhole approach indicator - bottom center */}
+                        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+                            <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-lg border border-purple-500/30">
+                                <p className="text-purple-400 text-center text-sm">
+                                    🌀 APPROACHING WORMHOLE
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Warning indicators */}
+                        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 space-y-2">
+                            <div className="bg-orange-500/20 border border-orange-500 px-3 py-1 rounded">
+                                <p className="text-orange-400 text-xs">⚠ HIGH SPEED</p>
+                            </div>
+                            <div className="bg-purple-500/20 border border-purple-500 px-3 py-1 rounded">
+                                <p className="text-purple-400 text-xs">⚡ WARP ACTIVE</p>
+                            </div>
+                        </div>
+                    </>
                 )}
             </div>
         </div>
