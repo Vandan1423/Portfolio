@@ -11,7 +11,7 @@ import * as THREE from "three";
  * 3. Camera STAYS IN COCKPIT (FPP view maintained)
  * 4. Wormhole MOVES TOWARD camera (not camera toward wormhole)
  * 5. Stars stream toward camera as speed increases
- * 6. Relativistic effects: FOV increase, camera shake
+ * 6. Relativistic effects: FOV increase, camera shake, background rotation
  * 7. Wormhole engulfs cockpit with white flash
  * 8. Hold white for 0.5s
  * 9. Fade from white revealing star system
@@ -24,12 +24,14 @@ import * as THREE from "three";
  * - Star streaking toward camera
  * - Smooth exponential acceleration
  * - White flash transition
+ * - Background rotation synced to velocity (relativistic physics)
  */
 const LaunchSequence = ({
     isActive,
     onSequenceComplete,
     wormholeRef, // Need ref to the wormhole to move it
     initialWormholePosition = [0, 0, -100], // Wormhole starts 100 units away
+    onVelocityChange, // Callback to pass velocity to parent for background rotation
 }) => {
     const { camera } = useThree();
     const [phase, setPhase] = useState("idle"); // idle, traveling, entering, portal, exiting, complete
@@ -77,6 +79,11 @@ const LaunchSequence = ({
 
             animationState.current.speed = easedProgress * animationState.current.maxSpeed;
 
+            // Pass velocity factor to parent (0-1 range for background rotation)
+            if (onVelocityChange) {
+                onVelocityChange(easedProgress);
+            }
+
             // === WORMHOLE MOVEMENT (moves TOWARD camera) ===
             if (wormholeRef?.current) {
                 const wormholeTotalDistance = animationState.current.initialWormholeZ - animationState.current.targetWormholeZ;
@@ -118,6 +125,10 @@ const LaunchSequence = ({
 
         // === PHASE 2: ENTERING WORMHOLE (instant white flash) ===
         else if (phase === "entering") {
+            // Keep velocity at max during entry
+            if (onVelocityChange) {
+                onVelocityChange(1);
+            }
             // Rapid white flash (0.3 seconds)
             const flashTime = Math.min(t / 0.3, 1);
             setWhiteFlashOpacity(flashTime);
@@ -131,6 +142,10 @@ const LaunchSequence = ({
 
         // === PHASE 3: PORTAL TRANSIT (white screen holds) ===
         else if (phase === "portal") {
+            // Maintain max velocity during portal transit
+            if (onVelocityChange) {
+                onVelocityChange(1);
+            }
             // Hold white screen for 0.5 seconds
             if (t > 0.5) {
                 console.log("✨ Exiting wormhole!");
@@ -144,6 +159,11 @@ const LaunchSequence = ({
             // Fade from white to reveal star system (2 seconds)
             const fadeTime = Math.min(t / 2, 1);
             setWhiteFlashOpacity(1 - fadeTime);
+
+            // Gradually reduce velocity during exit
+            if (onVelocityChange) {
+                onVelocityChange(1 - fadeTime * 0.5); // Reduce to 50% velocity
+            }
 
             // Restore normal FOV
             const restoredFov = THREE.MathUtils.lerp(camera.fov, 75, delta * 2);

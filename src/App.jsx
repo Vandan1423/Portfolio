@@ -5,11 +5,13 @@ import CockpitInterior from "./components/3D/CockpitInterior";
 import Wormhole from "./components/3D/Wormhole";
 import LaunchSequence from "./components/3D/LaunchSequence";
 import StarSystem from "./components/3D/StarSystem";
+import SpaceCubeMap from "./components/3D/SpaceCubeMap";
 import "./App.css";
 
 function App() {
     const [currentPhase, setCurrentPhase] = useState("cockpit"); // 'cockpit', 'launching', 'exploration'
     const [systemStatus, setSystemStatus] = useState("READY FOR LAUNCH");
+    const [velocityFactor, setVelocityFactor] = useState(0); // 0-1 for background rotation
     const spacecraftRef = useRef(); // Reference to the entire cockpit
     const wormholeRef = useRef(); // Reference to the wormhole for FPP movement
 
@@ -32,20 +34,31 @@ function App() {
     const handleSequenceComplete = () => {
         setCurrentPhase("exploration");
         setSystemStatus("EXPLORATION MODE");
+        setVelocityFactor(0); // Reset velocity
         console.log("🌟 Arrived at destination star system!");
+    };
+
+    const handleVelocityChange = (velocity) => {
+        setVelocityFactor(velocity);
     };
 
     return (
         <div className="w-full h-screen bg-deep-space">
             <Canvas
                 camera={{
-                    position: [0, 0, 0], // FPP view from behind cockpit
+                    position: [0, 0, -0.5], // FPP view - closer to cockpit interior
                     fov: 75,
                     near: 0.1,
                     far: 500, // Need to see far for wormhole
                 }}
                 gl={{ antialias: true }}
             >
+                {/* Space Background Cube Map - Always visible, rotates based on velocity */}
+                <SpaceCubeMap
+                    velocityFactor={velocityFactor}
+                    enableRelativistic={true}
+                />
+
                 {/* Lighting */}
                 <ambientLight intensity={0.8} />
                 <pointLight
@@ -77,15 +90,15 @@ function App() {
                 {/* Cockpit - visible only in cockpit phase */}
                 {currentPhase === "cockpit" && (
                     <group ref={spacecraftRef}>
-                        <CockpitInterior onCommand={handleTerminalCommand} />
+                        <CockpitInterior onCommand={handleTerminalCommand} showTerminal={true} />
                     </group>
                 )}
 
-                {/* During launch - show cockpit and wormhole */}
+                {/* During launch - show cockpit WITHOUT terminal */}
                 {currentPhase === "launching" && (
                     <>
                         <group ref={spacecraftRef}>
-                            <CockpitInterior onCommand={handleTerminalCommand} />
+                            <CockpitInterior onCommand={handleTerminalCommand} showTerminal={false} />
                         </group>
                         {/* Wormhole wrapped in group for animation - starts 100 units away */}
                         <group ref={wormholeRef} position={[0, 0, -100]}>
@@ -97,6 +110,7 @@ function App() {
                             wormholeRef={wormholeRef}
                             initialWormholePosition={[0, 0, -100]}
                             onSequenceComplete={handleSequenceComplete}
+                            onVelocityChange={handleVelocityChange}
                         />
                     </>
                 )}
@@ -147,25 +161,29 @@ function App() {
                     </div>
                 </div>
 
-                {/* Instructions - Bottom */}
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
-                    <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
-                        <p className="text-cyan-400 text-sm mb-1">
-                            🖥️ INTERACTIVE TERMINAL ACTIVE
-                        </p>
-                        <p className="text-asteroid-gray text-xs">
-                            Click the terminal screen to interact • Type 'help'
-                            for commands
-                        </p>
+                {/* Instructions - Bottom (hide during launch and exploration) */}
+                {currentPhase === "cockpit" && (
+                    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
+                        <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
+                            <p className="text-cyan-400 text-sm mb-1">
+                                🖥️ INTERACTIVE TERMINAL ACTIVE
+                            </p>
+                            <p className="text-asteroid-gray text-xs">
+                                Click the terminal screen to interact • Type 'help'
+                                for commands
+                            </p>
+                        </div>
                     </div>
-                </div>
+                )}
 
-                {/* System Info - Bottom Left */}
-                <div className="absolute bottom-8 left-8 text-xs text-asteroid-gray space-y-1">
-                    <div>COORDINATES: 0.0000, 0.0000, 0.0000</div>
-                    <div>QUANTUM DRIVE: STANDBY</div>
-                    <div>SHIELD STATUS: NOMINAL</div>
-                </div>
+                {/* System Info - Bottom Left (hide during launch) */}
+                {currentPhase !== "launching" && (
+                    <div className="absolute bottom-8 left-8 text-xs text-asteroid-gray space-y-1">
+                        <div>COORDINATES: 0.0000, 0.0000, 0.0000</div>
+                        <div>QUANTUM DRIVE: STANDBY</div>
+                        <div>SHIELD STATUS: NOMINAL</div>
+                    </div>
+                )}
 
                 {/* Launch Status Overlay - Speed HUD */}
                 {currentPhase === "launching" && (
@@ -178,7 +196,7 @@ function App() {
                                     ACCELERATING
                                 </p>
                                 <div className="mt-2 w-32 h-1 bg-gray-700 rounded-full overflow-hidden">
-                                    <div className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 animate-pulse" />
+                                    <div className="h-full bg-linear-to-r from-cyan-500 to-purple-500 animate-pulse" />
                                 </div>
                             </div>
                         </div>

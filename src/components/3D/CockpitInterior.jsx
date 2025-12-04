@@ -8,8 +8,11 @@ import HolographicTerminal from "./HolographicTerminal";
  *
  * Features a holographic terminal screen for user interaction
  * No buttons - all interaction through terminal commands
+ *
+ * @param {function} onCommand - Callback for terminal commands
+ * @param {boolean} showTerminal - Whether to show the terminal (default: true)
  */
-const CockpitInterior = ({ onCommand }) => {
+const CockpitInterior = ({ onCommand, showTerminal = true }) => {
     const groupRef = useRef();
 
     const { scene } = useGLTF("/models/SpaceshipCockpit.glb");
@@ -25,11 +28,13 @@ const CockpitInterior = ({ onCommand }) => {
                 scale={1.5} // Your exact scale
             />
 
-            {/* Holographic Terminal Screen - Main interaction interface */}
-            <HolographicTerminal
-                position={[0, -0.3, -2]} // Same position as your button was
-                onCommand={onCommand}
-            />
+            {/* Holographic Terminal Screen - Hidden during launch sequence */}
+            {showTerminal && (
+                <HolographicTerminal
+                    position={[0, -0.3, -2]} // Same position as your button was
+                    onCommand={onCommand}
+                />
+            )}
 
             {/* Cockpit Lighting - Updated to complement terminal green glow */}
             <pointLight
