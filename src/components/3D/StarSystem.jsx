@@ -1,6 +1,6 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Stars } from "@react-three/drei";
+import { Stars, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
@@ -15,52 +15,29 @@ import * as THREE from "three";
  *
  * This is the portfolio exploration area where users can navigate
  * to different sections (planets = portfolio sections)
+ *
+ * Props:
+ * @param {boolean} visible - Whether the star system is visible
+ * @param {array} planets - Array of planet objects
+ * @param {object} selectedPlanet - Currently selected planet object (unused in new flow)
+ * @param {boolean} animationsPaused - Whether orbital animations should be paused
  */
-const StarSystem = ({ visible = true }) => {
+const StarSystem = ({
+    visible = true,
+    planets = [],
+    selectedPlanet = null,
+    animationsPaused = false,
+}) => {
     const groupRef = useRef();
     const centralStarRef = useRef();
 
-    // Planet data - each planet represents a portfolio section
-    const planets = useMemo(() => [
-        {
-            name: "About",
-            position: [8, 0, -5],
-            size: 1.2,
-            color: "#4f46e5", // Indigo
-            orbitRadius: 8,
-            orbitSpeed: 0.3,
-        },
-        {
-            name: "Projects",
-            position: [-10, 2, -3],
-            size: 1.5,
-            color: "#06b6d4", // Cyan
-            orbitRadius: 10,
-            orbitSpeed: 0.2,
-        },
-        {
-            name: "Skills",
-            position: [5, -3, -8],
-            size: 1.0,
-            color: "#8b5cf6", // Purple
-            orbitRadius: 7,
-            orbitSpeed: 0.4,
-        },
-        {
-            name: "Contact",
-            position: [-6, 1, -10],
-            size: 0.9,
-            color: "#10b981", // Green
-            orbitRadius: 9,
-            orbitSpeed: 0.25,
-        },
-    ], []);
-
     useFrame((state) => {
-        if (groupRef.current) {
+        // Pause system rotation when animations are paused
+        if (groupRef.current && !animationsPaused) {
             groupRef.current.rotation.y = state.clock.elapsedTime * 0.01;
         }
 
+        // Keep sun pulsing even when paused
         if (centralStarRef.current) {
             const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.1 + 0.9;
             centralStarRef.current.intensity = 3 * pulse;
@@ -73,51 +50,68 @@ const StarSystem = ({ visible = true }) => {
         <group ref={groupRef}>
             {/* Dense starfield background */}
             <Stars
-                radius={300}
-                depth={100}
-                count={8000}
-                factor={6}
+                radius={500}
+                depth={200}
+                count={12000}
+                factor={8}
                 saturation={0}
                 fade
                 speed={0.5}
             />
 
             {/* Central star (sun) */}
-            <mesh position={[0, 0, -30]}>
-                <sphereGeometry args={[2, 32, 32]} />
-                <meshStandardMaterial
-                    emissive="#ffaa00"
-                    emissiveIntensity={2}
-                    color="#ffaa00"
-                />
-            </mesh>
+            <Sun position={[0, 0, -10]} />
 
             {/* Star light source */}
             <pointLight
                 ref={centralStarRef}
-                position={[0, 0, -30]}
+                position={[0, 0, -10]}
                 color="#ffaa00"
                 intensity={3}
                 distance={100}
                 decay={1}
             />
 
-            {/* Planets (Portfolio sections) */}
+            {/* Orbit Lines */}
+            {planets.map((planet) => (
+                <OrbitLine
+                    key={`orbit-${planet.name}`}
+                    radius={planet.orbitRadius}
+                    color={planet.orbitColor}
+                    sunPosition={[0, 0, -10]}
+                    yOffset={planet.yOffset}
+                />
+            ))}
+
+            {/* Asteroid Belt */}
+            <AsteroidBelt
+                innerRadius={58}
+                outerRadius={67}
+                sunPosition={[0, 0, -10]}
+            />
+
+            {/* Planets */}
             {planets.map((planet, index) => (
                 <Planet
                     key={planet.name}
                     {...planet}
                     index={index}
+                    sunPosition={[0, 0, -10]}
+                    animationsPaused={animationsPaused}
                 />
             ))}
 
-            {/* Nebula effect (ambient particles) */}
-            <NebulaEffect />
+            {/* Oort Cloud - Outer shell of icy particles */}
+            <OortCloud
+                innerRadius={150}
+                outerRadius={200}
+                sunPosition={[0, 0, -10]}
+            />
 
             {/* Ambient lighting */}
-            <ambientLight intensity={0.3} />
+            <ambientLight intensity={0.8} />
             <hemisphereLight
-                intensity={0.5}
+                intensity={0.8}
                 color="#ffffff"
                 groundColor="#000033"
             />
@@ -126,141 +120,327 @@ const StarSystem = ({ visible = true }) => {
 };
 
 /**
- * Planet Component
- * Individual planet with atmosphere glow
+ * Generate asteroid data outside component
  */
-const Planet = ({ position, size, color, name, orbitRadius, orbitSpeed, index }) => {
-    const planetRef = useRef();
-    const glowRef = useRef();
+const generateAsteroidData = (count, innerRadius, outerRadius) => {
+    const data = [];
+    for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius =
+            innerRadius + Math.random() * (outerRadius - innerRadius);
+        const yVariation = (Math.random() - 0.5) * 2;
+        const size = 0.1 + Math.random() * 0.3;
+        const rotationSpeed = (Math.random() - 0.5) * 0.02;
+        const orbitSpeed = 0.05 + Math.random() * 0.05;
+
+        data.push({
+            angle,
+            radius,
+            yVariation,
+            size,
+            rotationSpeed,
+            orbitSpeed,
+            initialRotation: [
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2,
+            ],
+        });
+    }
+    return data;
+};
+
+/**
+ * AsteroidBelt Component
+ */
+const AsteroidBelt = ({ innerRadius, outerRadius, sunPosition }) => {
+    const asteroidCount = 2000;
+    const instancedMeshRef = useRef();
+
+    const asteroidData = useMemo(
+        () => generateAsteroidData(asteroidCount, innerRadius, outerRadius),
+        [innerRadius, outerRadius]
+    );
 
     useFrame((state) => {
-        if (planetRef.current) {
-            // Slow rotation
-            planetRef.current.rotation.y = state.clock.elapsedTime * 0.1;
+        if (instancedMeshRef.current) {
+            const dummy = new THREE.Object3D();
 
-            // Orbital motion around central star
-            const angle = state.clock.elapsedTime * orbitSpeed + index * (Math.PI / 2);
-            const x = Math.cos(angle) * orbitRadius;
-            const z = -30 + Math.sin(angle) * orbitRadius;
-            planetRef.current.position.set(x, position[1], z);
-        }
+            asteroidData.forEach((asteroid, i) => {
+                const currentAngle =
+                    asteroid.angle +
+                    state.clock.elapsedTime * asteroid.orbitSpeed;
+                const x =
+                    sunPosition[0] + Math.cos(currentAngle) * asteroid.radius;
+                const z =
+                    sunPosition[2] + Math.sin(currentAngle) * asteroid.radius;
+                const y = sunPosition[1] + asteroid.yVariation;
 
-        if (glowRef.current) {
-            const pulse = Math.sin(state.clock.elapsedTime * 2 + index) * 0.2 + 0.8;
-            glowRef.current.scale.setScalar(1 + pulse * 0.1);
+                dummy.position.set(x, y, z);
+
+                dummy.rotation.set(
+                    asteroid.initialRotation[0] +
+                        state.clock.elapsedTime * asteroid.rotationSpeed,
+                    asteroid.initialRotation[1] +
+                        state.clock.elapsedTime * asteroid.rotationSpeed * 0.7,
+                    asteroid.initialRotation[2] +
+                        state.clock.elapsedTime * asteroid.rotationSpeed * 0.5
+                );
+
+                dummy.scale.set(asteroid.size, asteroid.size, asteroid.size);
+
+                dummy.updateMatrix();
+                instancedMeshRef.current.setMatrixAt(i, dummy.matrix);
+            });
+
+            instancedMeshRef.current.instanceMatrix.needsUpdate = true;
         }
     });
 
     return (
-        <group ref={planetRef} position={position}>
-            {/* Planet body */}
-            <mesh>
-                <sphereGeometry args={[size, 32, 32]} />
-                <meshStandardMaterial
-                    color={color}
-                    emissive={color}
-                    emissiveIntensity={0.3}
-                    roughness={0.8}
-                    metalness={0.2}
-                />
-            </mesh>
-
-            {/* Atmospheric glow */}
-            <mesh ref={glowRef} scale={1.2}>
-                <sphereGeometry args={[size * 1.1, 32, 32]} />
-                <meshBasicMaterial
-                    color={color}
-                    transparent
-                    opacity={0.2}
-                    side={THREE.BackSide}
-                />
-            </mesh>
-
-            {/* Planet light */}
-            <pointLight
-                color={color}
-                intensity={1.5}
-                distance={10}
+        <instancedMesh
+            ref={instancedMeshRef}
+            args={[null, null, asteroidCount]}
+        >
+            <dodecahedronGeometry args={[1, 0]} />
+            <meshStandardMaterial
+                color="#8b8680"
+                roughness={0.9}
+                metalness={0.1}
             />
-        </group>
+        </instancedMesh>
     );
 };
 
 /**
- * NebulaEffect Component
- * Creates colorful space dust particles
+ * Generate Oort Cloud particle data
  */
-const NebulaEffect = () => {
-    const particlesRef = useRef();
+const generateOortCloudData = (count, innerRadius, outerRadius) => {
+    const data = [];
+    for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const radius =
+            innerRadius + Math.random() * (outerRadius - innerRadius);
 
-    const particleData = useMemo(() => {
-        const count = 500;
-        const positions = new Float32Array(count * 3);
-        const colors = new Float32Array(count * 3);
+        const x = radius * Math.sin(phi) * Math.cos(angle);
+        const y = radius * Math.sin(phi) * Math.sin(angle);
+        const z = radius * Math.cos(phi);
 
-        const nebulaColors = [
-            new THREE.Color("#ff00ff"),
-            new THREE.Color("#00ffff"),
-            new THREE.Color("#ffaa00"),
-            new THREE.Color("#00ff88"),
-        ];
+        const size = 0.05 + Math.random() * 0.15;
+        const rotationSpeed = (Math.random() - 0.5) * 0.005;
+        const orbitSpeed = 0.001 + Math.random() * 0.002;
 
-        for (let i = 0; i < count; i++) {
-            const i3 = i * 3;
+        data.push({
+            x,
+            y,
+            z,
+            size,
+            rotationSpeed,
+            orbitSpeed,
+            angle,
+            phi,
+            radius,
+            initialRotation: [
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2,
+            ],
+        });
+    }
+    return data;
+};
 
-            // Random position in large sphere
-            const radius = 20 + Math.random() * 60;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
+/**
+ * OortCloud Component
+ */
+const OortCloud = ({ innerRadius, outerRadius, sunPosition }) => {
+    const particleCount = 3000;
+    const instancedMeshRef = useRef();
 
-            positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
-            positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-            positions[i3 + 2] = -30 + radius * Math.cos(phi);
-
-            // Random color from nebula palette
-            const color = nebulaColors[Math.floor(Math.random() * nebulaColors.length)];
-            colors[i3] = color.r;
-            colors[i3 + 1] = color.g;
-            colors[i3 + 2] = color.b;
-        }
-
-        return { positions, colors, count };
-    }, []);
+    const cloudData = useMemo(
+        () => generateOortCloudData(particleCount, innerRadius, outerRadius),
+        [innerRadius, outerRadius]
+    );
 
     useFrame((state) => {
-        if (particlesRef.current) {
-            particlesRef.current.rotation.y = state.clock.elapsedTime * 0.02;
-            particlesRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
+        if (instancedMeshRef.current) {
+            const dummy = new THREE.Object3D();
+
+            cloudData.forEach((particle, i) => {
+                const currentAngle =
+                    particle.angle +
+                    state.clock.elapsedTime * particle.orbitSpeed;
+                const currentPhi =
+                    particle.phi +
+                    state.clock.elapsedTime * particle.orbitSpeed * 0.5;
+
+                const x =
+                    sunPosition[0] +
+                    particle.radius *
+                        Math.sin(currentPhi) *
+                        Math.cos(currentAngle);
+                const y =
+                    sunPosition[1] +
+                    particle.radius *
+                        Math.sin(currentPhi) *
+                        Math.sin(currentAngle);
+                const z =
+                    sunPosition[2] + particle.radius * Math.cos(currentPhi);
+
+                dummy.position.set(x, y, z);
+
+                dummy.rotation.set(
+                    particle.initialRotation[0] +
+                        state.clock.elapsedTime * particle.rotationSpeed,
+                    particle.initialRotation[1] +
+                        state.clock.elapsedTime * particle.rotationSpeed * 0.7,
+                    particle.initialRotation[2] +
+                        state.clock.elapsedTime * particle.rotationSpeed * 0.5
+                );
+
+                dummy.scale.set(particle.size, particle.size, particle.size);
+
+                dummy.updateMatrix();
+                instancedMeshRef.current.setMatrixAt(i, dummy.matrix);
+            });
+
+            instancedMeshRef.current.instanceMatrix.needsUpdate = true;
         }
     });
 
     return (
-        <points ref={particlesRef}>
+        <instancedMesh
+            ref={instancedMeshRef}
+            args={[null, null, particleCount]}
+        >
+            <icosahedronGeometry args={[1, 0]} />
+            <meshStandardMaterial
+                color="#d4f1f9"
+                roughness={0.8}
+                metalness={0.2}
+                emissive="#89cff0"
+                emissiveIntensity={0.2}
+            />
+        </instancedMesh>
+    );
+};
+
+/**
+ * Sun Component
+ */
+const Sun = ({ position }) => {
+    const { scene } = useGLTF("/models/Sun.glb");
+    const sunRef = useRef();
+
+    useFrame((state) => {
+        if (sunRef.current) {
+            sunRef.current.rotation.y = state.clock.elapsedTime * 0.05;
+        }
+    });
+
+    return (
+        <primitive
+            ref={sunRef}
+            object={scene.clone()}
+            position={position}
+            scale={4.0}
+        />
+    );
+};
+
+/**
+ * OrbitLine Component
+ */
+const OrbitLine = ({ radius, color, sunPosition, yOffset = 0 }) => {
+    const orbitRef = useRef();
+
+    const points = useMemo(() => {
+        const pts = [];
+        const segments = 128;
+        for (let i = 0; i <= segments; i++) {
+            const angle = (i / segments) * Math.PI * 2;
+            pts.push(
+                new THREE.Vector3(
+                    Math.cos(angle) * radius,
+                    yOffset,
+                    Math.sin(angle) * radius
+                )
+            );
+        }
+        return pts;
+    }, [radius, yOffset]);
+
+    return (
+        <line ref={orbitRef} position={sunPosition}>
             <bufferGeometry>
                 <bufferAttribute
                     attach="attributes-position"
-                    count={particleData.count}
-                    array={particleData.positions}
-                    itemSize={3}
-                />
-                <bufferAttribute
-                    attach="attributes-color"
-                    count={particleData.count}
-                    array={particleData.colors}
+                    count={points.length}
+                    array={
+                        new Float32Array(points.flatMap((p) => [p.x, p.y, p.z]))
+                    }
                     itemSize={3}
                 />
             </bufferGeometry>
-            <pointsMaterial
-                size={0.3}
-                vertexColors
+            <lineBasicMaterial
+                color={color}
                 transparent
-                opacity={0.6}
-                sizeAttenuation
-                blending={THREE.AdditiveBlending}
-                depthWrite={false}
+                opacity={0.3}
+                linewidth={1}
             />
-        </points>
+        </line>
     );
 };
+
+/**
+ * Planet Component - Clean version
+ */
+const Planet = ({
+    scale,
+    modelPath,
+    orbitRadius,
+    orbitSpeed,
+    orbitColor,
+    index,
+    sunPosition,
+    yOffset = 0,
+    animationsPaused = false,
+}) => {
+    const { scene } = useGLTF(modelPath);
+    const planetRef = useRef();
+
+    // Calculate initial angle based on index for staggered starting positions
+    const initialAngle = useMemo(() => index * (Math.PI / 2), [index]);
+
+    useFrame((state) => {
+        if (planetRef.current) {
+            // Only animate if not paused
+            if (!animationsPaused) {
+                // Planet rotation on its axis
+                planetRef.current.rotation.y = state.clock.elapsedTime * 0.15;
+
+                // Orbital motion around the sun
+                const angle =
+                    state.clock.elapsedTime * orbitSpeed + initialAngle;
+                const x = sunPosition[0] + Math.cos(angle) * orbitRadius;
+                const z = sunPosition[2] + Math.sin(angle) * orbitRadius;
+                const y = sunPosition[1] + yOffset;
+
+                planetRef.current.position.set(x, y, z);
+            }
+        }
+    });
+
+    return <primitive ref={planetRef} object={scene.clone()} scale={scale} />;
+};
+
+// Preload all planet models
+useGLTF.preload("/models/Sun.glb");
+useGLTF.preload("/models/Pluto.glb");
+useGLTF.preload("/models/Earth.glb");
+useGLTF.preload("/models/Planet1.glb");
+useGLTF.preload("/models/Planet2.glb");
+useGLTF.preload("/models/Saturn.glb");
 
 export default StarSystem;

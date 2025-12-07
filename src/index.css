@@ -1,6 +1,11 @@
 /* Google Fonts Import - Must be first */
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
 
+*{
+    margin: 0;
+    padding: 0;
+}
+
 @import "tailwindcss";
 
 /* Tailwind v4 Custom Theme Variables */
@@ -17,13 +22,6 @@
     /* Custom Fonts */
     --font-heading: "Space Grotesk", sans-serif;
     --font-body: "Inter", sans-serif;
-}
-
-/* Global Resets */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
 
 html {
