@@ -9,13 +9,13 @@ import StarSystem from "./components/3D/StarSystem";
 import SpaceCubeMap from "./components/3D/SpaceCubeMap";
 import NavigationScreen from "./components/UI/NavigationScreen";
 import PlanetDetailScene from "./components/3D/PlanetDetailScene";
-import AboutMe from "./pages/AboutMe";
+import AboutMe from "./pages/AboutMe/AboutMe";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import "./App.css";
 
 function App() {
-    // DEVELOPMENT MODE: Skip to exploration phase for StarSystem testing
-    const [currentPhase, setCurrentPhase] = useState("exploration");
+    // Start with cockpit interior on website load
+    const [currentPhase, setCurrentPhase] = useState("cockpit");
     // Phases: 'cockpit', 'launching', 'exploration', 'planet-detail'
 
     const [systemStatus, setSystemStatus] = useState("EXPLORATION MODE");
@@ -169,283 +169,287 @@ function App() {
     };
 
     return (
-        <div className="w-full h-screen bg-deep-space">
-            {/* AboutMe Page - 2D React Page */}
-            {currentPage === "about-me" && (
-                <AboutMe planet={selectedPlanet} onBack={handleBackFromAboutMe} />
-            )}
+        // <div className="w-full h-screen bg-deep-space">
+        //     {/* AboutMe Page - 2D React Page */}
+        //     {currentPage === "about-me" && (
+        //         <AboutMe planet={selectedPlanet} onBack={handleBackFromAboutMe} />
+        //     )}
 
-            {/* 3D Portfolio - Main Application */}
-            {currentPage === "3d-portfolio" && (
-                <>
-                    {/* Planet Detail View - Isolated Scene */}
-            {currentPhase === "planet-detail" && selectedPlanet && (
-                <PlanetDetailScene
-                    planet={selectedPlanet}
-                    onBack={handleBackToExploration}
-                    onOrbitComplete={handleOrbitComplete}
-                />
-            )}
+        //     {/* 3D Portfolio - Main Application */}
+        //     {currentPage === "3d-portfolio" && (
+        //         <>
+        //             {/* Planet Detail View - Isolated Scene */}
+        //     {currentPhase === "planet-detail" && selectedPlanet && (
+        //         <PlanetDetailScene
+        //             planet={selectedPlanet}
+        //             onBack={handleBackToExploration}
+        //             onOrbitComplete={handleOrbitComplete}
+        //         />
+        //     )}
 
-            {/* Main 3D Canvas - Only render when NOT in planet-detail */}
-            {currentPhase !== "planet-detail" && (
-                <Canvas
-                    camera={{
-                        position: [0, 15, 45],
-                        fov: 50,
-                        near: 0.1,
-                        far: 1000,
-                    }}
-                    gl={{ antialias: true }}
-                    onCreated={({ scene }) => {
-                        scene.background = new THREE.Color(0x000000);
-                    }}
-                >
-                    {/* Space Background Cube Map */}
-                    <SpaceCubeMap
-                        velocityFactor={velocityFactor}
-                        enableRelativistic={true}
-                    />
+        //     {/* Main 3D Canvas - Only render when NOT in planet-detail */}
+        //     {currentPhase !== "planet-detail" && (
+        //         <Canvas
+        //             camera={{
+        //                 position: 
+        //                     currentPhase === "cockpit" || currentPhase === "launching"
+        //                         ? [0, 0, -0.5]
+        //                         : [0, 15, 45],
+        //                 fov: 50,
+        //                 near: 0.1,
+        //                 far: 1000,
+        //             }}
+        //             gl={{ antialias: true }}
+        //             onCreated={({ scene }) => {
+        //                 scene.background = new THREE.Color(0x000000);
+        //             }}
+        //         >
+        //             {/* Space Background Cube Map */}
+        //             <SpaceCubeMap
+        //                 velocityFactor={velocityFactor}
+        //                 enableRelativistic={true}
+        //             />
 
-                    {/* Lighting */}
-                    <ambientLight intensity={0.8} />
-                    <pointLight
-                        position={[0, 2, -1]}
-                        intensity={1.5}
-                        color="#6366f1"
-                    />
-                    <hemisphereLight
-                        intensity={0.5}
-                        color="#ffffff"
-                        groundColor="#00ff88"
-                    />
+        //             {/* Lighting */}
+        //             <ambientLight intensity={0.8} />
+        //             <pointLight
+        //                 position={[0, 2, -1]}
+        //                 intensity={1.5}
+        //                 color="#6366f1"
+        //             />
+        //             <hemisphereLight
+        //                 intensity={0.5}
+        //                 color="#ffffff"
+        //                 groundColor="#00ff88"
+        //             />
 
-                    {/* Cockpit Camera Controls */}
-                    {(currentPhase === "cockpit" ||
-                        currentPhase === "launching") && (
-                        <OrbitControls
-                            enableZoom={false}
-                            enablePan={false}
-                            enableRotate={true}
-                            target={[0, -0.2, -2]}
-                            minPolarAngle={0}
-                            maxPolarAngle={Math.PI}
-                            minAzimuthAngle={-Infinity}
-                            maxAzimuthAngle={Infinity}
-                            rotateSpeed={0.5}
-                            enableDamping={true}
-                            dampingFactor={0.05}
-                        />
-                    )}
+        //             {/* Cockpit Camera Controls */}
+        //             {(currentPhase === "cockpit" ||
+        //                 currentPhase === "launching") && (
+        //                 <OrbitControls
+        //                     enableZoom={false}
+        //                     enablePan={false}
+        //                     enableRotate={true}
+        //                     target={[0, -0.2, -2]}
+        //                     minPolarAngle={0}
+        //                     maxPolarAngle={Math.PI}
+        //                     minAzimuthAngle={-Infinity}
+        //                     maxAzimuthAngle={Infinity}
+        //                     rotateSpeed={0.5}
+        //                     enableDamping={true}
+        //                     dampingFactor={0.05}
+        //                 />
+        //             )}
 
-                    {/* Exploration Camera Controls */}
-                    {currentPhase === "exploration" && (
-                        <OrbitControls
-                            enableZoom={true}
-                            enablePan={true}
-                            enableRotate={true}
-                            target={[0, 0, 0]}
-                            minPolarAngle={0}
-                            maxPolarAngle={Math.PI}
-                            minAzimuthAngle={-Infinity}
-                            maxAzimuthAngle={Infinity}
-                            minDistance={10}
-                            maxDistance={400}
-                            rotateSpeed={0.5}
-                            zoomSpeed={1.0}
-                            enableDamping={true}
-                            dampingFactor={0.05}
-                        />
-                    )}
+        //             {/* Exploration Camera Controls */}
+        //             {currentPhase === "exploration" && (
+        //                 <OrbitControls
+        //                     enableZoom={true}
+        //                     enablePan={true}
+        //                     enableRotate={true}
+        //                     target={[0, 0, 0]}
+        //                     minPolarAngle={0}
+        //                     maxPolarAngle={Math.PI}
+        //                     minAzimuthAngle={-Infinity}
+        //                     maxAzimuthAngle={Infinity}
+        //                     minDistance={10}
+        //                     maxDistance={400}
+        //                     rotateSpeed={0.5}
+        //                     zoomSpeed={1.0}
+        //                     enableDamping={true}
+        //                     dampingFactor={0.05}
+        //                 />
+        //             )}
 
-                    {/* Cockpit Phase */}
-                    {currentPhase === "cockpit" && (
-                        <group ref={spacecraftRef}>
-                            <CockpitInterior
-                                onCommand={handleTerminalCommand}
-                                showTerminal={true}
-                            />
-                        </group>
-                    )}
+        //             {/* Cockpit Phase */}
+        //             {currentPhase === "cockpit" && (
+        //                 <group ref={spacecraftRef}>
+        //                     <CockpitInterior
+        //                         onCommand={handleTerminalCommand}
+        //                         showTerminal={true}
+        //                     />
+        //                 </group>
+        //             )}
 
-                    {/* Launching Phase */}
-                    {currentPhase === "launching" && (
-                        <>
-                            <group ref={spacecraftRef}>
-                                <CockpitInterior
-                                    onCommand={handleTerminalCommand}
-                                    showTerminal={false}
-                                />
-                            </group>
-                            <group ref={wormholeRef} position={[0, 0, -100]}>
-                                <Wormhole
-                                    position={[0, 0, 0]}
-                                    scale={5}
-                                    colorScheme="cyan"
-                                />
-                            </group>
-                            <LaunchSequence
-                                isActive={true}
-                                spacecraftRef={spacecraftRef}
-                                wormholeRef={wormholeRef}
-                                initialWormholePosition={[0, 0, -100]}
-                                onSequenceComplete={handleSequenceComplete}
-                                onVelocityChange={handleVelocityChange}
-                            />
-                        </>
-                    )}
+        //             {/* Launching Phase */}
+        //             {currentPhase === "launching" && (
+        //                 <>
+        //                     <group ref={spacecraftRef}>
+        //                         <CockpitInterior
+        //                             onCommand={handleTerminalCommand}
+        //                             showTerminal={false}
+        //                         />
+        //                     </group>
+        //                     <group ref={wormholeRef} position={[0, 0, -100]}>
+        //                         <Wormhole
+        //                             position={[0, 0, 0]}
+        //                             scale={5}
+        //                             colorScheme="cyan"
+        //                         />
+        //                     </group>
+        //                     <LaunchSequence
+        //                         isActive={true}
+        //                         spacecraftRef={spacecraftRef}
+        //                         wormholeRef={wormholeRef}
+        //                         initialWormholePosition={[0, 0, -100]}
+        //                         onSequenceComplete={handleSequenceComplete}
+        //                         onVelocityChange={handleVelocityChange}
+        //                     />
+        //                 </>
+        //             )}
 
-                    {/* Exploration Phase */}
-                    {currentPhase === "exploration" && (
-                        <StarSystem
-                            visible={true}
-                            planets={planets}
-                            selectedPlanet={null}
-                            animationsPaused={false}
-                        />
-                    )}
-                </Canvas>
-            )}
+        //             {/* Exploration Phase */}
+        //             {currentPhase === "exploration" && (
+        //                 <StarSystem
+        //                     visible={true}
+        //                     planets={planets}
+        //                     selectedPlanet={null}
+        //                     animationsPaused={false}
+        //                 />
+        //             )}
+        //         </Canvas>
+        //     )}
 
-            {/* HUD Overlay - Only show when NOT in planet-detail */}
-            {currentPhase !== "planet-detail" && (
-                <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                    {/* Top HUD - Ship Name */}
-                    <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center">
-                        <h1 className="text-2xl font-heading text-nebula-purple mb-2">
-                            CAPTAIN VANDAN'S VESSEL
-                        </h1>
-                        <div className="text-sm text-asteroid-gray">
-                            Neural Interface v2.5.1
-                        </div>
-                    </div>
+        //     {/* HUD Overlay - Only show when NOT in planet-detail */}
+        //     {currentPhase !== "planet-detail" && (
+        //         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        //             {/* Top HUD - Ship Name */}
+        //             <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center">
+        //                 <h1 className="text-2xl font-heading text-nebula-purple mb-2">
+        //                     CAPTAIN VANDAN'S VESSEL
+        //                 </h1>
+        //                 <div className="text-sm text-asteroid-gray">
+        //                     Neural Interface v2.5.1
+        //                 </div>
+        //             </div>
 
-                    {/* Status Indicators - Top Right */}
-                    <div className="absolute top-8 right-8 space-y-2">
-                        <div className="flex items-center space-x-2">
-                            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm text-moon-white">
-                                SYSTEMS ONLINE
-                            </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm text-moon-white">
-                                FUEL: 100%
-                            </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <div
-                                className={`w-3 h-3 rounded-full animate-pulse ${
-                                    currentPhase === "launching"
-                                        ? "bg-orange-500"
-                                        : "bg-cyan-400"
-                                }`}
-                            ></div>
-                            <span className="text-sm text-moon-white">
-                                {systemStatus}
-                            </span>
-                        </div>
-                    </div>
+        //             {/* Status Indicators - Top Right */}
+        //             <div className="absolute top-8 right-8 space-y-2">
+        //                 <div className="flex items-center space-x-2">
+        //                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+        //                     <span className="text-sm text-moon-white">
+        //                         SYSTEMS ONLINE
+        //                     </span>
+        //                 </div>
+        //                 <div className="flex items-center space-x-2">
+        //                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+        //                     <span className="text-sm text-moon-white">
+        //                         FUEL: 100%
+        //                     </span>
+        //                 </div>
+        //                 <div className="flex items-center space-x-2">
+        //                     <div
+        //                         className={`w-3 h-3 rounded-full animate-pulse ${
+        //                             currentPhase === "launching"
+        //                                 ? "bg-orange-500"
+        //                                 : "bg-cyan-400"
+        //                         }`}
+        //                     ></div>
+        //                     <span className="text-sm text-moon-white">
+        //                         {systemStatus}
+        //                     </span>
+        //                 </div>
+        //             </div>
 
-                    {/* Instructions - Cockpit Phase */}
-                    {currentPhase === "cockpit" && (
-                        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
-                            <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
-                                <p className="text-cyan-400 text-sm mb-1">
-                                    🖥️ INTERACTIVE TERMINAL ACTIVE
-                                </p>
-                                <p className="text-asteroid-gray text-xs">
-                                    Click the terminal screen to interact • Type
-                                    'help' for commands
-                                </p>
-                            </div>
-                        </div>
-                    )}
+        //             {/* Instructions - Cockpit Phase */}
+        //             {currentPhase === "cockpit" && (
+        //                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
+        //                     <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
+        //                         <p className="text-cyan-400 text-sm mb-1">
+        //                             🖥️ INTERACTIVE TERMINAL ACTIVE
+        //                         </p>
+        //                         <p className="text-asteroid-gray text-xs">
+        //                             Click the terminal screen to interact • Type
+        //                             'help' for commands
+        //                         </p>
+        //                     </div>
+        //                 </div>
+        //             )}
 
-                    {/* Exploration Instructions */}
-                    {currentPhase === "exploration" && (
-                        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center pointer-events-auto">
-                            <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
-                                <p className="text-cyan-400 text-sm mb-1">
-                                    Press{" "}
-                                    <span className="font-bold text-white">
-                                        N
-                                    </span>{" "}
-                                    to open Navigation
-                                </p>
-                                <p className="text-asteroid-gray text-xs">
-                                    Scroll to zoom • Drag to rotate •
-                                    Right-click to pan
-                                </p>
-                            </div>
-                        </div>
-                    )}
+        //             {/* Exploration Instructions */}
+        //             {currentPhase === "exploration" && (
+        //                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center pointer-events-auto">
+        //                     <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
+        //                         <p className="text-cyan-400 text-sm mb-1">
+        //                             Press{" "}
+        //                             <span className="font-bold text-white">
+        //                                 N
+        //                             </span>{" "}
+        //                             to open Navigation
+        //                         </p>
+        //                         <p className="text-asteroid-gray text-xs">
+        //                             Scroll to zoom • Drag to rotate •
+        //                             Right-click to pan
+        //                         </p>
+        //                     </div>
+        //                 </div>
+        //             )}
 
-                    {/* System Info - Bottom Left */}
-                    {currentPhase !== "launching" && (
-                        <div className="absolute bottom-8 left-8 text-xs text-asteroid-gray space-y-1">
-                            <div>COORDINATES: 0.0000, 0.0000, 0.0000</div>
-                            <div>QUANTUM DRIVE: STANDBY</div>
-                            <div>SHIELD STATUS: NOMINAL</div>
-                        </div>
-                    )}
+        //             {/* System Info - Bottom Left */}
+        //             {currentPhase !== "launching" && (
+        //                 <div className="absolute bottom-8 left-8 text-xs text-asteroid-gray space-y-1">
+        //                     <div>COORDINATES: 0.0000, 0.0000, 0.0000</div>
+        //                     <div>QUANTUM DRIVE: STANDBY</div>
+        //                     <div>SHIELD STATUS: NOMINAL</div>
+        //                 </div>
+        //             )}
 
-                    {/* Launch Status Overlay */}
-                    {currentPhase === "launching" && (
-                        <>
-                            <div className="absolute top-8 right-8">
-                                <div className="bg-black/70 backdrop-blur-md p-4 rounded-lg border border-cyan-500/30">
-                                    <p className="text-cyan-400 text-xs mb-1">
-                                        VELOCITY
-                                    </p>
-                                    <p className="text-2xl font-bold text-white font-mono">
-                                        ACCELERATING
-                                    </p>
-                                    <div className="mt-2 w-32 h-1 bg-gray-700 rounded-full overflow-hidden">
-                                        <div className="h-full bg-linear-to-r from-cyan-500 to-purple-500 animate-pulse" />
-                                    </div>
-                                </div>
-                            </div>
+        //             {/* Launch Status Overlay */}
+        //             {currentPhase === "launching" && (
+        //                 <>
+        //                     <div className="absolute top-8 right-8">
+        //                         <div className="bg-black/70 backdrop-blur-md p-4 rounded-lg border border-cyan-500/30">
+        //                             <p className="text-cyan-400 text-xs mb-1">
+        //                                 VELOCITY
+        //                             </p>
+        //                             <p className="text-2xl font-bold text-white font-mono">
+        //                                 ACCELERATING
+        //                             </p>
+        //                             <div className="mt-2 w-32 h-1 bg-gray-700 rounded-full overflow-hidden">
+        //                                 <div className="h-full bg-linear-to-r from-cyan-500 to-purple-500 animate-pulse" />
+        //                             </div>
+        //                         </div>
+        //                     </div>
 
-                            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-                                <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-lg border border-purple-500/30">
-                                    <p className="text-purple-400 text-center text-sm">
-                                        🌀 APPROACHING WORMHOLE
-                                    </p>
-                                </div>
-                            </div>
+        //                     <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        //                         <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-lg border border-purple-500/30">
+        //                             <p className="text-purple-400 text-center text-sm">
+        //                                 🌀 APPROACHING WORMHOLE
+        //                             </p>
+        //                         </div>
+        //                     </div>
 
-                            <div className="absolute top-1/2 left-8 transform -translate-y-1/2 space-y-2">
-                                <div className="bg-orange-500/20 border border-orange-500 px-3 py-1 rounded">
-                                    <p className="text-orange-400 text-xs">
-                                        ⚠ HIGH SPEED
-                                    </p>
-                                </div>
-                                <div className="bg-purple-500/20 border border-purple-500 px-3 py-1 rounded">
-                                    <p className="text-purple-400 text-xs">
-                                        ⚡ WARP ACTIVE
-                                    </p>
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
-            )}
+        //                     <div className="absolute top-1/2 left-8 transform -translate-y-1/2 space-y-2">
+        //                         <div className="bg-orange-500/20 border border-orange-500 px-3 py-1 rounded">
+        //                             <p className="text-orange-400 text-xs">
+        //                                 ⚠ HIGH SPEED
+        //                             </p>
+        //                         </div>
+        //                         <div className="bg-purple-500/20 border border-purple-500 px-3 py-1 rounded">
+        //                             <p className="text-purple-400 text-xs">
+        //                                 ⚡ WARP ACTIVE
+        //                             </p>
+        //                         </div>
+        //                     </div>
+        //                 </>
+        //             )}
+        //         </div>
+        //     )}
 
-                    {/* Navigation Screen - Only in exploration phase */}
-                    {currentPhase === "exploration" && (
-                        <NavigationScreen
-                            isVisible={isNavigationActive}
-                            onClose={() => setNavigationActive(false)}
-                            onPlanetSelect={handlePlanetSelect}
-                            selectedPlanet={null}
-                            planets={planets}
-                        />
-                    )}
-                </>
-            )}
-        </div>
+        //             {/* Navigation Screen - Only in exploration phase */}
+        //             {currentPhase === "exploration" && (
+        //                 <NavigationScreen
+        //                     isVisible={isNavigationActive}
+        //                     onClose={() => setNavigationActive(false)}
+        //                     onPlanetSelect={handlePlanetSelect}
+        //                     selectedPlanet={null}
+        //                     planets={planets}
+        //                 />
+        //             )}
+        //         </>
+        //     )}
+        // </div>
+        <AboutMe />
     );
 }
 
