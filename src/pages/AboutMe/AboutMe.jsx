@@ -809,6 +809,96 @@ console.log("Building amazing things! 🚀");`}</code>
                     </div>
                 </div>
             </section>
+
+            {/* Section 6: Certifications */}
+            <section className={styles.section}>
+                <div className={styles.leftContent}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionNumber}>06</span>
+                        <h2
+                            className={styles.glitchTitle}
+                            data-text="CERTIFICATIONS"
+                        >
+                            CERTIFICATIONS
+                        </h2>
+                    </div>
+                    <div className={styles.infoBox}>
+                        <p className={styles.certificationsIntro}>
+                            Professional certifications and completed courses demonstrating
+                            continuous learning and skill development
+                        </p>
+                        <div className={styles.certificationsList}>
+                            <div
+                                className={styles.certificationItem}
+                                onClick={() => {
+                                    // Store the target experience ID for highlighting
+                                    sessionStorage.setItem('highlightExperience', 'exp-05');
+                                    // Navigate to Experience page (adjust based on your routing)
+                                    window.location.href = '/experience#exp-05';
+                                }}
+                            >
+                                <div className={styles.certificationHeader}>
+                                    <div className={styles.certIcon}>📜</div>
+                                    <div className={styles.certTitleSection}>
+                                        <h4 className={styles.certTitle}>Web Development - Delta Batch</h4>
+                                        <p className={styles.certOrg}>Apna College • 2024</p>
+                                    </div>
+                                    <div className={styles.certArrow}>→</div>
+                                </div>
+                                <div className={styles.certDescription}>
+                                    <p>Comprehensive full-stack web development certification covering modern technologies</p>
+                                    <div className={styles.certTechHighlights}>
+                                        <span className={styles.certTech}>React</span>
+                                        <span className={styles.certTech}>Node.js</span>
+                                        <span className={styles.certTech}>MongoDB</span>
+                                        <span className={styles.certTech}>+10 more</span>
+                                    </div>
+                                </div>
+                                <div className={styles.certFooter}>
+                                    <span className={styles.certStatus}>✅ Completed</span>
+                                    <span className={styles.certAction}>View Details</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.certificationsNote}>
+                            <span className={styles.noteIcon}>💡</span>
+                            <p>Click on any certification to view full details on the Experience page</p>
+                        </div>
+                    </div>
+                </div>
+                <div className={styles.rightContent}>
+                    <div className={styles.certificateVisualization}>
+                        {/* Certificate Badge Animation */}
+                        <div className={styles.certificateBadge}>
+                            <div className={styles.badgeOuter}>
+                                <div className={styles.badgeMiddle}>
+                                    <div className={styles.badgeInner}>
+                                        <div className={styles.badgeIcon}>📜</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Orbiting Skill Icons */}
+                            <div className={styles.skillOrbit}>
+                                <div className={styles.skillDot} style={{ '--orbit-rotation': '0deg' }}>
+                                    <span>⚛️</span>
+                                </div>
+                                <div className={styles.skillDot} style={{ '--orbit-rotation': '72deg' }}>
+                                    <span>📦</span>
+                                </div>
+                                <div className={styles.skillDot} style={{ '--orbit-rotation': '144deg' }}>
+                                    <span>🗄️</span>
+                                </div>
+                                <div className={styles.skillDot} style={{ '--orbit-rotation': '216deg' }}>
+                                    <span>🎨</span>
+                                </div>
+                                <div className={styles.skillDot} style={{ '--orbit-rotation': '288deg' }}>
+                                    <span>🔧</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };

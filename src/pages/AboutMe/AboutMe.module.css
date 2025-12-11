@@ -1425,3 +1425,373 @@
     color: var(--color-gray-400);
     line-height: 1.5;
 }
+
+/* ====================================
+   SECTION 6: CERTIFICATIONS
+   ==================================== */
+
+/* Certifications Intro */
+.certificationsIntro {
+    font-size: 1rem;
+    color: var(--color-gray-400);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Certifications List */
+.certificationsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Certification Item */
+.certificationItem {
+    background: rgba(26, 26, 46, 0.6);
+    border: 2px solid rgba(79, 70, 229, 0.3);
+    border-radius: 16px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.certificationItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.certificationItem:hover::before {
+    left: 100%;
+}
+
+.certificationItem:hover {
+    border-color: rgba(79, 70, 229, 0.8);
+    transform: translateY(-4px);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Certification Header */
+.certificationHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.certIcon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    animation: float 3s ease-in-out infinite;
+    line-height: 1;
+    margin-top: 0.25rem;
+}
+
+.certTitleSection {
+    flex: 1;
+    min-width: 0;
+}
+
+.certTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+    font-family: var(--font-heading);
+    line-height: 1.3;
+}
+
+.certOrg {
+    font-size: 0.9rem;
+    color: var(--color-gray-400);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.certArrow {
+    font-size: 1.5rem;
+    color: var(--color-primary-light);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 0.25rem;
+}
+
+.certificationItem:hover .certArrow {
+    transform: translateX(5px);
+}
+
+/* Certification Description */
+.certDescription {
+    margin-bottom: 1rem;
+    padding-left: 0;
+}
+
+.certDescription p {
+    font-size: 0.95rem;
+    color: var(--color-gray-400);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+.certTechHighlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.certTech {
+    background: rgba(79, 70, 229, 0.2);
+    border: 1px solid rgba(79, 70, 229, 0.4);
+    color: var(--color-primary-light);
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Certification Footer */
+.certFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+.certStatus {
+    font-size: 0.9rem;
+    color: var(--color-success);
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.certAction {
+    font-size: 0.9rem;
+    color: var(--color-primary-light);
+    font-weight: 600;
+    transition: color 0.3s ease;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.certificationItem:hover .certAction {
+    color: var(--color-white);
+}
+
+/* Certifications Note */
+.certificationsNote {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 12px;
+}
+
+.noteIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.certificationsNote p {
+    font-size: 0.9rem;
+    color: var(--color-gray-400);
+    margin: 0;
+}
+
+/* Certificate Visualization */
+.certificateVisualization {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+}
+
+.certificateBadge {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Badge Layers */
+.badgeOuter {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(129, 140, 248, 0.3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: rotateGlow 8s linear infinite;
+    box-shadow:
+        0 0 40px rgba(79, 70, 229, 0.4),
+        inset 0 0 40px rgba(79, 70, 229, 0.2);
+}
+
+.badgeMiddle {
+    width: 85%;
+    height: 85%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(245, 158, 11, 0.3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: rotateGlow 10s linear infinite reverse;
+    box-shadow:
+        0 0 30px rgba(96, 165, 250, 0.3),
+        inset 0 0 30px rgba(96, 165, 250, 0.2);
+}
+
+.badgeInner {
+    width: 85%;
+    height: 85%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26, 26, 46, 0.95), rgba(15, 15, 30, 1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(79, 70, 229, 0.5);
+    box-shadow:
+        0 0 20px rgba(79, 70, 229, 0.5),
+        inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.badgeIcon {
+    font-size: 5rem;
+}
+
+/* Skill Orbit */
+.skillOrbit {
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    animation: rotateOrbit 20s linear infinite;
+}
+
+.skillDot {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(79, 70, 229, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    top: 50%;
+    left: 50%;
+    margin-top: -25px;
+    margin-left: -25px;
+    transform: rotate(var(--orbit-rotation)) translate(160px) rotate(calc(-1 * var(--orbit-rotation)));
+    box-shadow:
+        0 0 20px rgba(79, 70, 229, 0.6),
+        inset 0 0 10px rgba(255, 255, 255, 0.2);
+    animation: skillDotPulse 2s ease-in-out infinite;
+}
+
+.skillDot:nth-child(2) {
+    animation-delay: 0.4s;
+    background: rgba(96, 165, 250, 0.8);
+}
+
+.skillDot:nth-child(3) {
+    animation-delay: 0.8s;
+    background: rgba(245, 158, 11, 0.8);
+}
+
+.skillDot:nth-child(4) {
+    animation-delay: 1.2s;
+    background: rgba(52, 211, 153, 0.8);
+}
+
+.skillDot:nth-child(5) {
+    animation-delay: 1.6s;
+    background: rgba(129, 140, 248, 0.8);
+}
+
+/* Certification Animations */
+@keyframes rotateGlow {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotateOrbit {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes skillDotPulse {
+    0%, 100% {
+        transform: rotate(var(--orbit-rotation)) translate(160px) rotate(calc(-1 * var(--orbit-rotation))) scale(1);
+        box-shadow:
+            0 0 20px rgba(79, 70, 229, 0.6),
+            inset 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        transform: rotate(var(--orbit-rotation)) translate(160px) rotate(calc(-1 * var(--orbit-rotation))) scale(1.2);
+        box-shadow:
+            0 0 30px rgba(79, 70, 229, 0.8),
+            inset 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Responsive Design for Certifications */
+@media (max-width: 768px) {
+    .certificateBadge {
+        width: 200px;
+        height: 200px;
+    }
+
+    .badgeIcon {
+        font-size: 3rem;
+    }
+
+    .skillDot {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+        margin-top: -17.5px;
+        margin-left: -17.5px;
+        transform: rotate(var(--orbit-rotation)) translate(110px) rotate(calc(-1 * var(--orbit-rotation)));
+    }
+
+    .certificationItem {
+        padding: 1.25rem;
+    }
+
+    .certTitle {
+        font-size: 1.1rem;
+    }
+
+    .certIcon {
+        font-size: 2rem;
+    }
+}

@@ -12,6 +12,9 @@ import PlanetDetailScene from "./components/3D/PlanetDetailScene";
 import AboutMe from "./pages/AboutMe/AboutMe";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import Projects from "./pages/Projects/Projects";
+import Experience from "./pages/Experience/Experience";
+import Contact from "./pages/Contact/Contact";
+import Technologies from "./pages/Technologies/Technologies";
 import "./App.css";
 
 function App() {
@@ -451,7 +454,7 @@ function App() {
         //     )}
         // </div>
         <>
-            <Projects />
+            <Technologies />
         </>
     );
 }

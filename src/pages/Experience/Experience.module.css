@@ -1,0 +1,809 @@
+/* Color Palette */
+:root {
+    --color-space-deep: #0F0F1E;
+    --color-space-mid: #1A1A2E;
+    --color-primary: #4F46E5;
+    --color-primary-light: #818CF8;
+    --color-secondary: #F59E0B;
+    --color-accent: #60A5FA;
+    --color-success: #34D399;
+    --color-white: #F8FAFC;
+    --color-gray-100: #E2E8F0;
+    --color-gray-400: #94A3B8;
+    --gradient-primary: linear-gradient(135deg, #4F46E5, #818CF8);
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    min-height: 100vh;
+    background: var(--color-space-deep);
+    color: var(--color-white);
+    padding: 0;
+    position: relative;
+    overflow-x: hidden;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ===== BACKGROUND ===== */
+.spaceBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-image: url('/images/Star1.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.spaceBackground::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+}
+
+/* ===== HERO SECTION ===== */
+.heroSection {
+    position: relative;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 2rem;
+    margin-bottom: 50px;
+}
+
+.heroContent {
+    text-align: center;
+    animation: fadeSlideUp 1.2s ease-out;
+}
+
+.heroTitle {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.mainTitle {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #4F46E5 0%, #818CF8 50%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    position: relative;
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+.titleUnderline {
+    height: 4px;
+    width: 0;
+    background: linear-gradient(90deg, transparent, #4F46E5, #818CF8, #F59E0B, transparent);
+    margin: 1rem auto;
+    animation: underlineExpand 1.5s ease-out 0.5s forwards;
+    border-radius: 2px;
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.6);
+}
+
+.heroSubtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--color-gray-100);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    animation: fadeIn 1s ease-out 0.8s forwards;
+    margin-bottom: 2rem;
+}
+
+/* Hero Stars */
+.heroStars {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.heroStar {
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #4F46E5, #818CF8);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.8);
+    opacity: 0;
+    animation: starPulse 2s ease-in-out infinite;
+    animation-delay: var(--star-delay);
+}
+
+/* Scroll Indicator */
+.scrollIndicator {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s ease-out 1.5s forwards;
+}
+
+.scrollArrow {
+    width: 30px;
+    height: 50px;
+    border: 2px solid rgba(129, 140, 248, 0.6);
+    border-radius: 20px;
+    position: relative;
+}
+
+.scrollArrow::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #818CF8;
+    border-radius: 50%;
+    animation: scrollAnimation 2s infinite;
+}
+
+.scrollText {
+    font-size: 0.875rem;
+    color: var(--color-gray-400);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ===== EXPERIENCE SECTION ===== */
+.experienceSection {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+}
+
+/* ===== EXPERIENCE CARD ===== */
+.experienceCard {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 2px solid rgba(79, 70, 229, 0.3);
+    border-radius: 24px;
+    padding: 3rem;
+    margin-bottom: 6rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeSlideUp 0.8s ease-out backwards;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(79, 70, 229, 0.1);
+}
+
+.experienceCard::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient-primary);
+    border-radius: 24px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s;
+    filter: blur(15px);
+}
+
+.experienceCard:hover::before {
+    opacity: 0.3;
+}
+
+.experienceCard:hover {
+    border-color: rgba(79, 70, 229, 0.6);
+    transform: translateY(-8px);
+    box-shadow: 0 25px 70px rgba(79, 70, 229, 0.4);
+}
+
+/* Decorative divider between cards */
+.experienceCard:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: -3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(79, 70, 229, 0.5),
+        rgba(129, 140, 248, 0.5),
+        rgba(79, 70, 229, 0.5),
+        transparent
+    );
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+}
+
+/* Staggered animation for cards */
+.experienceCard:nth-child(1) { animation-delay: 0.1s; }
+.experienceCard:nth-child(2) { animation-delay: 0.2s; }
+.experienceCard:nth-child(3) { animation-delay: 0.3s; }
+.experienceCard:nth-child(4) { animation-delay: 0.4s; }
+
+/* ===== EXPERIENCE HEADER ===== */
+.experienceHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(79, 70, 229, 0.2);
+}
+
+.experienceNumber {
+    font-size: 4rem;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0.3;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.experienceTitleWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.titleSection {
+    flex: 1;
+}
+
+.experienceTitle {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--color-white);
+    margin-bottom: 0.5rem;
+}
+
+.organization {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    color: var(--color-primary-light);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.statusBadge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.statusBadge[data-status="Current"] {
+    background: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    color: var(--color-success);
+}
+
+.statusBadge[data-status="Completed"] {
+    background: rgba(96, 165, 250, 0.1);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    color: var(--color-accent);
+}
+
+.typeBadge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: var(--color-secondary);
+}
+
+.typeBadge[data-type="Leadership"] {
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    color: var(--color-primary-light);
+}
+
+.typeBadge[data-type="Research"] {
+    background: rgba(96, 165, 250, 0.1);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    color: var(--color-accent);
+}
+
+.typeBadge[data-type="Competition"] {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: var(--color-secondary);
+}
+
+/* ===== EXPERIENCE INFO ===== */
+.experienceInfo {
+    margin-bottom: 2rem;
+}
+
+.metaInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(15, 15, 30, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.metaIcon {
+    font-size: 1.25rem;
+}
+
+.metaText {
+    font-size: 0.95rem;
+    color: var(--color-gray-100);
+    font-weight: 500;
+}
+
+.experienceDescription {
+    font-size: 1.125rem;
+    color: var(--color-gray-100);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+}
+
+/* Section Titles */
+.sectionTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sectionIcon {
+    font-size: 1.25rem;
+}
+
+/* Tech Stack */
+.techSection {
+    margin-bottom: 2rem;
+}
+
+.techTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.techTag {
+    padding: 0.6rem 1.2rem;
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-white);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: default;
+}
+
+.techTag:hover {
+    background: rgba(79, 70, 229, 0.2);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Responsibilities Section */
+.responsibilitiesSection {
+    margin-bottom: 2rem;
+}
+
+.responsibilitiesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.responsibilityItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(26, 26, 46, 0.4);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-gray-100);
+    transition: all 0.3s ease;
+}
+
+.responsibilityItem:hover {
+    background: rgba(26, 26, 46, 0.6);
+    border-color: rgba(79, 70, 229, 0.4);
+    transform: translateX(10px);
+}
+
+.responsibilityBullet {
+    color: var(--color-primary-light);
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* Expanded Details */
+.expandedDetails {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid rgba(79, 70, 229, 0.2);
+    animation: expandAnimation 0.5s ease-out;
+}
+
+.detailSection {
+    margin-bottom: 1.5rem;
+}
+
+.detailText {
+    font-size: 1rem;
+    color: var(--color-gray-100);
+    line-height: 1.7;
+    padding-left: 2rem;
+}
+
+.noteSection {
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(96, 165, 250, 0.15));
+    border-left: 4px solid var(--color-primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.noteIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.noteText {
+    font-size: 0.95rem;
+    color: var(--color-gray-100);
+    line-height: 1.6;
+    font-style: italic;
+}
+
+/* Read More Button */
+.readMoreBtn {
+    margin: 2rem 0;
+    padding: 0.875rem 2rem;
+    background: rgba(79, 70, 229, 0.1);
+    border: 2px solid rgba(79, 70, 229, 0.3);
+    border-radius: 50px;
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.readMoreBtn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.readMoreBtn:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+
+.readMoreBtn:hover::before {
+    opacity: 0.2;
+}
+
+.btnArrow {
+    font-size: 1.25rem;
+    transition: transform 0.3s;
+}
+
+.readMoreBtn:hover .btnArrow {
+    transform: translateY(3px);
+}
+
+/* Action Buttons */
+.actionButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.actionBtn {
+    padding: 0.875rem 1.75rem;
+    background: rgba(79, 70, 229, 0.1);
+    border: 2px solid rgba(79, 70, 229, 0.3);
+    border-radius: 50px;
+    color: var(--color-white);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.actionBtn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.actionBtn:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+
+.actionBtn:hover::before {
+    opacity: 0.2;
+}
+
+.primaryBtn {
+    background: linear-gradient(135deg, #34D399, #10B981, #059669);
+    border-color: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.primaryBtn::before {
+    background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.primaryBtn:hover {
+    box-shadow: 0 10px 40px rgba(16, 185, 129, 0.6);
+    transform: translateY(-3px) scale(1.05);
+}
+
+.btnIcon {
+    font-size: 1.25rem;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes titleGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 40px rgba(129, 140, 248, 0.6));
+    }
+}
+
+@keyframes underlineExpand {
+    from {
+        width: 0;
+    }
+    to {
+        width: 300px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes starPulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+}
+
+@keyframes scrollAnimation {
+    0% {
+        opacity: 0;
+        top: 8px;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        top: 30px;
+    }
+}
+
+@keyframes expandAnimation {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 2000px;
+    }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .experienceSection {
+        padding: 0 1.5rem 3rem;
+    }
+
+    .experienceCard {
+        padding: 2rem;
+        margin-bottom: 5rem;
+    }
+
+    .experienceCard:not(:last-child)::after {
+        bottom: -2.5rem;
+        width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+
+    .heroSection {
+        height: 400px;
+        padding: 1.5rem;
+    }
+
+    .experienceSection {
+        padding: 0 1rem 2rem;
+    }
+
+    .experienceCard {
+        padding: 1.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .experienceCard:not(:last-child)::after {
+        bottom: -2rem;
+        width: 150px;
+    }
+
+    .experienceHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .experienceNumber {
+        font-size: 3rem;
+    }
+
+    .experienceTitle {
+        font-size: 1.5rem;
+    }
+
+    .experienceTitleWrapper {
+        width: 100%;
+    }
+
+    .metaInfo {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .actionButtons {
+        flex-direction: column;
+    }
+
+    .actionBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .experienceCard {
+        padding: 1rem;
+    }
+
+    .experienceNumber {
+        font-size: 2.5rem;
+    }
+
+    .experienceTitle {
+        font-size: 1.25rem;
+    }
+
+    .organization {
+        font-size: 0.95rem;
+    }
+
+    .experienceDescription {
+        font-size: 1rem;
+    }
+
+    .techTags {
+        gap: 0.5rem;
+    }
+
+    .techTag {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .badges {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
