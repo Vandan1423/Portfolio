@@ -11,6 +11,7 @@ import NavigationScreen from "./components/UI/NavigationScreen";
 import PlanetDetailScene from "./components/3D/PlanetDetailScene";
 import AboutMe from "./pages/AboutMe/AboutMe";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
+import Projects from "./pages/Projects/Projects";
 import "./App.css";
 
 function App() {
@@ -191,7 +192,7 @@ function App() {
         //     {currentPhase !== "planet-detail" && (
         //         <Canvas
         //             camera={{
-        //                 position: 
+        //                 position:
         //                     currentPhase === "cockpit" || currentPhase === "launching"
         //                         ? [0, 0, -0.5]
         //                         : [0, 15, 45],
@@ -449,7 +450,9 @@ function App() {
         //         </>
         //     )}
         // </div>
-        <AboutMe />
+        <>
+            <Projects />
+        </>
     );
 }
 
