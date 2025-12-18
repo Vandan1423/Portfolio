@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import PageTemplate from '../../components/layouts/PageTemplate/PageTemplate';
-import styles from './Technologies.module.css';
-import technologiesData from '../../data/technologiesData';
-
-// Import section components
 import TechnologiesHero from './sections/TechnologiesHero';
 import TechnologyTree from './sections/TechnologyTree';
 import CategoryFilters from './sections/CategoryFilters';
 import TechnologyCards from './sections/TechnologyCards';
+import technologiesData from '../../data/technologiesData';
+import styles from './Technologies.module.css';
 
-/**
- * Technologies Page Component
- * Main page component that orchestrates all technology-related sections
- * Manages state for selected tech, highlights, and active category filter
- */
 const Technologies = () => {
     const [selectedTech, setSelectedTech] = useState(null);
     const [highlightedTechs, setHighlightedTechs] = useState([]);
     const [activeCategory, setActiveCategory] = useState(null);
 
-    // Scroll to tech details when selected
+    // Auto-scroll to selected tech details
     useEffect(() => {
         if (selectedTech) {
             const element = document.getElementById(`tech-${selectedTech.id}`);
@@ -29,13 +22,10 @@ const Technologies = () => {
 
     const handleNodeClick = (tech) => {
         if (tech.technologies) {
-            // Clicked a category
             handleCategoryFilter(tech.id);
         } else {
-            // Clicked a technology
             setSelectedTech(tech);
-            const relatedIds = tech.relatedTo || [];
-            setHighlightedTechs([tech.id, ...relatedIds]);
+            setHighlightedTechs([tech.id, ...(tech.relatedTo || [])]);
         }
     };
 
@@ -58,13 +48,10 @@ const Technologies = () => {
             className={styles.pageContainer}
         >
             <div className={styles.container}>
-                {/* Background */}
-                <div className={styles.spaceBackground}></div>
+                <div className={styles.spaceBackground} />
 
-                {/* Hero Section */}
                 <TechnologiesHero />
 
-                {/* Section 1: Interactive Tree Visualization */}
                 <TechnologyTree
                     technologiesData={technologiesData}
                     selectedTech={selectedTech}
@@ -73,14 +60,12 @@ const Technologies = () => {
                     onClearSelection={clearSelection}
                 />
 
-                {/* Section 2: Category Filters */}
                 <CategoryFilters
                     categories={technologiesData.categories}
                     activeCategory={activeCategory}
                     onCategoryFilter={handleCategoryFilter}
                 />
 
-                {/* Section 3: Technology Details */}
                 <TechnologyCards
                     technologiesData={technologiesData}
                     activeCategory={activeCategory}

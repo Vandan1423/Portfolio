@@ -13,13 +13,13 @@
     --gradient-primary: linear-gradient(135deg, #4f46e5, #818cf8);
 }
 
-/* ===== PAGE CONTAINER (PageTemplate wrapper) ===== */
+/* Page Container */
 .pageContainer {
     padding: 0;
     margin: 0;
 }
 
-/* ===== CONTAINER ===== */
+/* Main Container */
 .container {
     min-height: 100vh;
     background: var(--color-space-deep);
@@ -27,11 +27,10 @@
     padding: 0;
     position: relative;
     overflow-x: hidden;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* ===== BACKGROUND ===== */
+/* Background */
 .spaceBackground {
     position: fixed;
     top: 0;
@@ -61,7 +60,7 @@
         );
 }
 
-/* ===== HERO SECTION ===== */
+/* Hero Section */
 .heroSection {
     position: relative;
     height: 500px;
@@ -180,7 +179,7 @@
     text-transform: uppercase;
 }
 
-/* ===== SECTION LAYOUT ===== */
+/* Section Layout */
 .treeSection,
 .filterSection,
 .detailsSection {
@@ -230,7 +229,7 @@
     border-radius: 2px;
 }
 
-/* ===== TREE VISUALIZATION ===== */
+/* Tree Visualization */
 .treeContainer {
     background: rgba(26, 26, 46, 0.7);
     backdrop-filter: blur(20px) saturate(180%);
@@ -306,7 +305,7 @@
     font-size: 0.95rem;
 }
 
-/* ===== CATEGORY FILTERS ===== */
+/* Category Filters */
 .categoryFilters {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -404,7 +403,7 @@
     font-weight: 600;
 }
 
-/* ===== TECH DETAIL CARDS ===== */
+/* Tech Detail Cards */
 .techGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -573,7 +572,7 @@
     font-weight: 500;
 }
 
-/* ===== ANIMATIONS ===== */
+/* Animations */
 @keyframes fadeSlideUp {
     from {
         opacity: 0;
@@ -685,7 +684,7 @@
     }
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
+/* Responsive Design */
 @media (max-width: 1024px) {
     .treeSection,
     .filterSection,

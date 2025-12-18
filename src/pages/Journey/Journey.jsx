@@ -11,14 +11,19 @@ const Journey = () => {
     const [visibleItems, setVisibleItems] = useState([]);
     const itemRefs = useRef([]);
 
+    // Observe timeline cards to trigger animations on scroll
     useEffect(() => {
+        const VISIBILITY_THRESHOLD = 0.5;
+        const HIDE_THRESHOLD = 0.3;
+
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     const index = parseInt(entry.target.dataset.index);
-                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+
+                    if (entry.isIntersecting && entry.intersectionRatio >= VISIBILITY_THRESHOLD) {
                         setVisibleItems((prev) => [...new Set([...prev, index])]);
-                    } else if (!entry.isIntersecting || entry.intersectionRatio < 0.3) {
+                    } else if (!entry.isIntersecting || entry.intersectionRatio < HIDE_THRESHOLD) {
                         setVisibleItems((prev) => prev.filter((i) => i !== index));
                     }
                 });
@@ -41,42 +46,40 @@ const Journey = () => {
             title="My Journey"
             subtitle="A timeline of growth, learning, and achievement"
         >
-            {/* Hero Section */}
             <section className={styles.heroSection}>
                 <div className={styles.heroContent}>
                     <div className={styles.heroTitle}>
                         <h1 className={styles.mainTitle}>My Journey</h1>
-                        <div className={styles.titleUnderline}></div>
+                        <div className={styles.titleUnderline} />
                     </div>
                     <p className={styles.heroSubtitle}>
                         From curious beginner to passionate developer - a timeline of growth, learning, and achievement
                     </p>
                     <div className={styles.heroStars}>
-                        <span className={styles.heroStar} style={{ '--star-delay': '0s' }}></span>
-                        <span className={styles.heroStar} style={{ '--star-delay': '0.3s' }}></span>
-                        <span className={styles.heroStar} style={{ '--star-delay': '0.6s' }}></span>
+                        <span className={styles.heroStar} style={{ '--star-delay': '0s' }} />
+                        <span className={styles.heroStar} style={{ '--star-delay': '0.3s' }} />
+                        <span className={styles.heroStar} style={{ '--star-delay': '0.6s' }} />
                     </div>
                 </div>
                 <div className={styles.scrollIndicator}>
-                    <div className={styles.scrollArrow}></div>
+                    <div className={styles.scrollArrow} />
                     <span className={styles.scrollText}>Scroll to Explore</span>
                 </div>
             </section>
 
-            {/* Timeline Section */}
             <section className={styles.timelineSection}>
                 <div className={styles.timelineWrapper}>
-                    {/* Animated Path */}
                     <div className={styles.timelinePath}>
-                        <div className={styles.pathLine}></div>
-                        <div className={styles.pathGlow}></div>
+                        <div className={styles.pathLine} />
+                        <div className={styles.pathGlow} />
                     </div>
 
-                    {/* Timeline Items */}
                     <div className={styles.timelineItems}>
                         {journeyData.map((item, index) => {
                             const sectionId = `journey-${index + 1}`;
                             const isLeft = index % 2 === 0;
+                            const isVisible = visibleItems.includes(index);
+
                             return (
                                 <div
                                     key={index}
@@ -87,16 +90,15 @@ const Journey = () => {
                                     }}
                                     data-index={index}
                                     className={`${styles.timelineCard} ${isLeft ? styles.left : styles.right} ${
-                                        visibleItems.includes(index) ? styles.visible : ''
+                                        isVisible ? styles.visible : ''
                                     }`}
                                     style={{
                                         '--card-delay': `${index * 0.15}s`,
                                         '--card-color': item.color,
                                     }}
                                 >
-                                    {/* Card Content */}
                                     <div className={styles.cardContent}>
-                                        <div className={styles.cardGradientBorder}></div>
+                                        <div className={styles.cardGradientBorder} />
 
                                         <div className={styles.cardHeader}>
                                             <span className={styles.cardCategory}>{item.category}</span>
@@ -106,21 +108,19 @@ const Journey = () => {
                                         <h3 className={styles.cardTitle}>{item.title}</h3>
                                         <p className={styles.cardDescription}>{item.description}</p>
 
-                                        {/* Particle Effects */}
                                         <div className={styles.cardParticles}>
-                                            <div className={`${styles.particle} ${styles.particle1}`}></div>
-                                            <div className={`${styles.particle} ${styles.particle2}`}></div>
-                                            <div className={`${styles.particle} ${styles.particle3}`}></div>
+                                            <div className={`${styles.particle} ${styles.particle1}`} />
+                                            <div className={`${styles.particle} ${styles.particle2}`} />
+                                            <div className={`${styles.particle} ${styles.particle3}`} />
                                         </div>
                                     </div>
 
-                                    {/* Card Node */}
                                     <div className={styles.cardNode}>
-                                        <div className={styles.nodeOuterRing}></div>
+                                        <div className={styles.nodeOuterRing} />
                                         <div className={styles.nodeInnerCircle}>
                                             <span className={styles.nodeIcon}>{item.icon}</span>
                                         </div>
-                                        <div className={styles.nodePulse}></div>
+                                        <div className={styles.nodePulse} />
                                     </div>
                                 </div>
                             );
@@ -129,11 +129,15 @@ const Journey = () => {
                 </div>
             </section>
 
-            {/* Vision Section */}
             <section className={styles.visionSection}>
                 <div className={styles.visionContent}>
                     <div className={styles.infinityContainer}>
-                        <svg className={styles.infinitySvg} viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <svg
+                            className={styles.infinitySvg}
+                            viewBox="0 0 200 100"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-label="Infinity symbol"
+                        >
                             <path
                                 className={styles.infinityPath}
                                 d="M 50,50 C 50,20 70,20 100,50 C 130,80 150,80 150,50 C 150,20 130,20 100,50 C 70,80 50,80 50,50"

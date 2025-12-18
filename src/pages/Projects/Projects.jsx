@@ -15,25 +15,22 @@ const Projects = () => {
     return (
         <PageTemplate
             title="Projects"
-            subtitle="Explore my journey through code, innovation, and problem-solving"
+            subtitle="Explore my journey trough code, innovation, and problem-solving"
         >
             <section className={styles.projectsSection}>
-                {projectsData.map((project, index) => {
-                    const sectionId = `project-${index + 1}`;
-                    return (
-                        <div
-                            key={project.id}
-                            ref={registerRef(sectionId)}
-                        >
-                            <ProjectCard
-                                project={project}
-                                index={index}
-                                isExpanded={isExpanded(project.id)}
-                                onToggle={() => toggle(project.id)}
-                            />
-                        </div>
-                    );
-                })}
+                {projectsData.map((project, index) => (
+                    <div
+                        key={project.id}
+                        ref={registerRef(`project-${index + 1}`)}
+                    >
+                        <ProjectCard
+                            project={project}
+                            index={index}
+                            isExpanded={isExpanded(project.id)}
+                            onToggle={() => toggle(project.id)}
+                        />
+                    </div>
+                ))}
             </section>
         </PageTemplate>
     );
