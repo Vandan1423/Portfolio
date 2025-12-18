@@ -1,0 +1,52 @@
+.communicationViz {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.vizSvg {
+    width: 100%;
+    height: auto;
+}
+
+.messageIcon {
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.messageRing {
+    animation: ringPulse 2s ease-in-out infinite;
+}
+
+.floatingParticle {
+    animation: float 4s ease-in-out infinite;
+    animation-delay: var(--particle-delay, 0s);
+    transform-origin: 200px 200px;
+}
+
+.wave {
+    animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes ringPulse {
+    0%, 100% { r: 80; opacity: 0.3; }
+    50% { r: 100; opacity: 0.1; }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: rotate(var(--particle-angle, 0deg)) translateX(0);
+    }
+    50% {
+        transform: rotate(var(--particle-angle, 0deg)) translateX(50px);
+    }
+}
+
+@keyframes wave {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+}

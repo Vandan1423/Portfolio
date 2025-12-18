@@ -81,3 +81,7 @@ h6 {
         display: none !important;
     }
 }
+
+.p-4{
+    padding: 0.7rem;
+}

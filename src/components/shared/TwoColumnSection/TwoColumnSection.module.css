@@ -1,0 +1,49 @@
+.section {
+    margin-bottom: 4rem;
+    padding: 2rem;
+    background: rgba(26, 31, 58, 0.3);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.twoColumn {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.leftContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.rightContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .twoColumn {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .reverseOnMobile {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .twoColumn {
+        gap: 1.5rem;
+    }
+}

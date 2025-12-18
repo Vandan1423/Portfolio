@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import styles from "./Planetinfopanel.module.css";
 
 /**
  * PlanetInfoPanel Component
@@ -20,15 +21,13 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="absolute right-8 top-1/2 transform -translate-y-1/2 z-40 w-[550px]"
+            className={styles.container}
         >
             {/* Main Panel Container */}
             <div
-                className="relative bg-black/85 backdrop-blur-md border-2"
+                className={styles.panel}
                 style={{
                     borderColor: `${planetColor}60`,
-                    clipPath:
-                        "polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))",
                     boxShadow: `
                         0 0 30px ${planetColor}30,
                         inset 0 0 30px ${planetColor}10
@@ -37,18 +36,18 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
             >
                 {/* Corner Accents - inside padding area */}
                 <div
-                    className="absolute top-3 left-3 w-16 h-16 border-t-2 border-l-2"
+                    className={styles.cornerTopLeft}
                     style={{ borderColor: `${planetColor}80` }}
                 />
                 <div
-                    className="absolute bottom-3 right-3 w-16 h-16 border-b-2 border-r-2"
+                    className={styles.cornerBottomRight}
                     style={{ borderColor: `${planetColor}80` }}
                 />
 
                 {/* Scan Line Effect */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none p-4">
+                <div className={styles.scanLineContainer}>
                     <motion.div
-                        className="w-full h-0.5"
+                        className={styles.scanLine}
                         style={{ backgroundColor: `${planetColor}40` }}
                         animate={{ y: [0, 500, 0] }}
                         transition={{
@@ -61,37 +60,36 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
 
                 {/* Grid Pattern Background */}
                 <div
-                    className="absolute inset-0 opacity-5 pointer-events-none"
+                    className={styles.gridPattern}
                     style={{
                         backgroundImage: `
                             linear-gradient(to right, ${planetColor} 1px, transparent 1px),
                             linear-gradient(to bottom, ${planetColor} 1px, transparent 1px)
                         `,
-                        backgroundSize: "15px 15px",
                     }}
                 />
 
                 {/* Content with INCREASED PADDING */}
-                <div className="relative" style={{ padding: "25px" }}>
+                <div className={styles.content}>
                     {/* Header */}
-                    <div className="mb-6 pb-4 border-b border-cyan-500/30">
+                    <div className={styles.header}>
                         {/* Section Label */}
-                        <div className="flex items-center space-x-2 mb-2">
+                        <div className={styles.sectionLabel}>
                             <div
-                                className="w-2 h-2 rounded-full animate-pulse"
+                                className={styles.statusIndicator}
                                 style={{
                                     backgroundColor: planetColor,
                                     boxShadow: `0 0 10px ${planetColor}`,
                                 }}
                             />
-                            <span className="text-cyan-400/70 font-mono text-xs tracking-[0.2em] uppercase">
+                            <span className={styles.sectionLabelText}>
                                 Section Data
                             </span>
                         </div>
 
                         {/* Title */}
                         <h2
-                            className="text-2xl font-bold font-mono tracking-wide"
+                            className={styles.title}
                             style={{
                                 color: planetColor,
                                 textShadow: `0 0 20px ${planetColor}80`,
@@ -101,13 +99,13 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
                         </h2>
 
                         {/* Subtitle */}
-                        <p className="text-cyan-300/60 font-mono text-sm mt-1">
+                        <p className={styles.subtitle}>
                             {planetData.subtitle}
                         </p>
 
                         {/* Animated underline */}
                         <motion.div
-                            className="h-0.5 mt-3"
+                            className={styles.titleUnderline}
                             style={{
                                 background: `linear-gradient(to right, ${planetColor}, transparent)`,
                             }}
@@ -119,22 +117,21 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
 
                     {/* Scrollable Content Area */}
                     <div
-                        className="max-h-[380px] overflow-y-auto pr-3 space-y-5"
+                        className={styles.scrollableContent}
                         style={{
-                            scrollbarWidth: "thin",
                             scrollbarColor: `${planetColor}50 transparent`,
                         }}
                     >
                         {/* Description */}
                         <div>
-                            <p className="text-gray-300 text-sm leading-relaxed font-light">
+                            <p className={styles.description}>
                                 {planetData.description}
                             </p>
                         </div>
 
                         {/* Stats Row */}
                         {planetData.stats && (
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className={styles.statsGrid}>
                                 {planetData.stats.map((stat, index) => (
                                     <motion.div
                                         key={stat.label}
@@ -143,22 +140,22 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
                                         transition={{
                                             delay: 0.4 + index * 0.1,
                                         }}
-                                        className="text-center p-3 rounded border"
+                                        className={styles.statCard}
                                         style={{
                                             borderColor: `${planetColor}30`,
                                             background: `${planetColor}10`,
                                         }}
                                     >
-                                        <span className="text-xl mb-1 block">
+                                        <span className={styles.statIcon}>
                                             {stat.icon}
                                         </span>
                                         <p
-                                            className="text-lg font-bold font-mono"
+                                            className={styles.statValue}
                                             style={{ color: planetColor }}
                                         >
                                             {stat.value}
                                         </p>
-                                        <p className="text-[10px] text-gray-400 font-mono uppercase tracking-wider">
+                                        <p className={styles.statLabel}>
                                             {stat.label}
                                         </p>
                                     </motion.div>
@@ -168,8 +165,8 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
 
                         {/* Details List */}
                         {planetData.details && (
-                            <div className="space-y-2">
-                                <p className="text-cyan-400/70 font-mono text-xs tracking-wider uppercase mb-3">
+                            <div className={styles.detailsContainer}>
+                                <p className={styles.detailsTitle}>
                                     Quick Info
                                 </p>
                                 {planetData.details.map((detail, index) => (
@@ -180,13 +177,13 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
                                         transition={{
                                             delay: 0.5 + index * 0.05,
                                         }}
-                                        className="flex justify-between items-center py-2 border-b border-cyan-500/10"
+                                        className={styles.detailRow}
                                     >
-                                        <span className="text-gray-400 font-mono text-xs uppercase">
+                                        <span className={styles.detailLabel}>
                                             {detail.label}
                                         </span>
                                         <span
-                                            className="font-mono text-sm text-right"
+                                            className={styles.detailValue}
                                             style={{ color: planetColor }}
                                         >
                                             {detail.value}
@@ -198,11 +195,11 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
 
                         {/* Highlights */}
                         {planetData.highlights && (
-                            <div>
-                                <p className="text-cyan-400/70 font-mono text-xs tracking-wider uppercase mb-3">
+                            <div className={styles.highlightsContainer}>
+                                <p className={styles.detailsTitle}>
                                     Highlights
                                 </p>
-                                <ul className="space-y-2">
+                                <ul className={styles.highlightsList}>
                                     {planetData.highlights.map(
                                         (highlight, index) => (
                                             <motion.li
@@ -212,17 +209,17 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
                                                 transition={{
                                                     delay: 0.6 + index * 0.05,
                                                 }}
-                                                className="flex items-start space-x-3 text-sm"
+                                                className={styles.highlightItem}
                                             >
                                                 <span
-                                                    className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                                    className={styles.highlightDot}
                                                     style={{
                                                         backgroundColor:
                                                             planetColor,
                                                         boxShadow: `0 0 6px ${planetColor}`,
                                                     }}
                                                 />
-                                                <span className="text-gray-300">
+                                                <span className={styles.highlightText}>
                                                     {highlight}
                                                 </span>
                                             </motion.li>
@@ -234,11 +231,11 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
 
                         {/* Links (if available) */}
                         {planetData.links && (
-                            <div className="pt-3">
-                                <p className="text-cyan-400/70 font-mono text-xs tracking-wider uppercase mb-3">
+                            <div className={styles.linksContainer}>
+                                <p className={styles.detailsTitle}>
                                     External Links
                                 </p>
-                                <div className="flex flex-wrap gap-2">
+                                <div className={styles.linksGrid}>
                                     {planetData.links.map((link, index) => (
                                         <motion.a
                                             key={link.label}
@@ -250,9 +247,7 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
                                             transition={{
                                                 delay: 0.7 + index * 0.1,
                                             }}
-                                            className="px-3 py-1.5 text-xs font-mono uppercase tracking-wider
-                                                border rounded transition-all duration-300
-                                                hover:shadow-[0_0_15px_rgba(0,255,255,0.4)]"
+                                            className={styles.linkButton}
                                             style={{
                                                 borderColor: `${planetColor}50`,
                                                 color: planetColor,
@@ -270,19 +265,17 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
                     </div>
 
                     {/* Footer with Back Button */}
-                    <div className="mt-5 pt-4 border-t border-cyan-500/20">
+                    <div className={styles.footer}>
                         <button
                             onClick={onBack}
-                            className="w-full py-3 font-mono text-sm uppercase tracking-wider
-                                border rounded transition-all duration-300 group
-                                hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]"
+                            className={styles.backButton}
                             style={{
                                 borderColor: `${planetColor}50`,
                                 color: planetColor,
                             }}
                         >
-                            <span className="flex items-center justify-center space-x-2">
-                                <span className="group-hover:-translate-x-1 transition-transform">
+                            <span className={styles.backButtonContent}>
+                                <span className={styles.backButtonArrow}>
                                     ←
                                 </span>
                                 <span>Return to System</span>

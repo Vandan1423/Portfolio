@@ -2,10 +2,10 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, Stars } from "@react-three/drei";
 import { useRef, useState, useEffect, useMemo } from "react";
 import * as THREE from "three";
-import { getPlanetData } from "../../data/planetData";
+import { getSectionData } from "../../data/sectionData";
 import PlanetInfoPanel from "../UI/PlanetInfoPanel";
 import useKeyboardShortcut from "../../hooks/useKeyboardShortcut";
-import OrbitingSpacecraft from "./OrbitingSpacecraft";
+import DockingSpacecraft from "./DockingSpacecraft";
 
 /**
  * PlanetDetailScene Component
@@ -17,55 +17,62 @@ import OrbitingSpacecraft from "./OrbitingSpacecraft";
  * - Glowing ring around planet
  * - 3D connecting line from planet to info panel
  * - Cyberpunk themed info panel
+ * - Docking sequence for navigation
  *
  * Props:
  * @param {object} planet - Planet object with name, modelPath, scale, orbitColor
  * @param {function} onBack - Callback to return to solar system view
- * @param {function} onOrbitComplete - Callback when orbit sequence completes
+ * @param {function} onDockComplete - Callback when docking sequence completes
  */
-const PlanetDetailScene = ({ planet, onBack, onOrbitComplete }) => {
-    const planetData = getPlanetData(planet?.name);
+const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
+    // Get section data using both systemId and planet's sectionId
+    console.log("🔍 PlanetDetailScene - systemId:", systemId);
+    console.log("🔍 PlanetDetailScene - planet:", planet);
+    console.log("🔍 PlanetDetailScene - planet.sectionId:", planet?.sectionId);
 
-    // Keyboard shortcut for orbit sequence (O key)
-    const { isActive: isOrbitTriggered, setIsActive: setOrbitTriggered } =
-        useKeyboardShortcut("o");
+    const planetData = getSectionData(systemId, planet?.sectionId);
+    console.log("🔍 PlanetDetailScene - planetData:", planetData);
 
-    // Keyboard shortcut for cancelling orbit (X key)
-    const { isActive: isCancelOrbit, setIsActive: setCancelOrbit } =
+    // Keyboard shortcut for docking sequence (D key)
+    const { isActive: isDockTriggered, setIsActive: setDockTriggered } =
+        useKeyboardShortcut("d");
+
+    // Keyboard shortcut for cancelling docking (X key)
+    const { isActive: isCancelDock, setIsActive: setCancelDock } =
         useKeyboardShortcut("x");
 
-    // Orbit state
-    const [isOrbiting, setIsOrbiting] = useState(false);
+    // Docking state
+    const [isDocking, setIsDocking] = useState(false);
 
-    // Handle orbit trigger
+    // Handle docking trigger
     useEffect(() => {
-        if (isOrbitTriggered && !isOrbiting) {
-            console.log("🛸 Orbit sequence triggered!");
+        if (isDockTriggered && !isDocking) {
+            console.log("🚀 Docking sequence triggered!");
             const timer = setTimeout(() => {
-                setIsOrbiting(true);
-                setOrbitTriggered(false);
+                setIsDocking(true);
+                setDockTriggered(false);
             }, 0);
             return () => clearTimeout(timer);
         }
-    }, [isOrbitTriggered, isOrbiting, setOrbitTriggered]);
+    }, [isDockTriggered, isDocking, setDockTriggered]);
 
-    // Handle orbit cancellation
+    // Handle docking cancellation
     useEffect(() => {
-        if (isCancelOrbit && isOrbiting) {
-            console.log("❌ Orbit cancelled");
+        if (isCancelDock && isDocking) {
+            console.log("❌ Docking cancelled");
             const timer = setTimeout(() => {
-                setIsOrbiting(false);
-                setCancelOrbit(false);
+                setIsDocking(false);
+                setCancelDock(false);
             }, 0);
             return () => clearTimeout(timer);
         }
-    }, [isCancelOrbit, isOrbiting, setCancelOrbit]);
+    }, [isCancelDock, isDocking, setCancelDock]);
 
-    // Handle orbit completion
-    const handleOrbitComplete = () => {
-        setIsOrbiting(false);
-        if (onOrbitComplete) {
-            onOrbitComplete(planet);
+    // Handle docking completion
+    const handleDockComplete = () => {
+        setIsDocking(false);
+        if (onDockComplete) {
+            onDockComplete(planet);
         }
     };
 
@@ -101,8 +108,8 @@ const PlanetDetailScene = ({ planet, onBack, onOrbitComplete }) => {
                 <PlanetDetailContent
                     planet={planet}
                     planetData={planetData}
-                    isOrbiting={isOrbiting}
-                    onOrbitComplete={handleOrbitComplete}
+                    isDocking={isDocking}
+                    onDockComplete={handleDockComplete}
                 />
             </Canvas>
 
@@ -155,25 +162,25 @@ const PlanetDetailScene = ({ planet, onBack, onOrbitComplete }) => {
                 </div>
             </div>
 
-            {/* Orbit Hint */}
-            {!isOrbiting && (
+            {/* Docking Hint */}
+            {!isDocking && (
                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-40">
                     <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
                         <p className="text-cyan-400 text-sm text-center">
-                            Press <span className="font-bold text-white">O</span> to
-                            orbit planet • Press{" "}
+                            Press <span className="font-bold text-white">D</span> to
+                            dock with planet • Press{" "}
                             <span className="font-bold text-white">X</span> to cancel
                         </p>
                     </div>
                 </div>
             )}
 
-            {/* Orbiting Status */}
-            {isOrbiting && (
+            {/* Docking Status */}
+            {isDocking && (
                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-40">
                     <div className="bg-orange-500/20 backdrop-blur-md px-6 py-3 rounded-lg border border-orange-500/50">
                         <p className="text-orange-400 text-sm text-center font-bold">
-                            🛸 Orbiting... Press{" "}
+                            🚀 Docking sequence initiated... Press{" "}
                             <span className="font-bold text-white">X</span> to cancel
                         </p>
                     </div>
@@ -187,8 +194,8 @@ const PlanetDetailScene = ({ planet, onBack, onOrbitComplete }) => {
  * PlanetDetailContent - 3D Scene Contents
  * Handles the Three.js rendering of planet, glow, line, etc.
  */
-const PlanetDetailContent = ({ planet, planetData, isOrbiting, onOrbitComplete }) => {
-    // Calculate planet scale for spacecraft orbit
+const PlanetDetailContent = ({ planet, planetData, isDocking, onDockComplete }) => {
+    // Calculate planet scale for spacecraft docking
     const planetScale = useMemo(() => {
         return planet.scale < 1 ? planet.scale * 200 : planet.scale * 1.2;
     }, [planet.scale]);
@@ -224,11 +231,12 @@ const PlanetDetailContent = ({ planet, planetData, isOrbiting, onOrbitComplete }
                     color="#00ffff"
                 />
 
-                {/* Orbiting Spacecraft */}
-                <OrbitingSpacecraft
-                    isOrbiting={isOrbiting}
+                {/* Docking Spacecraft */}
+                <DockingSpacecraft
+                    isDocking={isDocking}
                     planetScale={planetScale}
-                    onOrbitComplete={onOrbitComplete}
+                    planetPosition={new THREE.Vector3(0, 0, 0)}
+                    onDockComplete={onDockComplete}
                 />
             </group>
         </>
@@ -326,10 +334,11 @@ const InteractivePlanet = ({ planet, planetData }) => {
         return baseScale * scaleMultiplier;
     }, [planet.scale, planetData]);
 
-    // Get vertical offset from planet data (default: 0)
-    const verticalOffset = useMemo(() => {
-        return planetData?.verticalOffset || 0;
-    }, [planetData]);
+    // Get position offset from planet's detailOffset property [x, y, z]
+    // Default to [0, 0, 0] if not specified
+    const positionOffset = useMemo(() => {
+        return planet?.detailOffset || [0, 0, 0];
+    }, [planet]);
 
     // Get axial tilt from planet data (default: 0) and convert to radians
     const axialTilt = useMemo(() => {
@@ -342,7 +351,7 @@ const InteractivePlanet = ({ planet, planetData }) => {
             ref={planetRef}
             object={clonedScene}
             scale={normalizedScale}
-            position={[0, verticalOffset, 0]}
+            position={positionOffset}
             rotation={[0, 0, axialTilt]} // Apply axial tilt on Z-axis
         />
     );

@@ -1,0 +1,97 @@
+/* SVG Orbital System */
+.orbitalSystem {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+}
+
+/* Central Planet with rotation */
+.centralPlanet {
+    animation: planetPulse 4s ease-in-out infinite;
+    transform-origin: 200px 200px;
+}
+
+@keyframes planetPulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: url(#glow);
+    }
+    50% {
+        transform: scale(1.05);
+        filter: url(#glow) brightness(1.2);
+    }
+}
+
+/* Orbit rings remain static but visible */
+.orbitRing {
+    opacity: 0.6;
+}
+
+/* Satellite groups - each rotates around center */
+.satelliteGroup1 {
+    animation: orbit 10s linear infinite;
+    transform-origin: 200px 200px;
+}
+
+.satelliteGroup2 {
+    animation: orbit 15s linear infinite reverse;
+    transform-origin: 200px 200px;
+}
+
+.satelliteGroup3 {
+    animation: orbit 20s linear infinite;
+    transform-origin: 200px 200px;
+}
+
+@keyframes orbit {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Comet trail animation */
+.cometTrail {
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: cometDraw 2s ease-out infinite;
+}
+
+@keyframes cometDraw {
+    0% {
+        stroke-dashoffset: 50;
+        opacity: 0.3;
+    }
+    50% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+    100% {
+        stroke-dashoffset: -50;
+        opacity: 0.3;
+    }
+}
+
+/* Satellites pulse slightly */
+.satellite {
+    animation: satellitePulse 3s ease-in-out infinite;
+}
+
+@keyframes satellitePulse {
+    0%, 100% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .orbitalSystem {
+        width: 300px;
+        height: 300px;
+    }
+}

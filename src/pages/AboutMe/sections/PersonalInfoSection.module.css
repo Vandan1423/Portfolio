@@ -1,0 +1,168 @@
+/* Info Box */
+.infoBox {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.infoBox::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #4F46E5, #818CF8);
+    border-radius: 20px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s;
+    filter: blur(10px);
+}
+
+.infoBox:hover::before {
+    opacity: 0.3;
+}
+
+.infoBox:hover {
+    border-color: rgba(79, 70, 229, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(79, 70, 229, 0.3);
+}
+
+/* Personal Info Section */
+.name {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+}
+
+.tagline {
+    font-size: 1.5rem;
+    color: #818CF8;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.description {
+    font-size: 1.1rem;
+    color: #E2E8F0;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.infoGrid {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-size: 0.9rem;
+    color: #818CF8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+.value {
+    font-size: 1.1rem;
+    color: #F8FAFC;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.value:hover {
+    color: #4F46E5;
+    transform: translateX(5px);
+}
+
+.socialLinks {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.socialBtn {
+    padding: 0.8rem 1.5rem;
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 50px;
+    color: #F8FAFC;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.socialBtn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #4F46E5, #818CF8);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.socialBtn:hover {
+    transform: translateY(-3px);
+    border-color: #4F46E5;
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+
+.socialBtn:hover::before {
+    opacity: 0.1;
+}
+
+.icon {
+    font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .infoBox {
+        padding: 2rem;
+    }
+
+    .name {
+        font-size: 2rem;
+    }
+
+    .tagline {
+        font-size: 1.2rem;
+    }
+
+    .socialLinks {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .name {
+        font-size: 1.5rem;
+    }
+
+    .tagline {
+        font-size: 1.2rem;
+    }
+}

@@ -1,0 +1,51 @@
+.tag {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.default {
+    background: rgba(102, 126, 234, 0.15);
+    color: #667eea;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.tech {
+    background: rgba(0, 217, 255, 0.1);
+    color: #00d9ff;
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.1);
+}
+
+.tech:hover {
+    background: rgba(0, 217, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+}
+
+.skill {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.category {
+    background: rgba(255, 0, 255, 0.1);
+    color: #ff00ff;
+    border: 1px solid rgba(255, 0, 255, 0.3);
+}
+
+.success {
+    background: rgba(0, 255, 102, 0.1);
+    color: #00ff66;
+    border: 1px solid rgba(0, 255, 102, 0.3);
+}
+
+.warning {
+    background: rgba(255, 170, 0, 0.1);
+    color: #ffaa00;
+    border: 1px solid rgba(255, 170, 0, 0.3);
+}

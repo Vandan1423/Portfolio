@@ -1,0 +1,80 @@
+/* Tech Visualization - Terminal Style Code Editor */
+.techVisualization {
+    width: 100%;
+    max-width: 450px;
+    background: rgba(15, 15, 30, 0.95);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.editorHeader {
+    padding: 0.8rem 1rem;
+    background: rgba(79, 70, 229, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+.editorDots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.fileName {
+    font-size: 0.9rem;
+    color: #94A3B8;
+    font-family: 'Courier New', monospace;
+    flex: 1;
+}
+
+.codeEditor {
+    padding: 1.5rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #F8FAFC;
+    min-height: 200px;
+}
+
+.codeContent {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: #818CF8;
+    animation: cursorBlink 1s infinite;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+}
+
+@keyframes cursorBlink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .techVisualization {
+        max-width: 100%;
+    }
+    
+    .codeEditor {
+        padding: 1rem;
+        font-size: 0.8rem;
+    }
+}

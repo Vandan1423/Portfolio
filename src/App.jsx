@@ -1,7 +1,9 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useState, useRef, useEffect } from "react";
 import * as THREE from "three";
+import { useNavigation } from "./context/NavigationContext";
+import { useStarSystem } from "./context/StarSystemContext";
 import CockpitInterior from "./components/3D/CockpitInterior";
 import Wormhole from "./components/3D/Wormhole";
 import LaunchSequence from "./components/3D/LaunchSequence";
@@ -15,447 +17,380 @@ import Projects from "./pages/Projects/Projects";
 import Experience from "./pages/Experience/Experience";
 import Contact from "./pages/Contact/Contact";
 import Technologies from "./pages/Technologies/Technologies";
+import Journey from "./pages/Journey/Journey";
+import HelpButton from "./components/UI/HelpButton";
 import "./App.css";
 
-function App() {
-    // Start with cockpit interior on website load
-    const [currentPhase, setCurrentPhase] = useState("cockpit");
-    // Phases: 'cockpit', 'launching', 'exploration', 'planet-detail'
+/**
+ * SmoothCameraTransition Component
+ * Handles smooth camera transitions when returning to the star system
+ */
+const SmoothCameraTransition = ({ targetPosition, targetLookAt, isTransitioningRef, onComplete }) => {
+    const { camera } = useThree();
+    const targetPosRef = useRef(new THREE.Vector3(...targetPosition));
+    const targetLookRef = useRef(new THREE.Vector3(...targetLookAt));
 
-    const [systemStatus, setSystemStatus] = useState("EXPLORATION MODE");
-    const [velocityFactor, setVelocityFactor] = useState(0);
-    const spacecraftRef = useRef();
+    useFrame(() => {
+        if (!isTransitioningRef.current) return;
+
+        // Smoothly lerp camera position
+        camera.position.lerp(targetPosRef.current, 0.05);
+
+        // Smoothly lerp camera lookAt
+        const currentLookAt = new THREE.Vector3();
+        camera.getWorldDirection(currentLookAt);
+        currentLookAt.add(camera.position);
+
+        const newLookAt = new THREE.Vector3();
+        newLookAt.lerpVectors(currentLookAt, targetLookRef.current, 0.05);
+        camera.lookAt(newLookAt);
+
+        // Check if we're close enough to target
+        const distanceToTarget = camera.position.distanceTo(targetPosRef.current);
+        if (distanceToTarget < 0.5) {
+            camera.position.copy(targetPosRef.current);
+            camera.lookAt(targetLookRef.current);
+            isTransitioningRef.current = false;
+            if (onComplete) onComplete();
+        }
+    });
+
+    return null;
+};
+
+function App() {
+    const { currentPage, onNavigate } = useNavigation();
+    const {
+        currentSystem,
+        destinationSystem,
+        selectedPlanet,
+        travelPhase,
+        setTravelPhase,
+        setSelectedPlanet,
+        setTravelDestination,
+        setCurrentSystemId,
+        starSystems
+    } = useStarSystem();
+
+    const [currentPhase, setCurrentPhase] = useState("cockpit");
+    const [isTransitioning, setIsTransitioning] = useState(false);
+
+    const [systemStatus, setSystemStatus] = useState("SYSTEMS STANDBY");
+    const [_velocityFactor, setVelocityFactor] = useState(0);
+    const _spacecraftRef = useRef();
     const wormholeRef = useRef();
 
-    // Selected planet for detail view
-    const [selectedPlanet, setSelectedPlanet] = useState(null);
+    const CAMERA_POSITIONS = {
+        COCKPIT: [0, 0, 0.2],
+        // Changed to a more dynamic angle - slightly elevated and to the side for better view
+        EXPLORATION: [120, 120, 140], // [x, y, z] - adjusted for a more cinematic angle
+    };
 
-    // Page navigation state (3d-portfolio or about-me)
-    const [currentPage, setCurrentPage] = useState("3d-portfolio");
+    const cameraRef = useRef();
+    const isCameraTransitioningRef = useRef(false);
+    const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
+    const prevPhaseRef = useRef(currentPhase);
 
-    /**
-     * Planet data - shared between StarSystem and NavigationScreen
-     *
-     * NEW PROPERTIES FOR DETAIL VIEW:
-     * - detailOffset: [x, y, z] - Adjust planet position in detail view
-     *   Positive X = move right, Negative X = move left
-     *   Positive Y = move up, Negative Y = move down
-     *   Positive Z = move toward camera, Negative Z = move away
-     *
-     * - detailScale: number - Override the auto-calculated scale in detail view
-     *   If not provided, scale is calculated automatically
-     */
-    const planets = [
-        {
-            name: "Pluto",
-            section: "About Me",
-            modelPath: "/models/Pluto.glb",
-            scale: 2.0,
-            orbitRadius: 25,
-            orbitSpeed: 0.3,
-            orbitColor: "#ffc649",
-            yOffset: -1.8,
-            // Detail view adjustments
-            detailOffset: [0, 0, 0], // [x, y, z] - adjust as needed
-            detailScale: 2.5, // Override scale for detail view
-        },
-        {
-            name: "Earth",
-            section: "Technical Arsenal",
-            modelPath: "/models/Earth.glb",
-            scale: 2.2,
-            orbitRadius: 45,
-            orbitSpeed: 0.28,
-            orbitColor: "#4a90e2",
-            yOffset: -2,
-            // Detail view adjustments
-            detailOffset: [0, 0, 0], // Adjust if not centered
-            detailScale: 2.8,
-        },
-        {
-            name: "Planet1",
-            section: "Achievements",
-            modelPath: "/models/Planet1.glb",
-            scale: 3,
-            orbitRadius: 75,
-            orbitSpeed: 0.22,
-            orbitColor: "#e27b58",
-            yOffset: 0,
-            // Detail view adjustments
-            detailOffset: [0, 0, 0],
-            detailScale: 3.5,
-        },
-        {
-            name: "Planet2",
-            section: "Interests & Hobbies",
-            modelPath: "/models/Planet2.glb",
-            scale: 5,
-            orbitRadius: 95,
-            orbitSpeed: 0.18,
-            orbitColor: "#9b59b6",
-            yOffset: 0,
-            // Detail view adjustments
-            detailOffset: [0, 0, 0],
-            detailScale: 5,
-        },
-        {
-            name: "Saturn",
-            section: "Quick Links",
-            modelPath: "/models/Saturn.glb",
-            scale: 0.015,
-            orbitRadius: 115,
-            orbitSpeed: 0.15,
-            orbitColor: "#f39c12",
-            yOffset: 0,
-            // Detail view adjustments - Saturn needs significant adjustment
-            detailOffset: [0, 0, 0], // Adjust position
-            detailScale: 3, // Saturn's original scale is 0.015, so this overrides it
-        },
-    ];
+    useEffect(() => {
+        if (!cameraRef.current) return;
 
-    // Keyboard shortcut for navigation screen (N key)
-    const { isActive: isNavigationActive, setIsActive: setNavigationActive } =
-        useKeyboardShortcut("n");
+        const phaseChanged = prevPhaseRef.current !== currentPhase;
+        prevPhaseRef.current = currentPhase;
 
-    // Handle commands from the terminal
-    const handleTerminalCommand = (command) => {
-        console.log("Command received:", command);
+        if (currentPhase === "cockpit" || currentPhase === "launching") {
+            // Keep camera in cockpit for both phases
+            cameraRef.current.position.set(...CAMERA_POSITIONS.COCKPIT);
+            cameraRef.current.lookAt(0, 0, -5); // Look forward
+            isCameraTransitioningRef.current = false;
+        } else if (currentPhase === "exploration" && phaseChanged) {
+            // Trigger smooth transition when entering exploration phase
+            isCameraTransitioningRef.current = true;
+        }
+    }, [currentPhase, CAMERA_POSITIONS.COCKPIT]);
 
+    // Effect to handle returning from a page back to 3D portfolio
+    useEffect(() => {
+        if (currentPage === "3d-portfolio" && currentPhase === "exploration" && cameraRef.current) {
+            // Trigger camera transition when returning to 3D portfolio
+            isCameraTransitioningRef.current = true;
+        }
+    }, [currentPage, currentPhase]);
+
+    const handleLaunchCommand = (command) => {
         if (command === "launch") {
-            setSystemStatus("LAUNCH INITIATED");
-            setTimeout(() => {
-                setCurrentPhase("launching");
-            }, 3500);
-        } else if (command === "navigate") {
-            setSystemStatus("NAVIGATION MODE");
-            console.log("Navigation mode activated");
+            // Start the launch sequence
+            setCurrentPhase("launching");
+            setTravelPhase("launching");
+            setSystemStatus("LAUNCHING");
+            // Note: LaunchSequence component will handle completion and transition
         }
     };
 
-    const handleSequenceComplete = () => {
-        setCurrentPhase("exploration");
-        setSystemStatus("EXPLORATION MODE");
-        setVelocityFactor(0);
-        console.log("🌟 Arrived at destination star system!");
+    const handleSystemTravel = (systemId) => {
+        console.log("Initiating wormhole travel to system:", systemId);
+        
+        // Set the travel destination in context (already destructured at top of component)
+        setTravelDestination(systemId);
+        
+        // Start transition with brief fade
+        setIsTransitioning(true);
+        
+        // Stop any camera transitions and disable orbit controls
+        isCameraTransitioningRef.current = false;
+        setOrbitControlsEnabled(false);
+        
+        // Brief delay for transition, then show cockpit
+        setTimeout(() => {
+            // Immediately position camera in cockpit if available
+            if (cameraRef.current) {
+                cameraRef.current.position.set(...CAMERA_POSITIONS.COCKPIT);
+                cameraRef.current.lookAt(0, 0, -5);
+            }
+            
+            // Set cockpit phase
+            setCurrentPhase("cockpit");
+            setSystemStatus("WARP DRIVE INITIATED - PREPARE FOR JUMP");
+            setTravelPhase("preparing");
+            setIsTransitioning(false);
+        }, 200); // Brief 200ms transition
+        
+        // After a delay to show cockpit, automatically trigger launch sequence
+        setTimeout(() => {
+            setCurrentPhase("launching");
+            setTravelPhase("launching");
+            setSystemStatus("WORMHOLE JUMP IN PROGRESS");
+        }, 3200); // 200ms transition + 3000ms cockpit view
     };
 
-    const handleVelocityChange = (velocity) => {
-        setVelocityFactor(velocity);
+    const handleDockingComplete = (planet) => {
+        console.log("Docking complete for planet:", planet);
+
+        if (planet && currentSystem) {
+            // Convert page name to URL format (e.g., "About Me" -> "about-me")
+            const pageSlug = currentSystem.page.toLowerCase().replace(/\s+/g, '-');
+
+            // Navigate to the page and section
+            onNavigate(pageSlug, planet.sectionId);
+
+            console.log(`Navigating to ${pageSlug} -> ${planet.sectionId}`);
+        }
     };
 
-    // Handle planet selection from navigation screen
-    const handlePlanetSelect = (planet) => {
-        console.log("Planet selected for detail view:", planet);
-        setSelectedPlanet(planet);
-        setNavigationActive(false); // Close navigation screen
-        setCurrentPhase("planet-detail"); // Switch to planet detail view
+    // Navigation screen toggle with 'N' key
+    const { isActive: isNavigationVisible, setIsActive: setNavigationVisible } = useKeyboardShortcut("n");
+
+    useKeyboardShortcut("Escape", () => {
+        if (currentPhase === "planet-detail") {
+            setSelectedPlanet(null);
+            setCurrentPhase("exploration");
+        }
+    });
+
+    const renderPage = () => {
+        switch (currentPage) {
+            case "about-me":
+                return <AboutMe />;
+            case "projects":
+                return <Projects />;
+            case "experience":
+                return <Experience />;
+            case "contact":
+                return <Contact />;
+            case "journey":
+                return <Journey />;
+            case "technologies":
+                return <Technologies />;
+            default:
+                return null;
+        }
     };
 
-    // Handle returning from planet detail to exploration
-    const handleBackToExploration = () => {
-        console.log("Returning to exploration...");
-        setSelectedPlanet(null);
-        setCurrentPhase("exploration");
-    };
-
-    // Handle orbit sequence completion
-    const handleOrbitComplete = (planet) => {
-        console.log("✅ Orbit complete! Navigating to AboutMe...");
-        setCurrentPage("about-me");
-        // Keep selectedPlanet and phase for back navigation
-    };
-
-    // Handle returning from AboutMe to planet detail
-    const handleBackFromAboutMe = () => {
-        console.log("Returning to planet detail...");
-        setCurrentPage("3d-portfolio");
-        // Stay in planet-detail phase with same planet
-    };
+    if (currentPage !== "3d-portfolio") {
+        return renderPage();
+    }
 
     return (
-        // <div className="w-full h-screen bg-deep-space">
-        //     {/* AboutMe Page - 2D React Page */}
-        //     {currentPage === "about-me" && (
-        //         <AboutMe planet={selectedPlanet} onBack={handleBackFromAboutMe} />
-        //     )}
+        <div className="w-full h-screen bg-deep-space relative overflow-hidden">
+            {currentPhase === "planet-detail" && selectedPlanet ? (
+                <PlanetDetailScene
+                    planet={selectedPlanet}
+                    systemId={currentSystem?.id}
+                    onBack={() => {
+                        setSelectedPlanet(null);
+                        setCurrentPhase("exploration");
+                    }}
+                    onDockComplete={handleDockingComplete}
+                />
+            ) : (
+                <>
+                    <Canvas
+                        camera={{
+                            position: CAMERA_POSITIONS.COCKPIT,
+                            fov: 60,
+                            near: 0.1,
+                            far: 2000,
+                        }}
+                        onCreated={({ camera }) => {
+                            cameraRef.current = camera;
+                            // Set initial camera based on current phase
+                            if (currentPhase === "cockpit" || currentPhase === "launching") {
+                                camera.position.set(...CAMERA_POSITIONS.COCKPIT);
+                                camera.lookAt(0, 0, -5); // Look forward
+                            }
+                        }}
+                        gl={{
+                            antialias: true,
+                            alpha: true,
+                            powerPreference: "high-performance",
+                        }}
+                    >
+                        <color attach="background" args={["#000000"]} />
+                        <SpaceCubeMap />
+                        <ambientLight intensity={0.3} />
+                        <pointLight position={[0, 0, 0]} intensity={2} color="#FDB813" />
 
-        //     {/* 3D Portfolio - Main Application */}
-        //     {currentPage === "3d-portfolio" && (
-        //         <>
-        //             {/* Planet Detail View - Isolated Scene */}
-        //     {currentPhase === "planet-detail" && selectedPlanet && (
-        //         <PlanetDetailScene
-        //             planet={selectedPlanet}
-        //             onBack={handleBackToExploration}
-        //             onOrbitComplete={handleOrbitComplete}
-        //         />
-        //     )}
+                        {/* Smooth camera transition when returning to exploration */}
+                        <SmoothCameraTransition 
+                            targetPosition={CAMERA_POSITIONS.EXPLORATION}
+                            targetLookAt={[0, 0, 0]}
+                            isTransitioningRef={isCameraTransitioningRef}
+                            onComplete={() => {
+                                isCameraTransitioningRef.current = false;
+                                setOrbitControlsEnabled(true);
+                            }}
+                        />
 
-        //     {/* Main 3D Canvas - Only render when NOT in planet-detail */}
-        //     {currentPhase !== "planet-detail" && (
-        //         <Canvas
-        //             camera={{
-        //                 position:
-        //                     currentPhase === "cockpit" || currentPhase === "launching"
-        //                         ? [0, 0, -0.5]
-        //                         : [0, 15, 45],
-        //                 fov: 50,
-        //                 near: 0.1,
-        //                 far: 1000,
-        //             }}
-        //             gl={{ antialias: true }}
-        //             onCreated={({ scene }) => {
-        //                 scene.background = new THREE.Color(0x000000);
-        //             }}
-        //         >
-        //             {/* Space Background Cube Map */}
-        //             <SpaceCubeMap
-        //                 velocityFactor={velocityFactor}
-        //                 enableRelativistic={true}
-        //             />
+                        <OrbitControls
+                            enabled={currentPhase === "exploration" && orbitControlsEnabled}
+                            enablePan={false}
+                            minDistance={50}
+                            maxDistance={300}
+                            maxPolarAngle={Math.PI / 1.8}
+                            minPolarAngle={Math.PI / 4}
+                        />
 
-        //             {/* Lighting */}
-        //             <ambientLight intensity={0.8} />
-        //             <pointLight
-        //                 position={[0, 2, -1]}
-        //                 intensity={1.5}
-        //                 color="#6366f1"
-        //             />
-        //             <hemisphereLight
-        //                 intensity={0.5}
-        //                 color="#ffffff"
-        //                 groundColor="#00ff88"
-        //             />
+                        {/* Render cockpit only during cockpit and launching phases */}
+                        {(currentPhase === "cockpit" || currentPhase === "launching") && (
+                            <CockpitInterior
+                                onCommand={handleLaunchCommand}
+                                showTerminal={currentPhase === "cockpit" && travelPhase !== "preparing"}
+                            />
+                        )}
 
-        //             {/* Cockpit Camera Controls */}
-        //             {(currentPhase === "cockpit" ||
-        //                 currentPhase === "launching") && (
-        //                 <OrbitControls
-        //                     enableZoom={false}
-        //                     enablePan={false}
-        //                     enableRotate={true}
-        //                     target={[0, -0.2, -2]}
-        //                     minPolarAngle={0}
-        //                     maxPolarAngle={Math.PI}
-        //                     minAzimuthAngle={-Infinity}
-        //                     maxAzimuthAngle={Infinity}
-        //                     rotateSpeed={0.5}
-        //                     enableDamping={true}
-        //                     dampingFactor={0.05}
-        //                 />
-        //             )}
+                        {currentPhase === "launching" && (
+                            <>
+                                <Wormhole
+                                    ref={wormholeRef}
+                                    position={[0, 0, -300]}
+                                    scale={10}
+                                    colorScheme={destinationSystem?.color || "cyan"}
+                                />
+                                <LaunchSequence
+                                    isActive={true}
+                                    wormholeRef={wormholeRef}
+                                    onSequenceComplete={() => {
+                                        setVelocityFactor(0);
+                                        setCurrentPhase("exploration");
+                                        
+                                        // If we have a travel destination, change to that system
+                                        if (destinationSystem) {
+                                            setCurrentSystemId(destinationSystem.id);
+                                            setSystemStatus(`ARRIVED AT ${destinationSystem.name}`);
+                                            setTravelDestination(null); // Clear travel destination
+                                        } else {
+                                            setSystemStatus("EXPLORATION MODE");
+                                        }
+                                        
+                                        setTravelPhase(null);
+                                    }}
+                                    onVelocityChange={(velocity) => {
+                                        setVelocityFactor(velocity);
+                                    }}
+                                />
+                            </>
+                        )}
 
-        //             {/* Exploration Camera Controls */}
-        //             {currentPhase === "exploration" && (
-        //                 <OrbitControls
-        //                     enableZoom={true}
-        //                     enablePan={true}
-        //                     enableRotate={true}
-        //                     target={[0, 0, 0]}
-        //                     minPolarAngle={0}
-        //                     maxPolarAngle={Math.PI}
-        //                     minAzimuthAngle={-Infinity}
-        //                     maxAzimuthAngle={Infinity}
-        //                     minDistance={10}
-        //                     maxDistance={400}
-        //                     rotateSpeed={0.5}
-        //                     zoomSpeed={1.0}
-        //                     enableDamping={true}
-        //                     dampingFactor={0.05}
-        //                 />
-        //             )}
+                        {currentPhase === "exploration" && currentSystem && (
+                            <StarSystem
+                                visible={true}
+                                planets={currentSystem.planets || []}
+                                animationsPaused={false}
+                            />
+                        )}
+                    </Canvas>
 
-        //             {/* Cockpit Phase */}
-        //             {currentPhase === "cockpit" && (
-        //                 <group ref={spacecraftRef}>
-        //                     <CockpitInterior
-        //                         onCommand={handleTerminalCommand}
-        //                         showTerminal={true}
-        //                     />
-        //                 </group>
-        //             )}
+                    {currentPhase === "cockpit" && (
+                        <div className="absolute top-6 left-6 text-white font-mono z-10">
+                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-green-500/30">
+                                <div className="text-green-400 text-sm mb-1">
+                                    COCKPIT INTERFACE
+                                </div>
+                                <div className="text-xs text-gray-400">{systemStatus}</div>
+                                <div className="text-xs text-green-400/60 mt-1">
+                                    Type 'launch' in terminal to begin
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-        //             {/* Launching Phase */}
-        //             {currentPhase === "launching" && (
-        //                 <>
-        //                     <group ref={spacecraftRef}>
-        //                         <CockpitInterior
-        //                             onCommand={handleTerminalCommand}
-        //                             showTerminal={false}
-        //                         />
-        //                     </group>
-        //                     <group ref={wormholeRef} position={[0, 0, -100]}>
-        //                         <Wormhole
-        //                             position={[0, 0, 0]}
-        //                             scale={5}
-        //                             colorScheme="cyan"
-        //                         />
-        //                     </group>
-        //                     <LaunchSequence
-        //                         isActive={true}
-        //                         spacecraftRef={spacecraftRef}
-        //                         wormholeRef={wormholeRef}
-        //                         initialWormholePosition={[0, 0, -100]}
-        //                         onSequenceComplete={handleSequenceComplete}
-        //                         onVelocityChange={handleVelocityChange}
-        //                     />
-        //                 </>
-        //             )}
+                    {currentPhase === "launching" && (
+                        <div className="absolute top-6 left-6 text-white font-mono z-10">
+                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-red-500/50 animate-pulse">
+                                <div className="text-red-400 text-sm mb-1 font-bold">
+                                    ⚠ LAUNCH SEQUENCE ACTIVE
+                                </div>
+                                <div className="text-xs text-gray-400">{systemStatus}</div>
+                            </div>
+                        </div>
+                    )}
 
-        //             {/* Exploration Phase */}
-        //             {currentPhase === "exploration" && (
-        //                 <StarSystem
-        //                     visible={true}
-        //                     planets={planets}
-        //                     selectedPlanet={null}
-        //                     animationsPaused={false}
-        //                 />
-        //             )}
-        //         </Canvas>
-        //     )}
+                    {currentPhase === "exploration" && (
+                        <div className="absolute top-6 left-6 text-white font-mono z-10">
+                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-cyan-500/30 text-sm/8">
+                                <div className="text-cyan-400 text-sm mb-1">
+                                    {currentSystem?.name || "UNKNOWN SYSTEM"}
+                                </div>
+                                <div className="text-xs text-gray-400">{systemStatus}</div>
+                                <div className="text-xs text-cyan-400/60 mt-1">
+                                    Press 'N' for navigation
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-        //     {/* HUD Overlay - Only show when NOT in planet-detail */}
-        //     {currentPhase !== "planet-detail" && (
-        //         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        //             {/* Top HUD - Ship Name */}
-        //             <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center">
-        //                 <h1 className="text-2xl font-heading text-nebula-purple mb-2">
-        //                     CAPTAIN VANDAN'S VESSEL
-        //                 </h1>
-        //                 <div className="text-sm text-asteroid-gray">
-        //                     Neural Interface v2.5.1
-        //                 </div>
-        //             </div>
+                    {currentPhase === "exploration" && (
+                        <NavigationScreen
+                            isVisible={isNavigationVisible}
+                            onClose={() => setNavigationVisible(false)}
+                            onPlanetSelect={(planet) => {
+                                setSelectedPlanet(planet);
+                                // Small delay to show selection before transitioning
+                                setTimeout(() => {
+                                    setCurrentPhase("planet-detail");
+                                    setNavigationVisible(false);
+                                }, 400);
+                            }}
+                            onSystemTravelSelect={(systemId) => {
+                                handleSystemTravel(systemId);
+                                setNavigationVisible(false);
+                            }}
+                            currentSystemId={currentSystem?.id}
+                            selectedPlanet={selectedPlanet}
+                            planets={currentSystem?.planets || []}
+                            starSystems={starSystems}
+                        />
+                    )}
 
-        //             {/* Status Indicators - Top Right */}
-        //             <div className="absolute top-8 right-8 space-y-2">
-        //                 <div className="flex items-center space-x-2">
-        //                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-        //                     <span className="text-sm text-moon-white">
-        //                         SYSTEMS ONLINE
-        //                     </span>
-        //                 </div>
-        //                 <div className="flex items-center space-x-2">
-        //                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-        //                     <span className="text-sm text-moon-white">
-        //                         FUEL: 100%
-        //                     </span>
-        //                 </div>
-        //                 <div className="flex items-center space-x-2">
-        //                     <div
-        //                         className={`w-3 h-3 rounded-full animate-pulse ${
-        //                             currentPhase === "launching"
-        //                                 ? "bg-orange-500"
-        //                                 : "bg-cyan-400"
-        //                         }`}
-        //                     ></div>
-        //                     <span className="text-sm text-moon-white">
-        //                         {systemStatus}
-        //                     </span>
-        //                 </div>
-        //             </div>
+                    {/* Black transition screen when switching to cockpit */}
+                    {isTransitioning && (
+                        <div className="absolute inset-0 bg-black z-30 pointer-events-none" />
+                    )}
+                </>
+            )}
 
-        //             {/* Instructions - Cockpit Phase */}
-        //             {currentPhase === "cockpit" && (
-        //                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
-        //                     <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
-        //                         <p className="text-cyan-400 text-sm mb-1">
-        //                             🖥️ INTERACTIVE TERMINAL ACTIVE
-        //                         </p>
-        //                         <p className="text-asteroid-gray text-xs">
-        //                             Click the terminal screen to interact • Type
-        //                             'help' for commands
-        //                         </p>
-        //                     </div>
-        //                 </div>
-        //             )}
-
-        //             {/* Exploration Instructions */}
-        //             {currentPhase === "exploration" && (
-        //                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center pointer-events-auto">
-        //                     <div className="bg-deep-space/80 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
-        //                         <p className="text-cyan-400 text-sm mb-1">
-        //                             Press{" "}
-        //                             <span className="font-bold text-white">
-        //                                 N
-        //                             </span>{" "}
-        //                             to open Navigation
-        //                         </p>
-        //                         <p className="text-asteroid-gray text-xs">
-        //                             Scroll to zoom • Drag to rotate •
-        //                             Right-click to pan
-        //                         </p>
-        //                     </div>
-        //                 </div>
-        //             )}
-
-        //             {/* System Info - Bottom Left */}
-        //             {currentPhase !== "launching" && (
-        //                 <div className="absolute bottom-8 left-8 text-xs text-asteroid-gray space-y-1">
-        //                     <div>COORDINATES: 0.0000, 0.0000, 0.0000</div>
-        //                     <div>QUANTUM DRIVE: STANDBY</div>
-        //                     <div>SHIELD STATUS: NOMINAL</div>
-        //                 </div>
-        //             )}
-
-        //             {/* Launch Status Overlay */}
-        //             {currentPhase === "launching" && (
-        //                 <>
-        //                     <div className="absolute top-8 right-8">
-        //                         <div className="bg-black/70 backdrop-blur-md p-4 rounded-lg border border-cyan-500/30">
-        //                             <p className="text-cyan-400 text-xs mb-1">
-        //                                 VELOCITY
-        //                             </p>
-        //                             <p className="text-2xl font-bold text-white font-mono">
-        //                                 ACCELERATING
-        //                             </p>
-        //                             <div className="mt-2 w-32 h-1 bg-gray-700 rounded-full overflow-hidden">
-        //                                 <div className="h-full bg-linear-to-r from-cyan-500 to-purple-500 animate-pulse" />
-        //                             </div>
-        //                         </div>
-        //                     </div>
-
-        //                     <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        //                         <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-lg border border-purple-500/30">
-        //                             <p className="text-purple-400 text-center text-sm">
-        //                                 🌀 APPROACHING WORMHOLE
-        //                             </p>
-        //                         </div>
-        //                     </div>
-
-        //                     <div className="absolute top-1/2 left-8 transform -translate-y-1/2 space-y-2">
-        //                         <div className="bg-orange-500/20 border border-orange-500 px-3 py-1 rounded">
-        //                             <p className="text-orange-400 text-xs">
-        //                                 ⚠ HIGH SPEED
-        //                             </p>
-        //                         </div>
-        //                         <div className="bg-purple-500/20 border border-purple-500 px-3 py-1 rounded">
-        //                             <p className="text-purple-400 text-xs">
-        //                                 ⚡ WARP ACTIVE
-        //                             </p>
-        //                         </div>
-        //                     </div>
-        //                 </>
-        //             )}
-        //         </div>
-        //     )}
-
-        //             {/* Navigation Screen - Only in exploration phase */}
-        //             {currentPhase === "exploration" && (
-        //                 <NavigationScreen
-        //                     isVisible={isNavigationActive}
-        //                     onClose={() => setNavigationActive(false)}
-        //                     onPlanetSelect={handlePlanetSelect}
-        //                     selectedPlanet={null}
-        //                     planets={planets}
-        //                 />
-        //             )}
-        //         </>
-        //     )}
-        // </div>
-        <>
-            <Technologies />
-        </>
+            {/* Help Button - Available on all pages */}
+            <HelpButton />
+        </div>
     );
 }
 

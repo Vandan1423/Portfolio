@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, forwardRef } from "react";
 import { useFrame, extend } from "@react-three/fiber";
 import * as THREE from "three";
 import { shaderMaterial } from "@react-three/drei";
@@ -377,13 +377,13 @@ extend({ TunnelGlowMaterial });
 /**
  * ProceduralWormhole Component - Fixed Version
  */
-const Wormhole = ({
+const Wormhole = forwardRef(({
     position = [0, 0, 0],
     scale = 1,
     rotation = [0, 0, 0],
     colorScheme = "cyan",
-}) => {
-    const groupRef = useRef();
+}, ref) => {
+    const groupRef = ref || useRef();
     const vortexFrontRef = useRef();
     const vortexBackRef = useRef();
     const rimFrontRef = useRef();
@@ -794,6 +794,8 @@ const Wormhole = ({
             />
         </group>
     );
-};
+});
+
+Wormhole.displayName = 'Wormhole';
 
 export default Wormhole;

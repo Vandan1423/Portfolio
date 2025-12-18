@@ -30,7 +30,7 @@ const LaunchSequence = ({
     isActive,
     onSequenceComplete,
     wormholeRef, // Need ref to the wormhole to move it
-    initialWormholePosition = [0, 0, -100], // Wormhole starts 100 units away
+    initialWormholePosition = [0, 0, -300], // Wormhole starts 300 units away
     onVelocityChange, // Callback to pass velocity to parent for background rotation
 }) => {
     const { camera } = useThree();
@@ -45,7 +45,7 @@ const LaunchSequence = ({
         initialWormholeZ: initialWormholePosition[2],
         speed: 0,
         maxSpeed: 15, // Max speed value
-        targetWormholeZ: 5, // Wormhole moves to 5 units in front of camera
+        targetWormholeZ: 0, // Wormhole moves to camera position (fully engulfs it)
     });
 
     // Initialize - camera stays in place!
@@ -57,12 +57,20 @@ const LaunchSequence = ({
             animationState.current.elapsedTime = 0;
             animationState.current.speed = 0;
 
+            // Get actual wormhole position from ref
+            if (wormholeRef?.current) {
+                animationState.current.initialWormholeZ = wormholeRef.current.position.z;
+            }
+
+            // Set target to camera position so wormhole fully engulfs it
+            animationState.current.targetWormholeZ = camera.position.z + 5; // Move 5 units past camera
+
             console.log("🚀 Launch sequence initiated - TRUE FPP View!");
             console.log("Camera stays at:", camera.position);
             console.log("Wormhole will move from", animationState.current.initialWormholeZ, "to", animationState.current.targetWormholeZ);
             setPhase("traveling");
         }
-    }, [isActive, phase, camera]);
+    }, [isActive, phase, camera, wormholeRef]);
 
     useFrame((state, delta) => {
         if (!isActive) return;
@@ -72,8 +80,8 @@ const LaunchSequence = ({
 
         // === PHASE 1: TRAVELING - WORMHOLE APPROACHES CAMERA ===
         if (phase === "traveling") {
-            // Acceleration (0-15 seconds) - exponential ease-in
-            const duration = 15; // 15 seconds for wormhole to reach camera
+            // Acceleration (0-10 seconds) - exponential ease-in
+            const duration = 10; // 10 seconds for wormhole to reach camera
             const progress = Math.min(t / duration, 1);
             const easedProgress = Math.pow(progress, 2); // Quadratic ease-in
 
@@ -95,7 +103,7 @@ const LaunchSequence = ({
 
             // === CAMERA STAYS IN COCKPIT - ONLY SHAKE ===
             const speedRatio = animationState.current.speed / animationState.current.maxSpeed;
-            const shakeIntensity = speedRatio * 0.08;
+            const shakeIntensity = speedRatio * 0.01; // Reduced from 0.08 for smoother experience
             const shakeX = Math.sin(state.clock.elapsedTime * 20) * shakeIntensity;
             const shakeY = Math.cos(state.clock.elapsedTime * 15) * shakeIntensity;
 
@@ -151,6 +159,12 @@ const LaunchSequence = ({
                 console.log("✨ Exiting wormhole!");
                 setPhase("exiting");
                 animationState.current.elapsedTime = 0;
+
+                // Transition to exploration mode immediately
+                // This hides cockpit and moves camera before white flash fades
+                if (onSequenceComplete) {
+                    onSequenceComplete();
+                }
             }
         }
 
@@ -186,11 +200,7 @@ const LaunchSequence = ({
             if (fadeTime >= 1) {
                 console.log("🌟 Star system revealed!");
                 setPhase("complete");
-
-                // Notify parent that sequence is complete
-                if (onSequenceComplete) {
-                    setTimeout(() => onSequenceComplete(), 500);
-                }
+                // onSequenceComplete already called at start of exiting phase
             }
         }
     });

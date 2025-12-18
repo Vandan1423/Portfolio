@@ -1,0 +1,52 @@
+.container {
+    width: 100%;
+    min-height: 100vh;
+    background: url('/images/Star2.png') center/cover no-repeat fixed;
+    background-color: #0a0e27;
+    position: relative;
+    overflow-y: auto;
+}
+
+.container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg,
+        rgba(10, 14, 39, 0.3) 0%,
+        rgba(10, 14, 39, 0.2) 50%,
+        rgba(10, 14, 39, 0.3) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.backButton {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 100;
+}
+
+.content {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    padding-top: 6rem;
+}
+
+@media (max-width: 768px) {
+    .backButton {
+        top: 1rem;
+        left: 1rem;
+    }
+
+    .content {
+        padding: 1rem;
+        padding-top: 5rem;
+    }
+}

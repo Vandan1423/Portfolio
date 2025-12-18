@@ -1,0 +1,50 @@
+.techNode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    background: rgba(26, 31, 58, 0.4);
+    border: 2px solid rgba(0, 217, 255, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.techNode:hover {
+    border-color: rgba(0, 217, 255, 0.6);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.techNode.selected {
+    border-color: #00d9ff;
+    background: rgba(0, 217, 255, 0.1);
+    box-shadow: 0 0 25px rgba(0, 217, 255, 0.4);
+}
+
+.name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e0e6ed;
+    text-align: center;
+}
+
+.proficiency {
+    font-size: 0.75rem;
+    color: #8892b0;
+}
+
+.default {
+    border-color: rgba(0, 217, 255, 0.3);
+}
+
+.category {
+    border-color: rgba(255, 0, 255, 0.3);
+}
+
+.category:hover {
+    border-color: rgba(255, 0, 255, 0.6);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+}

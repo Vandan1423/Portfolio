@@ -29,9 +29,10 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
         "CALIBRATING WARP COORDINATES...",
         "SYSTEMS ONLINE",
         "",
-        "WELCOME, CAPTAIN VANDAN",
+        "WELCOME, CAPTAIN",
         "",
-        "Type 'help' for available commands",
+        "Type 'clear' to clear the screen",
+        "Type 'status' for getting status of the spacecraft",
         "Type 'launch' to begin your journey",
         "",
     ];
@@ -120,18 +121,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
         setTerminalLines((prev) => [...prev, `> ${cmd}`, ""]);
 
         // Command processing (will expand this later for navigation)
-        if (command === "help") {
-            setTerminalLines((prev) => [
-                ...prev,
-                "AVAILABLE COMMANDS:",
-                "  launch    - Initiate launch sequence",
-                "  navigate  - Open navigation menu",
-                "  status    - System status report",
-                "  clear     - Clear terminal",
-                "  help      - Show this message",
-                "",
-            ]);
-        } else if (command === "launch") {
+        if (command === "launch") {
             setTerminalLines((prev) => [
                 ...prev,
                 "INITIATING LAUNCH SEQUENCE...",
@@ -148,7 +138,9 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                 if (countdown > 0) {
                     setTerminalLines((prev) => {
                         const newLines = [...prev];
-                        newLines[newLines.length - 1] = `COUNTDOWN: ${countdown}...`;
+                        newLines[
+                            newLines.length - 1
+                        ] = `COUNTDOWN: ${countdown}...`;
                         return newLines;
                     });
                     countdown--;
@@ -166,17 +158,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                     }
                 }
             }, 1000);
-        } else if (command === "navigate") {
-            setTerminalLines((prev) => [
-                ...prev,
-                "NAVIGATION SYSTEM LOADING...",
-                "(Navigation menu will appear here)",
-                "",
-            ]);
-            if (onCommand) {
-                onCommand("navigate");
-            }
-        } else if (command === "status") {
+        }else if (command === "status") {
             setTerminalLines((prev) => [
                 ...prev,
                 "SYSTEM STATUS:",
@@ -195,7 +177,6 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
             setTerminalLines((prev) => [
                 ...prev,
                 `Command not recognized: ${cmd}`,
-                "Type 'help' for available commands",
                 "",
             ]);
         }

@@ -1,0 +1,126 @@
+.socialViz {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.socialOrb {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+}
+
+.socialLink {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    margin: -40px 0 0 -40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background: rgba(0, 217, 255, 0.1);
+    border: 2px solid rgba(0, 217, 255, 0.3);
+    border-radius: 50%;
+    text-decoration: none;
+    color: #00d9ff;
+    transition: all 0.3s ease;
+    animation: orbit 20s linear infinite;
+    animation-delay: var(--link-delay, 0s);
+    transform-origin: 150px 150px;
+}
+
+.socialLink:hover {
+    background: rgba(0, 217, 255, 0.2);
+    border-color: #00d9ff;
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+    transform: scale(1.1);
+}
+
+.socialIcon {
+    font-size: 1.5rem;
+}
+
+.socialLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.centerOrb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    margin: -50px 0 0 -50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 3px solid #00d9ff;
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.centerText {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+}
+
+@keyframes orbit {
+    0% {
+        transform: rotate(var(--link-angle, 0deg)) translateX(100px) rotate(calc(-1 * var(--link-angle, 0deg)));
+    }
+    100% {
+        transform: rotate(calc(var(--link-angle, 0deg) + 360deg)) translateX(100px) rotate(calc(-1 * (var(--link-angle, 0deg) + 360deg)));
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@media (max-width: 768px) {
+    .socialOrb {
+        width: 250px;
+        height: 250px;
+    }
+
+    .socialLink {
+        width: 60px;
+        height: 60px;
+        margin: -30px 0 0 -30px;
+    }
+
+    .socialIcon {
+        font-size: 1.2rem;
+    }
+
+    .socialLabel {
+        font-size: 0.65rem;
+    }
+
+    .centerOrb {
+        width: 80px;
+        height: 80px;
+        margin: -40px 0 0 -40px;
+    }
+
+    @keyframes orbit {
+        0% {
+            transform: rotate(var(--link-angle, 0deg)) translateX(75px) rotate(calc(-1 * var(--link-angle, 0deg)));
+        }
+        100% {
+            transform: rotate(calc(var(--link-angle, 0deg) + 360deg)) translateX(75px) rotate(calc(-1 * (var(--link-angle, 0deg) + 360deg)));
+        }
+    }
+}

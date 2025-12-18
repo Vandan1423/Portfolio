@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import styles from "./PlanetList.module.css";
 
 /**
  * PlanetList Component
@@ -25,14 +26,14 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="space-y-3"
+            className={styles.container}
         >
             {/* Header */}
-            <div className="mb-4 pb-3 border-b border-cyan-500/30">
-                <h3 className="text-cyan-300 font-mono text-sm uppercase tracking-widest">
+            <div className={styles.header}>
+                <h3 className={styles.headerTitle}>
                     Available Destinations
                 </h3>
-                <p className="text-cyan-400/50 font-mono text-xs mt-1">
+                <p className={styles.headerSubtitle}>
                     Select a planet to view detailed information
                 </p>
             </div>
@@ -45,21 +46,14 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     onClick={() => handlePlanetClick(planet)}
-                    className="w-full relative group"
+                    className={styles.planetButton}
                 >
                     {/* Angular Container */}
-                    <div
-                        className="relative overflow-hidden"
-                        style={{
-                            clipPath:
-                                "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))",
-                        }}
-                    >
+                    <div className={styles.planetAngular}>
                         {/* Background */}
                         <div
-                            className="p-4 border-2 transition-all duration-300"
+                            className={styles.planetContent}
                             style={{
-                                background: `linear-gradient(135deg, rgba(0,40,60,0.3) 0%, rgba(0,15,30,0.1) 100%)`,
                                 borderColor:
                                     selectedPlanet?.name === planet.name
                                         ? planet.orbitColor
@@ -72,7 +66,7 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                         >
                             {/* Hover Scan Effect */}
                             <motion.div
-                                className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent"
+                                className={styles.planetHoverScan}
                                 initial={{ x: "-100%" }}
                                 whileHover={{
                                     x: "100%",
@@ -83,11 +77,11 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                                 }}
                             ></motion.div>
 
-                            <div className="relative flex items-center space-x-4">
+                            <div className={styles.planetInner}>
                                 {/* Planet Indicator */}
-                                <div className="flex-shrink-0">
+                                <div className={styles.planetIndicatorContainer}>
                                     <div
-                                        className="w-12 h-12 rounded-full border-2 flex items-center justify-center relative"
+                                        className={styles.planetIndicator}
                                         style={{
                                             borderColor: planet.orbitColor,
                                             background: `radial-gradient(circle, ${planet.orbitColor}20 0%, transparent 70%)`,
@@ -97,7 +91,7 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                                         {selectedPlanet?.name ===
                                             planet.name && (
                                             <motion.div
-                                                className="absolute inset-0 rounded-full border-2"
+                                                className={styles.planetPulsingRing}
                                                 style={{
                                                     borderColor:
                                                         planet.orbitColor,
@@ -115,7 +109,7 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
 
                                         {/* Planet Icon/Dot */}
                                         <div
-                                            className="w-6 h-6 rounded-full"
+                                            className={styles.planetDot}
                                             style={{
                                                 backgroundColor:
                                                     planet.orbitColor,
@@ -126,34 +120,27 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                                 </div>
 
                                 {/* Planet Info */}
-                                <div className="flex-1 text-left">
-                                    <h4
-                                        className="text-lg font-bold font-mono uppercase tracking-wide text-cyan-300
-                                        group-hover:text-cyan-200 transition-colors"
-                                        style={{
-                                            textShadow:
-                                                "0 0 10px rgba(0,255,255,0.5)",
-                                        }}
-                                    >
+                                <div className={styles.planetInfo}>
+                                    <h4 className={styles.planetName}>
                                         {planet.name}
                                     </h4>
-                                    <p className="text-xs font-mono text-cyan-400/70 mt-1">
-                                        {planet.section}
+                                    <p className={styles.planetSection}>
+                                        {planet.section || `SECTION ${planet.sectionId || planet.id}`}
                                     </p>
 
                                     {/* Distance/Stats */}
-                                    <div className="flex items-center space-x-3 mt-2">
-                                        <span className="text-[10px] font-mono text-cyan-500/60">
+                                    <div className={styles.planetStats}>
+                                        <span className={styles.planetStatText}>
                                             ORBIT: {planet.orbitRadius} AU
                                         </span>
                                         <div
-                                            className="w-1 h-1 rounded-full"
+                                            className={styles.planetStatDot}
                                             style={{
                                                 backgroundColor:
                                                     planet.orbitColor,
                                             }}
                                         ></div>
-                                        <span className="text-[10px] font-mono text-cyan-500/60">
+                                        <span className={styles.planetStatText}>
                                             SECTOR{" "}
                                             {String.fromCharCode(65 + index)}
                                         </span>
@@ -161,19 +148,12 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                                 </div>
 
                                 {/* Arrow Indicator */}
-                                <div className="flex-shrink-0">
+                                <div className={styles.arrowContainer}>
                                     <motion.div
-                                        className="w-8 h-8 border-2 border-cyan-400/50 flex items-center justify-center
-                                        transform rotate-45 group-hover:border-cyan-300 group-hover:scale-110 transition-all"
+                                        className={styles.arrowFrame}
                                         whileHover={{ rotate: 45 }}
                                     >
-                                        <span
-                                            className="text-cyan-400 transform -rotate-45 group-hover:text-cyan-300"
-                                            style={{
-                                                textShadow:
-                                                    "0 0 10px currentColor",
-                                            }}
-                                        >
+                                        <span className={styles.arrowIcon}>
                                             →
                                         </span>
                                     </motion.div>
@@ -182,7 +162,7 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
 
                             {/* Bottom Accent Line */}
                             <div
-                                className="absolute bottom-0 left-0 w-full h-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className={styles.bottomAccent}
                                 style={{
                                     background: `linear-gradient(to right, transparent, ${planet.orbitColor}, transparent)`,
                                 }}
@@ -191,22 +171,22 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                     </div>
 
                     {/* Glow on Hover */}
-                    <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/5 transition-all duration-300 pointer-events-none rounded"></div>
+                    <div className={styles.glowEffect}></div>
                 </motion.button>
             ))}
 
             {/* Empty State */}
             {planets.length === 0 && (
-                <div className="text-center py-8">
-                    <p className="text-cyan-400/50 font-mono text-sm">
+                <div className={styles.emptyState}>
+                    <p className={styles.emptyStateText}>
                         No planets detected in this system
                     </p>
                 </div>
             )}
 
             {/* Info Note */}
-            <div className="mt-4 pt-3 border-t border-cyan-500/20">
-                <p className="text-cyan-400/40 font-mono text-[10px] text-center">
+            <div className={styles.infoNote}>
+                <p className={styles.infoNoteText}>
                     Click on any planet to enter detailed analysis mode
                 </p>
             </div>

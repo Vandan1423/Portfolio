@@ -13,6 +13,12 @@
     --gradient-primary: linear-gradient(135deg, #4f46e5, #818cf8);
 }
 
+/* ===== PAGE CONTAINER (PageTemplate wrapper) ===== */
+.pageContainer {
+    padding: 0;
+    margin: 0;
+}
+
 /* ===== CONTAINER ===== */
 .container {
     min-height: 100vh;

@@ -1,0 +1,12 @@
+.contactInfoCard {
+    cursor: default;
+}
+
+.link {
+    text-decoration: none;
+    display: block;
+}
+
+.link .contactInfoCard {
+    cursor: pointer;
+}

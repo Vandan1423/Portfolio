@@ -1,6 +1,6 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Stars, useGLTF } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
@@ -19,13 +19,11 @@ import * as THREE from "three";
  * Props:
  * @param {boolean} visible - Whether the star system is visible
  * @param {array} planets - Array of planet objects
- * @param {object} selectedPlanet - Currently selected planet object (unused in new flow)
  * @param {boolean} animationsPaused - Whether orbital animations should be paused
  */
 const StarSystem = ({
     visible = true,
     planets = [],
-    selectedPlanet = null,
     animationsPaused = false,
 }) => {
     const groupRef = useRef();
@@ -48,17 +46,6 @@ const StarSystem = ({
 
     return (
         <group ref={groupRef}>
-            {/* Dense starfield background */}
-            <Stars
-                radius={500}
-                depth={200}
-                count={12000}
-                factor={8}
-                saturation={0}
-                fade
-                speed={0.5}
-            />
-
             {/* Central star (sun) */}
             <Sun position={[0, 0, -10]} />
 
@@ -75,7 +62,7 @@ const StarSystem = ({
             {/* Orbit Lines */}
             {planets.map((planet) => (
                 <OrbitLine
-                    key={`orbit-${planet.name}`}
+                    key={`orbit-${planet.id}`}
                     radius={planet.orbitRadius}
                     color={planet.orbitColor}
                     sunPosition={[0, 0, -10]}
@@ -93,7 +80,7 @@ const StarSystem = ({
             {/* Planets */}
             {planets.map((planet, index) => (
                 <Planet
-                    key={planet.name}
+                    key={planet.id}
                     {...planet}
                     index={index}
                     sunPosition={[0, 0, -10]}
@@ -401,7 +388,6 @@ const Planet = ({
     modelPath,
     orbitRadius,
     orbitSpeed,
-    orbitColor,
     index,
     sunPosition,
     yOffset = 0,

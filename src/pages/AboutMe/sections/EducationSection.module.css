@@ -1,0 +1,126 @@
+/* Info Box */
+.infoBox {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.infoBox::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #4F46E5, #818CF8);
+    border-radius: 20px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s;
+    filter: blur(10px);
+}
+
+.infoBox:hover::before {
+    opacity: 0.3;
+}
+
+.infoBox:hover {
+    border-color: rgba(79, 70, 229, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(79, 70, 229, 0.3);
+}
+
+/* Education Section */
+.degreeTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: #fff;
+}
+
+.institute {
+    font-size: 1.2rem;
+    color: #818CF8;
+    margin-bottom: 2rem;
+}
+
+.educationStats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.statBox {
+    flex: 1;
+    padding: 1.5rem;
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.statBox:hover {
+    background: rgba(79, 70, 229, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+
+.statLabel {
+    font-size: 0.9rem;
+    color: #818CF8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.statValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.previousEducation {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+.eduItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(79, 70, 229, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.eduItem:hover {
+    background: rgba(79, 70, 229, 0.2);
+    transform: translateX(10px);
+}
+
+.percentage {
+    font-weight: 700;
+    color: #60A5FA;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .infoBox {
+        padding: 2rem;
+    }
+
+    .educationStats {
+        flex-direction: column;
+    }
+}

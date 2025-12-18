@@ -1,0 +1,141 @@
+/* Info Box */
+.infoBox {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.infoBox::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #4F46E5, #818CF8);
+    border-radius: 20px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s;
+    filter: blur(10px);
+}
+
+.infoBox:hover::before {
+    opacity: 0.3;
+}
+
+.infoBox:hover {
+    border-color: rgba(79, 70, 229, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(79, 70, 229, 0.3);
+}
+
+/* Interests Section */
+.interestsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.interestCard {
+    padding: 1.5rem;
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: default;
+}
+
+.interestCard:hover {
+    background: rgba(79, 70, 229, 0.2);
+    border-color: rgba(79, 70, 229, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+
+.interestIcon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: bounce 2s infinite;
+}
+
+.interestCard:nth-child(1) .interestIcon {
+    animation-delay: 0s;
+}
+.interestCard:nth-child(2) .interestIcon {
+    animation-delay: 0.2s;
+}
+.interestCard:nth-child(3) .interestIcon {
+    animation-delay: 0.4s;
+}
+.interestCard:nth-child(4) .interestIcon {
+    animation-delay: 0.6s;
+}
+
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.interestCard h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.interestCard p {
+    font-size: 0.9rem;
+    color: #E2E8F0;
+}
+
+.funFact {
+    padding: 1.5rem;
+    background: linear-gradient(
+        135deg,
+        rgba(79, 70, 229, 0.2) 0%,
+        rgba(96, 165, 250, 0.2) 100%
+    );
+    border: 1px solid rgba(79, 70, 229, 0.4);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.funFactLabel {
+    font-size: 0.9rem;
+    color: #818CF8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.funFact p {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #fff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .infoBox {
+        padding: 2rem;
+    }
+
+    .interestsGrid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,21 @@
+.categoryFilter {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.categoryButton {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 768px) {
+    .categoryFilter {
+        gap: 0.5rem;
+    }
+
+    .categoryButton {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+}

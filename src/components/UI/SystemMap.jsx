@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import styles from "./SystemMap.module.css";
+
 /**
  * SystemMap Component
  *
@@ -36,13 +38,13 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="w-full"
+            className={styles.container}
         >
             {/* Map Container */}
-            <div className="relative w-[350px] h-[350px] mx-auto bg-[rgba(0,20,40,0.5)] border-2 border-cyan-400/30 rounded-lg overflow-hidden">
+            <div className={styles.mapContainer}>
                 {/* Grid Background */}
-                <div className="absolute inset-0 opacity-20">
-                    <svg width="100%" height="100%">
+                <div className={styles.gridBackground}>
+                    <svg className={styles.gridSvg}>
                         <defs>
                             <pattern
                                 id="grid"
@@ -64,13 +66,13 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
 
                 {/* Central Sun */}
                 <div
-                    className="absolute w-6 h-6 rounded-full bg-[#ffaa00] shadow-[0_0_20px_rgba(255,170,0,0.8)]"
+                    className={styles.sun}
                     style={{
                         left: `${centerX - 12}px`,
                         top: `${centerY - 12}px`,
                     }}
                 >
-                    <div className="absolute inset-0 rounded-full bg-[#ffaa00] animate-pulse opacity-50"></div>
+                    <div className={styles.sunGlow}></div>
                 </div>
 
                 {/* Orbit Rings */}
@@ -79,8 +81,7 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
                     return (
                         <svg
                             key={`orbit-${index}`}
-                            className="absolute inset-0 pointer-events-none"
-                            style={{ overflow: "visible" }}
+                            className={styles.orbitSvg}
                         >
                             <circle
                                 cx={centerX}
@@ -109,7 +110,7 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
                     return (
                         <motion.div
                             key={planet.name}
-                            className="absolute cursor-pointer group"
+                            className={styles.planetNode}
                             style={{
                                 left: `${x}px`,
                                 top: `${y}px`,
@@ -121,10 +122,8 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
                         >
                             {/* Planet Node */}
                             <div
-                                className={`w-4 h-4 rounded-full transition-all ${
-                                    isSelected
-                                        ? "shadow-[0_0_15px_rgba(0,255,255,0.8)]"
-                                        : "group-hover:shadow-[0_0_15px_rgba(0,255,255,0.5)]"
+                                className={`${styles.planetDot} ${
+                                    isSelected ? styles.planetDotSelected : ""
                                 }`}
                                 style={{
                                     backgroundColor: isSelected
@@ -135,7 +134,7 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
                             >
                                 {isSelected && (
                                     <motion.div
-                                        className="absolute inset-0 rounded-full"
+                                        className={styles.planetPulse}
                                         style={{
                                             borderColor: planet.orbitColor,
                                         }}
@@ -155,24 +154,20 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
 
                             {/* Planet Label */}
                             <div
-                                className={`absolute top-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap
-                                ${
-                                    isSelected
-                                        ? "opacity-100"
-                                        : "opacity-0 group-hover:opacity-100"
-                                }
-                                transition-opacity bg-black/90 px-2 py-1 rounded border`}
+                                className={`${styles.planetLabel} ${
+                                    isSelected ? styles.planetLabelVisible : ""
+                                }`}
                                 style={{
                                     borderColor: `${planet.orbitColor}50`,
                                 }}
                             >
                                 <p
-                                    className="text-xs font-mono font-bold"
+                                    className={styles.planetName}
                                     style={{ color: planet.orbitColor }}
                                 >
                                     {planet.name}
                                 </p>
-                                <p className="text-cyan-400/60 text-[10px] font-mono">
+                                <p className={styles.planetSection}>
                                     {planet.section}
                                 </p>
                             </div>
@@ -181,32 +176,32 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
                 })}
 
                 {/* Corner Decorations */}
-                <div className="absolute top-2 left-2 w-6 h-6 border-t-2 border-l-2 border-cyan-400/50"></div>
-                <div className="absolute top-2 right-2 w-6 h-6 border-t-2 border-r-2 border-cyan-400/50"></div>
-                <div className="absolute bottom-2 left-2 w-6 h-6 border-b-2 border-l-2 border-cyan-400/50"></div>
-                <div className="absolute bottom-2 right-2 w-6 h-6 border-b-2 border-r-2 border-cyan-400/50"></div>
+                <div className={styles.cornerTopLeft}></div>
+                <div className={styles.cornerTopRight}></div>
+                <div className={styles.cornerBottomLeft}></div>
+                <div className={styles.cornerBottomRight}></div>
             </div>
 
             {/* Legend */}
-            <div className="mt-4 p-3 bg-cyan-500/5 border border-cyan-500/20 rounded">
-                <p className="text-cyan-400 font-mono text-xs font-bold mb-2">
+            <div className={styles.legend}>
+                <p className={styles.legendTitle}>
                     SYSTEM LEGEND
                 </p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className={styles.legendGrid}>
                     {planets.map((planet) => (
                         <div
                             key={planet.name}
-                            className="flex items-center space-x-2 text-[10px] font-mono cursor-pointer hover:bg-cyan-500/10 p-1 rounded transition-colors"
+                            className={styles.legendItem}
                             onClick={() => handlePlanetClick(planet)}
                         >
                             <div
-                                className="w-3 h-3 rounded-full"
+                                className={styles.legendDot}
                                 style={{
                                     backgroundColor: planet.orbitColor,
                                     boxShadow: `0 0 5px ${planet.orbitColor}80`,
                                 }}
                             ></div>
-                            <span className="text-cyan-400/70 truncate">
+                            <span className={styles.legendText}>
                                 {planet.name}
                             </span>
                         </div>
@@ -215,8 +210,8 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
             </div>
 
             {/* Instructions */}
-            <div className="mt-3 text-center">
-                <p className="text-cyan-400/50 font-mono text-xs">
+            <div className={styles.instructions}>
+                <p className={styles.instructionsText}>
                     Click on a planet to analyze
                 </p>
             </div>

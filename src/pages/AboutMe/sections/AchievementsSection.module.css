@@ -1,0 +1,97 @@
+/* Info Box */
+.infoBox {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.infoBox::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #4F46E5, #818CF8);
+    border-radius: 20px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s;
+    filter: blur(10px);
+}
+
+.infoBox:hover::before {
+    opacity: 0.3;
+}
+
+.infoBox:hover {
+    border-color: rgba(79, 70, 229, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(79, 70, 229, 0.3);
+}
+
+/* Section 5: Achievements Styles */
+.achievementsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.achievementItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(26, 26, 46, 0.4);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.achievementItem:hover {
+    background: rgba(26, 26, 46, 0.6);
+    border-color: rgba(79, 70, 229, 0.5);
+    transform: translateX(10px);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+}
+
+.achievementIcon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+}
+
+.achievementContent {
+    flex: 1;
+}
+
+.achievementTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #F8FAFC;
+    margin-bottom: 0.5rem;
+}
+
+.achievementDesc {
+    font-size: 1rem;
+    color: #94A3B8;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .infoBox {
+        padding: 2rem;
+    }
+
+    .achievementItem {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+}

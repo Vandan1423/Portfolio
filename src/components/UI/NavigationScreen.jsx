@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import SystemMap from "./SystemMap";
 import PlanetList from "./PlanetList";
+import styles from "./NavigationScreen.module.css";
 
 /**
  * NavigationScreen Component
@@ -27,8 +28,11 @@ const NavigationScreen = ({
     isVisible,
     onClose,
     onPlanetSelect,
+    onSystemTravelSelect,
+    currentSystemId,
     selectedPlanet,
     planets = [],
+    starSystems = [],
 }) => {
     const [currentView, setCurrentView] = useState("main-menu");
     // Views: 'main-menu', 'planet-list', 'system-map', 'system-travel'
@@ -64,7 +68,7 @@ const NavigationScreen = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1, backdropFilter: "blur(4px)" }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 pointer-events-auto bg-black/60"
+                        className={styles.backdrop}
                         onClick={handleClose}
                     ></motion.div>
 
@@ -74,29 +78,18 @@ const NavigationScreen = ({
                         animate={{ scale: 1, opacity: 1, y: 0, x: "-50%" }}
                         exit={{ scale: 0.8, opacity: 0, y: 50 }}
                         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                        className="fixed left-1/2 top-1/2 -translate-y-1/2 w-[600px] max-h-[85vh] z-50 pointer-events-auto px-8"
+                        className={styles.panel}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Main Container with Angular Design */}
-                        <div className="relative h-full">
+                        <div style={{ position: "relative", height: "100%" }}>
                             {/* Animated Background Grid */}
-                            <div className="absolute inset-0 opacity-10 pointer-events-none">
-                                <div
-                                    className="w-full h-full"
-                                    style={{
-                                        backgroundImage: `
-                                            linear-gradient(to right, rgba(0,255,255,0.3) 1px, transparent 1px),
-                                            linear-gradient(to bottom, rgba(0,255,255,0.3) 1px, transparent 1px)
-                                        `,
-                                        backgroundSize: "20px 20px",
-                                    }}
-                                ></div>
-                            </div>
+                            <div className={styles.gridPattern}></div>
 
                             {/* Scan Line Animation */}
-                            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            <div className={styles.scanLineContainer}>
                                 <motion.div
-                                    className="w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-30"
+                                    className={styles.scanLine}
                                     animate={{ y: [0, 800] }}
                                     transition={{
                                         duration: 3,
@@ -107,34 +100,13 @@ const NavigationScreen = ({
                             </div>
 
                             {/* Angular Frame with Cut Corners */}
-                            <div
-                                className="relative h-full bg-gradient-to-br from-[rgba(5,15,35,0.98)] via-[rgba(10,20,40,0.95)] to-[rgba(5,10,25,0.98)]"
-                                style={{
-                                    clipPath:
-                                        "polygon(0 40px, 40px 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%)",
-                                    boxShadow: `
-                                        0 0 40px rgba(0,255,255,0.3),
-                                        inset 0 0 60px rgba(0,100,150,0.1)
-                                    `,
-                                }}
-                            >
+                            <div className={styles.angularFrame}>
                                 {/* Corner Accents */}
-                                <div
-                                    className="absolute top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-cyan-400 opacity-60"
-                                    style={{ margin: "10px" }}
-                                ></div>
-                                <div
-                                    className="absolute bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-cyan-400 opacity-60"
-                                    style={{ margin: "10px" }}
-                                ></div>
+                                <div className={styles.cornerTopLeft}></div>
+                                <div className={styles.cornerBottomRight}></div>
 
                                 {/* Animated Corner Lines */}
-                                <svg
-                                    className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                                    style={{
-                                        filter: "drop-shadow(0 0 4px cyan)",
-                                    }}
-                                >
+                                <svg className={styles.cornerLinesSvg}>
                                     <motion.path
                                         d="M 30 0 L 0 30 L 0 100"
                                         stroke="rgba(0,255,255,0.6)"
@@ -144,45 +116,21 @@ const NavigationScreen = ({
                                         animate={{ pathLength: 1 }}
                                         transition={{ duration: 1, delay: 0.2 }}
                                     />
-                                    <motion.path
-                                        d="M 450 620 L 420 650 L 350 650"
-                                        stroke="rgba(0,255,255,0.6)"
-                                        strokeWidth="2"
-                                        fill="none"
-                                        initial={{ pathLength: 0 }}
-                                        animate={{ pathLength: 1 }}
-                                        transition={{ duration: 1, delay: 0.4 }}
-                                    />
                                 </svg>
 
                                 {/* Header Section */}
-                                <div className="relative p-8 pt-12 border-b-2 border-cyan-500/30">
+                                <div className={styles.header}>
                                     {/* Tech Pattern Background */}
-                                    <div
-                                        className="absolute top-0 right-0 w-32 h-full opacity-10"
-                                        style={{
-                                            backgroundImage:
-                                                "repeating-linear-gradient(0deg, transparent, transparent 2px, cyan 2px, cyan 4px)",
-                                        }}
-                                    ></div>
+                                    <div className={styles.headerPattern}></div>
 
                                     {/* Title with Holographic Effect */}
-                                    <div className="relative flex justify-between items-center">
+                                    <div className={styles.headerContent}>
                                         <div>
-                                            <h2
-                                                className="text-3xl font-bold text-cyan-400 font-mono tracking-widest uppercase"
-                                                style={{
-                                                    textShadow: `
-                                                        0 0 10px rgba(0,255,255,0.8),
-                                                        0 0 20px rgba(0,255,255,0.4),
-                                                        0 0 30px rgba(0,255,255,0.2)
-                                                    `,
-                                                }}
-                                            >
+                                            <h2 className={styles.title}>
                                                 DASHBOARD
                                             </h2>
                                             <motion.div
-                                                className="h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-transparent mt-2"
+                                                className={styles.titleUnderline}
                                                 initial={{ width: 0 }}
                                                 animate={{ width: "100%" }}
                                                 transition={{
@@ -195,17 +143,11 @@ const NavigationScreen = ({
                                         {/* Close Button with Tech Frame */}
                                         <button
                                             onClick={handleClose}
-                                            className="relative group"
+                                            className={styles.closeButton}
                                             aria-label="Close Navigation"
                                         >
-                                            <div className="w-10 h-10 border-2 border-cyan-400 flex items-center justify-center transform rotate-45 transition-all group-hover:border-red-400 group-hover:scale-110">
-                                                <span
-                                                    className="text-cyan-400 font-bold text-xl transform -rotate-45 group-hover:text-red-400"
-                                                    style={{
-                                                        textShadow:
-                                                            "0 0 10px currentColor",
-                                                    }}
-                                                >
+                                            <div className={styles.closeButtonFrame}>
+                                                <span className={styles.closeButtonIcon}>
                                                     ×
                                                 </span>
                                             </div>
@@ -213,9 +155,9 @@ const NavigationScreen = ({
                                     </div>
 
                                     {/* Subtitle/Status */}
-                                    <div className="mt-4 flex items-center space-x-3">
-                                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(0,255,255,0.8)]"></div>
-                                        <p className="text-cyan-300/70 text-sm font-mono uppercase tracking-wider">
+                                    <div className={styles.statusBar}>
+                                        <div className={styles.statusIndicator}></div>
+                                        <p className={styles.statusText}>
                                             {currentView === "main-menu" &&
                                                 "System Online"}
                                             {currentView === "planet-list" &&
@@ -228,18 +170,11 @@ const NavigationScreen = ({
                                     </div>
 
                                     {/* Decorative Tech Elements */}
-                                    <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50"></div>
+                                    <div className={styles.headerBottomLine}></div>
                                 </div>
 
                                 {/* Content Area */}
-                                <div
-                                    className="relative p-6 max-h-[50vh] overflow-y-auto"
-                                    style={{
-                                        scrollbarWidth: "thin",
-                                        scrollbarColor:
-                                            "rgba(0,255,255,0.5) transparent",
-                                    }}
-                                >
+                                <div className={styles.contentArea}>
                                     <AnimatePresence mode="wait">
                                         {currentView === "main-menu" && (
                                             <MainMenu
@@ -251,7 +186,7 @@ const NavigationScreen = ({
                                             <PlanetList
                                                 key="planet-list"
                                                 planets={planets}
-                                                selectedPlanet={null}
+                                                selectedPlanet={selectedPlanet}
                                                 onPlanetClick={
                                                     handlePlanetClick
                                                 }
@@ -261,58 +196,36 @@ const NavigationScreen = ({
                                             <SystemMap
                                                 key="system-map"
                                                 planets={planets}
-                                                selectedPlanet={null}
+                                                selectedPlanet={selectedPlanet}
                                                 onPlanetClick={
                                                     handlePlanetClick
                                                 }
                                             />
                                         )}
                                         {currentView === "system-travel" && (
-                                            <div key="system-travel">
-                                                <div className="text-center py-8">
-                                                    <div className="text-cyan-400 text-xl font-mono mb-4">
-                                                        COMING SOON
-                                                    </div>
-                                                    <p className="text-cyan-400/70 font-mono text-sm">
-                                                        Inter-System Travel
-                                                    </p>
-                                                    <p className="text-cyan-400/50 font-mono text-xs mt-4">
-                                                        This feature will allow
-                                                        you to travel to
-                                                        different star systems
-                                                        via wormhole.
-                                                    </p>
-                                                </div>
-                                            </div>
+                                            <SystemTravelList
+                                                key="system-travel"
+                                                starSystems={starSystems}
+                                                currentSystemId={currentSystemId}
+                                                onSystemSelect={onSystemTravelSelect}
+                                            />
                                         )}
                                     </AnimatePresence>
                                 </div>
 
                                 {/* Footer - Back Button */}
                                 {currentView !== "main-menu" && (
-                                    <div className="relative p-4 border-t-2 border-cyan-500/30">
-                                        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+                                    <div className={styles.footer}>
+                                        <div className={styles.footerTopLine}></div>
 
                                         <button
                                             onClick={handleBack}
-                                            className="relative w-full py-3 px-4 group overflow-hidden"
-                                            style={{
-                                                clipPath:
-                                                    "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)",
-                                            }}
+                                            className={styles.backButton}
                                         >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-900/30 to-blue-900/30 border-2 border-cyan-400/50 transition-all group-hover:border-cyan-300 group-hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]"></div>
-                                            <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/10 transition-all duration-300"></div>
-                                            <span
-                                                className="relative text-cyan-400 font-mono font-bold uppercase tracking-wider flex items-center justify-center space-x-2 group-hover:text-cyan-300"
-                                                style={{
-                                                    textShadow:
-                                                        "0 0 10px rgba(0,255,255,0.5)",
-                                                }}
-                                            >
-                                                <span className="text-lg">
-                                                    ←
-                                                </span>
+                                            <div className={styles.backButtonBg}></div>
+                                            <div className={styles.backButtonHighlight}></div>
+                                            <span className={styles.backButtonText}>
+                                                <span>←</span>
                                                 <span>RETURN</span>
                                             </span>
                                         </button>
@@ -354,8 +267,7 @@ const MainMenu = ({ onViewChange }) => {
             title: "WARP DRIVE",
             code: "A2",
             description: "Inter-system navigation",
-            available: false,
-            badge: "LOCKED",
+            available: true,
             color: "purple",
         },
     ];
@@ -365,7 +277,7 @@ const MainMenu = ({ onViewChange }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="space-y-4"
+            className={styles.menuContainer}
         >
             {menuOptions.map((option, index) => (
                 <motion.button
@@ -379,39 +291,21 @@ const MainMenu = ({ onViewChange }) => {
                     }}
                     onClick={() => option.available && onViewChange(option.id)}
                     disabled={!option.available}
-                    className={`w-full relative group ${
-                        !option.available && "opacity-60 cursor-not-allowed"
-                    }`}
+                    className={styles.menuOption}
                 >
                     {/* Angular Container */}
-                    <div
-                        className="relative overflow-hidden"
-                        style={{
-                            clipPath:
-                                "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
-                        }}
-                    >
+                    <div className={styles.menuOptionAngular}>
                         <div
-                            className={`p-5 border-2 transition-all duration-300 ${
-                                option.available
-                                    ? `border-cyan-400/40 group-hover:border-cyan-400 group-hover:shadow-[0_0_30px_rgba(0,255,255,0.3)]`
-                                    : "border-gray-600/30"
+                            className={`${styles.menuOptionContent} ${
+                                !option.available ? styles.menuOptionDisabled : ""
                             }`}
-                            style={{
-                                background: option.available
-                                    ? `linear-gradient(135deg, rgba(0,50,80,0.3) 0%, rgba(0,20,40,0.1) 100%)`
-                                    : "rgba(20,20,20,0.2)",
-                                borderColor: option.available
-                                    ? "rgba(0,255,255,0.4)"
-                                    : "rgba(100,100,100,0.3)",
-                            }}
                         >
                             {/* Tech Corner Accent */}
-                            <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-cyan-400/30"></div>
+                            <div className={styles.menuOptionCorner}></div>
 
                             {/* Hover Scan Line */}
                             <motion.div
-                                className="absolute inset-0 bg-gradient-to-b from-cyan-400/0 via-cyan-400/20 to-cyan-400/0"
+                                className={styles.menuScanLine}
                                 initial={{ y: "-100%" }}
                                 whileHover={
                                     option.available
@@ -426,53 +320,36 @@ const MainMenu = ({ onViewChange }) => {
                                 }
                             ></motion.div>
 
-                            <div className="relative flex items-center space-x-4">
+                            <div className={styles.menuOptionInner}>
                                 {/* Code Label */}
-                                <div
-                                    className="flex-shrink-0 w-16 h-16 border-2 border-cyan-400/50 flex items-center justify-center"
-                                    style={{
-                                        clipPath:
-                                            "polygon(0 10px, 10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%)",
-                                        background: "rgba(0,255,255,0.1)",
-                                    }}
-                                >
+                                <div className={styles.menuCodeLabel}>
                                     <span
-                                        className={`text-2xl font-bold font-mono ${
-                                            option.available
-                                                ? "text-cyan-400"
-                                                : "text-gray-500"
+                                        className={`${styles.menuCodeText} ${
+                                            !option.available
+                                                ? styles.menuCodeTextDisabled
+                                                : ""
                                         }`}
-                                        style={{
-                                            textShadow: option.available
-                                                ? "0 0 10px rgba(0,255,255,0.8)"
-                                                : "none",
-                                        }}
                                     >
                                         {option.code}
                                     </span>
                                 </div>
 
                                 {/* Text Content */}
-                                <div className="flex-1 text-left">
+                                <div className={styles.menuTextContent}>
                                     <h3
-                                        className={`font-mono text-lg font-bold uppercase tracking-wider ${
-                                            option.available
-                                                ? "text-cyan-300"
-                                                : "text-gray-500"
+                                        className={`${styles.menuTitle} ${
+                                            !option.available
+                                                ? styles.menuTitleDisabled
+                                                : ""
                                         }`}
-                                        style={{
-                                            textShadow: option.available
-                                                ? "0 0 10px rgba(0,255,255,0.5)"
-                                                : "none",
-                                        }}
                                     >
                                         {option.title}
                                     </h3>
                                     <p
-                                        className={`font-mono text-xs mt-1 ${
-                                            option.available
-                                                ? "text-cyan-400/60"
-                                                : "text-gray-600"
+                                        className={`${styles.menuDescription} ${
+                                            !option.available
+                                                ? styles.menuDescriptionDisabled
+                                                : ""
                                         }`}
                                     >
                                         {option.description}
@@ -481,13 +358,7 @@ const MainMenu = ({ onViewChange }) => {
 
                                 {/* Badge */}
                                 {option.badge && (
-                                    <div
-                                        className="absolute top-2 right-2 px-2 py-1 border border-yellow-500/50 text-[10px] font-mono font-bold text-yellow-400 bg-yellow-900/20"
-                                        style={{
-                                            clipPath:
-                                                "polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%)",
-                                        }}
-                                    >
+                                    <div className={styles.menuBadge}>
                                         {option.badge}
                                     </div>
                                 )}
@@ -495,17 +366,152 @@ const MainMenu = ({ onViewChange }) => {
 
                             {/* Bottom Accent Line */}
                             {option.available && (
-                                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div className={styles.menuBottomAccent}></div>
                             )}
                         </div>
                     </div>
 
                     {/* Glow Effect on Hover */}
                     {option.available && (
-                        <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/5 transition-all duration-300 pointer-events-none"></div>
+                        <div className={styles.menuOptionGlow}></div>
                     )}
                 </motion.button>
             ))}
+        </motion.div>
+    );
+};
+
+/**
+ * SystemTravelList Component
+ * Displays all available star systems for inter-system navigation
+ * Each star system represents a different page of the portfolio
+ */
+const SystemTravelList = ({ starSystems, currentSystemId, onSystemSelect }) => {
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.travelListContainer}
+        >
+            {/* Header */}
+            <div className={styles.travelListHeader}>
+                <h3 className={styles.travelListTitle}>
+                    Available Star Systems
+                </h3>
+                <p className={styles.travelListSubtitle}>
+                    Select destination for wormhole jump
+                </p>
+            </div>
+
+            {/* Star Systems List */}
+            {starSystems.map((system, index) => {
+                const isCurrent = system.id === currentSystemId;
+                return (
+                <motion.div
+                    key={system.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                        delay: index * 0.1,
+                        type: "spring",
+                        stiffness: 100,
+                    }}
+                    onClick={() => {
+                        if (!isCurrent && onSystemSelect) {
+                            onSystemSelect(system.id);
+                        }
+                    }}
+                    className={`${styles.systemItem} ${
+                        isCurrent
+                            ? styles.systemItemCurrent
+                            : styles.systemItemClickable
+                    }`}
+                >
+                    {/* Angular Container */}
+                    <div className={styles.systemItemAngular}>
+                        <div
+                            className={`${styles.systemItemContent} ${
+                                isCurrent
+                                    ? styles.systemItemContentCurrent
+                                    : ""
+                            }`}
+                        >
+                            {/* Hover Scan Effect */}
+                            {!isCurrent && (
+                                <motion.div
+                                    className={styles.systemScanEffect}
+                                    initial={{ y: "-100%" }}
+                                    whileHover={{
+                                        y: "100%",
+                                        transition: {
+                                            duration: 0.5,
+                                            ease: "linear",
+                                        },
+                                    }}
+                                ></motion.div>
+                            )}
+
+                            <div className={styles.systemItemInner}>
+                                {/* System Code */}
+                                <div
+                                    className={`${styles.systemCode} ${
+                                        isCurrent
+                                            ? styles.systemCodeCurrent
+                                            : ""
+                                    }`}
+                                >
+                                    <span className={styles.systemCodeText}>
+                                        {system.code}
+                                    </span>
+                                </div>
+
+                                {/* System Info */}
+                                <div className={styles.systemInfo}>
+                                    <div className={styles.systemInfoHeader}>
+                                        <h4 className={styles.systemName}>
+                                            {system.name}
+                                        </h4>
+                                        <div className={styles.systemDot}>
+                                            •
+                                        </div>
+                                        <span className={styles.systemPage}>
+                                            {system.page}
+                                        </span>
+                                    </div>
+                                    <p className={styles.systemDescription}>
+                                        {system.description}
+                                    </p>
+                                </div>
+
+                                {/* Status Badge */}
+                                <div className={styles.statusBadgeContainer}>
+                                    {isCurrent ? (
+                                        <div className={styles.currentBadge}>
+                                            <span className={styles.currentBadgeText}>
+                                                CURRENT
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className={styles.arrowIcon}>
+                                            <span className={styles.arrowIconText}>
+                                                →
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Bottom Accent Line */}
+                            {!isCurrent && (
+                                <div className={styles.systemBottomAccent}></div>
+                            )}
+                        </div>
+                    </div>
+                </motion.div>
+            );
+            })}
         </motion.div>
     );
 };
