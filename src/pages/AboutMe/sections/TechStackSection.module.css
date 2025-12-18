@@ -75,8 +75,79 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .infoBox {
+        padding: 2.5rem;
+    }
+
+    .categoryTitle {
+        font-size: 1rem;
+        letter-spacing: 1.5px;
+    }
+
+    .skillTags {
+        gap: 0.7rem;
+    }
+
+    .skillTag {
+        padding: 0.55rem 1.1rem;
+        font-size: 0.85rem;
+    }
+
+    .skillCategory {
+        margin-bottom: 1.75rem;
+    }
+}
+
 @media (max-width: 768px) {
     .infoBox {
         padding: 2rem;
+    }
+
+    .categoryTitle {
+        font-size: 0.95rem;
+    }
+
+    .skillTags {
+        gap: 0.6rem;
+    }
+
+    .skillTag {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .skillCategory {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .infoBox {
+        padding: 1.5rem;
+    }
+
+    .categoryTitle {
+        font-size: 0.9rem;
+        letter-spacing: 1.5px;
+        margin-bottom: 0.8rem;
+    }
+
+    .skillTags {
+        gap: 0.5rem;
+    }
+
+    .skillTag {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .skillCategory {
+        margin-bottom: 1.25rem;
+    }
+
+    .skillTag:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
     }
 }

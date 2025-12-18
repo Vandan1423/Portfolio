@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { getAssetsInPriorityOrder, getAssetStats } from '../../utils/assetCollector';
+import { getAssetsInPriorityOrder } from '../../utils/assetCollector';
 
 // Maximum number of assets to load concurrently
 const CONCURRENT_LOAD_LIMIT = 5;
@@ -28,7 +28,6 @@ const preloadImage = (asset) => {
         const img = new Image();
 
         img.onload = () => {
-            console.log(`✅ Loaded image: ${asset.name}`);
             resolve({ success: true, asset });
         };
 
@@ -51,7 +50,6 @@ const preloadModel = (asset) => {
         try {
             // Use useGLTF.preload from @react-three/drei
             useGLTF.preload(asset.url);
-            console.log(`✅ Preloaded model: ${asset.name}`);
             resolve({ success: true, asset });
         } catch (error) {
             console.warn(`⚠️ Failed to preload model: ${asset.name}`, error);
@@ -104,9 +102,6 @@ const useAssetPreloader = (onProgress, onComplete) => {
 
                 setTotalAssets(total);
 
-                console.log('🚀 Starting asset preload...');
-                console.log('📊 Asset stats:', getAssetStats());
-
                 if (total === 0) {
                     console.warn('⚠️ No assets to load');
                     setIsComplete(true);
@@ -145,9 +140,6 @@ const useAssetPreloader = (onProgress, onComplete) => {
                         await new Promise(resolve => setTimeout(resolve, 50));
                     }
                 }
-
-                console.log('✨ All assets preloaded successfully!');
-                console.log(`📦 Loaded ${loaded}/${total} assets`);
 
                 setIsComplete(true);
 

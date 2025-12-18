@@ -24,7 +24,7 @@ const IDLE_ROTATION_AMPLITUDE = 0.1;
 
 // Docking point spherical coordinates (for visibility)
 const DOCKING_THETA = Math.PI / 4; // 45° horizontal
-const DOCKING_PHI = Math.PI / 6;   // 30° vertical from top
+const DOCKING_PHI = Math.PI / 6; // 30° vertical from top
 
 // Bezier curve configuration
 const CONTROL_POINT_1_ELEVATION = 1.5; // Arc height multiplier
@@ -37,8 +37,18 @@ const LIGHT_BOTTOM_DISTANCE = 0.3;
 
 // Spacecraft lights configuration
 const SPACECRAFT_LIGHTS = [
-    { position: [0, 0.3, 0], intensity: 1.5, distanceMultiplier: LIGHT_TOP_DISTANCE, color: "#00ffff" },
-    { position: [0, -0.2, 0], intensity: 2, distanceMultiplier: LIGHT_BOTTOM_DISTANCE, color: "#ff6600" },
+    {
+        position: [0, 0.3, 0],
+        intensity: 1.5,
+        distanceMultiplier: LIGHT_TOP_DISTANCE,
+        color: "#00ffff",
+    },
+    {
+        position: [0, -0.2, 0],
+        intensity: 2,
+        distanceMultiplier: LIGHT_BOTTOM_DISTANCE,
+        color: "#ff6600",
+    },
 ];
 
 // Pure helper functions (outside component to avoid recreation on each render)
@@ -80,7 +90,12 @@ const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
  * @param {THREE.Vector3} planetPosition - Center position of the planet
  * @param {function} onDockComplete - Callback when docking sequence completes
  */
-const DockingSpacecraft = ({ isDocking, planetScale, planetPosition = new THREE.Vector3(0, 0, 0), onDockComplete }) => {
+const DockingSpacecraft = ({
+    isDocking,
+    planetScale,
+    planetPosition = new THREE.Vector3(0, 0, 0),
+    onDockComplete,
+}) => {
     const spacecraftRef = useRef();
     const animationState = useRef({
         elapsedTime: 0,
@@ -105,15 +120,23 @@ const DockingSpacecraft = ({ isDocking, planetScale, planetPosition = new THREE.
     useEffect(() => {
         if (isDocking) {
             animationState.current.elapsedTime = 0;
-            animationState.current.dockingPoint = getDockingPoint(planetPosition, planetRadius);
+            animationState.current.dockingPoint = getDockingPoint(
+                planetPosition,
+                planetRadius
+            );
 
             if (spacecraftRef.current) {
-                animationState.current.startPosition = spacecraftRef.current.position.clone();
+                animationState.current.startPosition =
+                    spacecraftRef.current.position.clone();
 
                 // Calculate Bezier curve control points for natural arc approach
                 const startPos = animationState.current.startPosition;
                 const dockPoint = animationState.current.dockingPoint;
-                const midPoint = new THREE.Vector3().lerpVectors(startPos, dockPoint, 0.5);
+                const midPoint = new THREE.Vector3().lerpVectors(
+                    startPos,
+                    dockPoint,
+                    0.5
+                );
 
                 // Control point 1: Elevated arc (for smooth entry)
                 animationState.current.controlPoint1 = new THREE.Vector3(
@@ -123,14 +146,13 @@ const DockingSpacecraft = ({ isDocking, planetScale, planetPosition = new THREE.
                 );
 
                 // Control point 2: Near planet (for final approach)
-                animationState.current.controlPoint2 = new THREE.Vector3().lerpVectors(
-                    midPoint,
-                    dockPoint,
-                    CONTROL_POINT_2_LERP
-                );
+                animationState.current.controlPoint2 =
+                    new THREE.Vector3().lerpVectors(
+                        midPoint,
+                        dockPoint,
+                        CONTROL_POINT_2_LERP
+                    );
             }
-
-            console.log("🚀 Starting docking sequence...");
         } else {
             // Reset to idle position
             if (spacecraftRef.current) {
@@ -143,7 +165,8 @@ const DockingSpacecraft = ({ isDocking, planetScale, planetPosition = new THREE.
 
     // Calculate position along Bezier curve using reusable vector
     const getBezierPosition = (t) => {
-        const { startPosition, controlPoint1, controlPoint2, dockingPoint } = animationState.current;
+        const { startPosition, controlPoint1, controlPoint2, dockingPoint } =
+            animationState.current;
 
         if (!startPosition || !dockingPoint) {
             return getIdlePosition(planetScale);
@@ -172,7 +195,10 @@ const DockingSpacecraft = ({ isDocking, planetScale, planetPosition = new THREE.
 
         if (isDocking) {
             animationState.current.elapsedTime += delta;
-            const rawProgress = Math.min(animationState.current.elapsedTime / DOCK_DURATION, 1);
+            const rawProgress = Math.min(
+                animationState.current.elapsedTime / DOCK_DURATION,
+                1
+            );
             const progress = easeOutCubic(rawProgress);
 
             // Update position along Bezier curve
@@ -180,34 +206,51 @@ const DockingSpacecraft = ({ isDocking, planetScale, planetPosition = new THREE.
             spacecraftRef.current.position.copy(currentPos);
 
             // Alignment phase: Rotate spacecraft to face docking point
-            if (progress > ALIGNMENT_START_PROGRESS && animationState.current.dockingPoint) {
-                const { targetQuaternion, tempMatrix, upVector } = reusableObjects.current;
+            if (
+                progress > ALIGNMENT_START_PROGRESS &&
+                animationState.current.dockingPoint
+            ) {
+                const { targetQuaternion, tempMatrix, upVector } =
+                    reusableObjects.current;
 
-                tempMatrix.lookAt(currentPos, animationState.current.dockingPoint, upVector);
+                tempMatrix.lookAt(
+                    currentPos,
+                    animationState.current.dockingPoint,
+                    upVector
+                );
                 targetQuaternion.setFromRotationMatrix(tempMatrix);
-                spacecraftRef.current.quaternion.slerp(targetQuaternion, ROTATION_LERP_SPEED);
+                spacecraftRef.current.quaternion.slerp(
+                    targetQuaternion,
+                    ROTATION_LERP_SPEED
+                );
             }
 
             // Final dock phase: Add subtle bounce effect
             if (progress > BOUNCE_START_PROGRESS) {
-                const bounceProgress = (progress - BOUNCE_START_PROGRESS) / (1 - BOUNCE_START_PROGRESS);
-                const bounceScale = spacecraftScale * (1 + Math.sin(bounceProgress * Math.PI) * BOUNCE_INTENSITY);
+                const bounceProgress =
+                    (progress - BOUNCE_START_PROGRESS) /
+                    (1 - BOUNCE_START_PROGRESS);
+                const bounceScale =
+                    spacecraftScale *
+                    (1 + Math.sin(bounceProgress * Math.PI) * BOUNCE_INTENSITY);
                 spacecraftRef.current.scale.setScalar(bounceScale);
             }
 
             // Check if docking complete
             if (progress >= 1 && onDockComplete) {
-                console.log("✅ Docking sequence complete!");
                 onDockComplete();
             }
         } else {
             // Idle state: Gentle floating animation
             const time = state.clock.elapsedTime;
             const idlePos = getIdlePosition(planetScale);
-            const floatOffset = Math.sin(time * IDLE_FLOAT_SPEED) * IDLE_FLOAT_AMPLITUDE;
+            const floatOffset =
+                Math.sin(time * IDLE_FLOAT_SPEED) * IDLE_FLOAT_AMPLITUDE;
 
             spacecraftRef.current.position.y = idlePos.y + floatOffset;
-            spacecraftRef.current.rotation.y = IDLE_ROTATION_Y + Math.sin(time * IDLE_ROTATION_SPEED) * IDLE_ROTATION_AMPLITUDE;
+            spacecraftRef.current.rotation.y =
+                IDLE_ROTATION_Y +
+                Math.sin(time * IDLE_ROTATION_SPEED) * IDLE_ROTATION_AMPLITUDE;
             spacecraftRef.current.scale.setScalar(spacecraftScale);
         }
     });

@@ -130,6 +130,28 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .infoBox {
+        padding: 2.5rem;
+    }
+
+    .interestsGrid {
+        gap: 1.25rem;
+    }
+
+    .interestIcon {
+        font-size: 2.5rem;
+    }
+
+    .interestCard h4 {
+        font-size: 1.1rem;
+    }
+
+    .funFact {
+        padding: 1.25rem;
+    }
+}
+
 @media (max-width: 768px) {
     .infoBox {
         padding: 2rem;
@@ -137,5 +159,66 @@
 
     .interestsGrid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .interestIcon {
+        font-size: 2.5rem;
+    }
+
+    .interestCard {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .infoBox {
+        padding: 1.5rem;
+    }
+
+    .interestsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .interestCard {
+        padding: 1rem;
+    }
+
+    .interestIcon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .interestCard h4 {
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .interestCard p {
+        font-size: 0.85rem;
+    }
+
+    .funFact {
+        padding: 1rem;
+    }
+
+    .funFactLabel {
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+    }
+
+    .funFact p {
+        font-size: 0.95rem;
+    }
+
+    @keyframes bounce {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-6px);
+        }
     }
 }

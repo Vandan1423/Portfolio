@@ -73,12 +73,7 @@ const CORNER_PATHS = [
  */
 const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Get section data using both systemId and planet's sectionId
-    console.log("🔍 PlanetDetailScene - systemId:", systemId);
-    console.log("🔍 PlanetDetailScene - planet:", planet);
-    console.log("🔍 PlanetDetailScene - planet.sectionId:", planet?.sectionId);
-
     const planetData = getSectionData(systemId, planet?.sectionId);
-    console.log("🔍 PlanetDetailScene - planetData:", planetData);
 
     // Keyboard shortcut for docking sequence (D key)
     const { isActive: isDockTriggered, setIsActive: setDockTriggered } =
@@ -94,7 +89,6 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Handle docking trigger
     useEffect(() => {
         if (isDockTriggered && !isDocking) {
-            console.log("🚀 Docking sequence triggered!");
             const timer = setTimeout(() => {
                 setIsDocking(true);
                 setDockTriggered(false);
@@ -106,7 +100,6 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Handle docking cancellation
     useEffect(() => {
         if (isCancelDock && isDocking) {
-            console.log("❌ Docking cancelled");
             const timer = setTimeout(() => {
                 setIsDocking(false);
                 setCancelDock(false);

@@ -49,7 +49,6 @@ const SpaceCubeMap = ({
         const texture = loader.load(
             CUBE_MAP_IMAGES,
             (loadedTexture) => {
-                console.log('✨ Space cube map loaded successfully!');
                 loadedTexture.colorSpace = THREE.SRGBColorSpace;
                 setCubeTexture(loadedTexture);
             },
@@ -62,7 +61,6 @@ const SpaceCubeMap = ({
         return () => {
             if (texture) {
                 texture.dispose();
-                console.log('🧹 Cube map cleaned up');
             }
         };
     }, [scene]);

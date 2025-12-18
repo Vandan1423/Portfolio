@@ -115,12 +115,92 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .infoBox {
+        padding: 2.5rem;
+    }
+
+    .degreeTitle {
+        font-size: 1.6rem;
+    }
+
+    .institute {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .educationStats {
+        gap: 1.5rem;
+    }
+
+    .statValue {
+        font-size: 1.8rem;
+    }
+}
+
 @media (max-width: 768px) {
     .infoBox {
         padding: 2rem;
     }
 
+    .degreeTitle {
+        font-size: 1.5rem;
+    }
+
+    .institute {
+        font-size: 1rem;
+    }
+
     .educationStats {
         flex-direction: column;
+        gap: 1rem;
+    }
+
+    .statValue {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .infoBox {
+        padding: 1.5rem;
+    }
+
+    .degreeTitle {
+        font-size: 1.3rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .institute {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .educationStats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .statBox {
+        padding: 1rem;
+    }
+
+    .statLabel {
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+    }
+
+    .statValue {
+        font-size: 1.5rem;
+    }
+
+    .previousEducation {
+        gap: 0.8rem;
+        padding-top: 1.5rem;
+    }
+
+    .eduItem {
+        padding: 0.8rem;
+        font-size: 0.9rem;
     }
 }

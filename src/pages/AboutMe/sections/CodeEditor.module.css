@@ -68,13 +68,89 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .techVisualization {
+        max-width: 400px;
+    }
+
+    .editorHeader {
+        padding: 0.75rem 0.9rem;
+    }
+
+    .dot {
+        width: 11px;
+        height: 11px;
+    }
+
+    .fileName {
+        font-size: 0.85rem;
+    }
+
+    .codeEditor {
+        padding: 1.25rem;
+        font-size: 0.85rem;
+        min-height: 180px;
+    }
+}
+
 @media (max-width: 768px) {
     .techVisualization {
         max-width: 100%;
     }
-    
+
     .codeEditor {
         padding: 1rem;
         font-size: 0.8rem;
+        min-height: 160px;
+    }
+
+    .editorHeader {
+        padding: 0.7rem 0.85rem;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    .fileName {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .techVisualization {
+        max-width: 100%;
+        border-radius: 10px;
+    }
+
+    .editorHeader {
+        padding: 0.6rem 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .editorDots {
+        gap: 0.4rem;
+    }
+
+    .dot {
+        width: 9px;
+        height: 9px;
+    }
+
+    .fileName {
+        font-size: 0.75rem;
+    }
+
+    .codeEditor {
+        padding: 0.85rem;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        min-height: 140px;
+    }
+
+    .cursor {
+        width: 6px;
+        height: 14px;
     }
 }

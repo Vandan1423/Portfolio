@@ -212,7 +212,16 @@
     background-size: 20px 20px;
 }
 
-.helper-text{
+/* Helper text - Status display box */
+.helper-text {
     height: 100px;
     width: 300px;
+    max-width: 90vw;
+}
+
+/* Hide helper text on mobile/tablet (3D portfolio not shown) */
+@media (max-width: 1024px) {
+    .helper-text {
+        display: none !important;
+    }
 }

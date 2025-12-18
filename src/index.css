@@ -75,8 +75,8 @@ h6 {
     background: #818cf8;
 }
 
-/* Hide 3D canvas on mobile (performance) */
-@media (max-width: 768px) {
+/* Hide 3D canvas on mobile and tablet (performance) */
+@media (max-width: 1024px) {
     canvas {
         display: none !important;
     }

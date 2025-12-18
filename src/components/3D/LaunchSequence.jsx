@@ -113,10 +113,6 @@ const LaunchSequence = ({
 
             // Set target so wormhole fully engulfs camera
             animationState.current.targetWormholeZ = camera.position.z + WORMHOLE_OVERSHOOT;
-
-            console.log("🚀 Launch sequence initiated - TRUE FPP View!");
-            console.log("Camera stays at:", camera.position);
-            console.log("Wormhole will move from", animationState.current.initialWormholeZ, "to", animationState.current.targetWormholeZ);
             setPhase("traveling");
         }
     }, [isActive, phase, camera, wormholeRef]);
@@ -165,9 +161,6 @@ const LaunchSequence = ({
 
             // Check if wormhole has reached camera
             if (progress >= TRAVEL_COMPLETION_THRESHOLD) {
-                console.log("⚡ Wormhole engulfing cockpit!");
-                console.log("Final wormhole Z:", wormholeRef?.current?.position.z);
-                console.log("Camera stayed at Z:", camera.position.z);
                 setPhase("entering");
                 animationState.current.elapsedTime = 0;
             }
@@ -181,7 +174,6 @@ const LaunchSequence = ({
             setWhiteFlashOpacity(flashProgress);
 
             if (flashProgress >= 1) {
-                console.log("🌀 Inside wormhole portal!");
                 setPhase("portal");
                 animationState.current.elapsedTime = 0;
             }
@@ -192,7 +184,6 @@ const LaunchSequence = ({
             onVelocityChange?.(1); // Maintain max velocity
 
             if (t > DURATION_PORTAL_HOLD) {
-                console.log("✨ Exiting wormhole!");
                 setPhase("exiting");
                 animationState.current.elapsedTime = 0;
 
@@ -227,7 +218,6 @@ const LaunchSequence = ({
             camera.position.set(restoredX, restoredY, camera.position.z);
 
             if (fadeProgress >= 1) {
-                console.log("🌟 Star system revealed!");
                 setPhase("complete");
             }
         }

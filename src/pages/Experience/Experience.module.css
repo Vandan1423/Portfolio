@@ -11,11 +11,19 @@
 @media (max-width: 1024px) {
     .experienceSection {
         padding: 0 1.5rem 3rem;
+        max-width: 900px;
     }
 }
 
 @media (max-width: 768px) {
     .experienceSection {
         padding: 0 1rem 2rem;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .experienceSection {
+        padding: 0 0.75rem 1.5rem;
     }
 }

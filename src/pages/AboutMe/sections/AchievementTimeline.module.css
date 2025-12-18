@@ -137,6 +137,28 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .constellationTimeline {
+        max-width: 350px;
+        height: 500px;
+    }
+
+    .achievementTooltip {
+        min-width: 260px;
+        max-width: 300px;
+        padding: 1.25rem 1.75rem;
+        left: 62%;
+    }
+
+    .tooltipTitle {
+        font-size: 1.15rem;
+    }
+
+    .tooltipDesc {
+        font-size: 0.9rem;
+    }
+}
+
 @media (max-width: 768px) {
     .constellationTimeline {
         max-width: 300px;
@@ -144,7 +166,71 @@
     }
 
     .achievementTooltip {
-        min-width: 200px;
-        padding: 1rem;
+        min-width: 220px;
+        max-width: 260px;
+        padding: 1rem 1.5rem;
+        left: 60%;
+    }
+
+    .tooltipTitle {
+        font-size: 1.1rem;
+    }
+
+    .tooltipDesc {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .constellationTimeline {
+        max-width: 240px;
+        height: 380px;
+    }
+
+    .starNode:hover .starCircle {
+        r: 32;
+        filter: drop-shadow(0 0 15px rgba(129, 140, 248, 1));
+    }
+
+    .starNode:hover .starRing {
+        r: 42;
+    }
+
+    .starNode:hover text {
+        font-size: 28;
+    }
+
+    .achievementTooltip {
+        min-width: 180px;
+        max-width: 220px;
+        padding: 0.85rem 1.25rem;
+        left: 58%;
+        border-width: 1.5px;
+        border-radius: 12px;
+    }
+
+    .tooltipTitle {
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .tooltipDesc {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    @keyframes drawPath {
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes pulseRing {
+        0%, 100% {
+            opacity: 0.25;
+        }
+        50% {
+            opacity: 0.5;
+        }
     }
 }

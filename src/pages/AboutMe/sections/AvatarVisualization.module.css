@@ -93,8 +93,75 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .avatarWrapper {
+        max-width: 350px;
+    }
+
+    .container {
+        min-height: 350px;
+    }
+
+    @keyframes particleOrbit {
+        from {
+            transform: rotate(0deg) translateX(-150px) rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg) translateX(-150px) rotate(-360deg);
+        }
+    }
+}
+
 @media (max-width: 768px) {
     .avatarWrapper {
         max-width: 300px;
+    }
+
+    .container {
+        min-height: 300px;
+    }
+
+    @keyframes particleOrbit {
+        from {
+            transform: rotate(0deg) translateX(-130px) rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg) translateX(-130px) rotate(-360deg);
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .avatarWrapper {
+        max-width: 240px;
+    }
+
+    .container {
+        min-height: 250px;
+    }
+
+    .orbitParticle {
+        width: 6px;
+        height: 6px;
+        box-shadow: 0 0 10px #4F46E5;
+    }
+
+    @keyframes particleOrbit {
+        from {
+            transform: rotate(0deg) translateX(-100px) rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg) translateX(-100px) rotate(-360deg);
+        }
+    }
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
     }
 }

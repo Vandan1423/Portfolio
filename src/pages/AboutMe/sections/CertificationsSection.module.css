@@ -231,20 +231,179 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .infoBox {
+        padding: 2.5rem;
+    }
+
+    .certificationsIntro {
+        font-size: 0.95rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .certificationsList {
+        gap: 1.25rem;
+    }
+
+    .certificationItem {
+        padding: 1.35rem;
+    }
+
+    .certIcon {
+        font-size: 2.25rem;
+    }
+
+    .certTitle {
+        font-size: 1.15rem;
+    }
+
+    .certOrg {
+        font-size: 0.85rem;
+    }
+
+    .certDescription p {
+        font-size: 0.9rem;
+    }
+
+    .certTech {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.7rem;
+    }
+}
+
 @media (max-width: 768px) {
     .infoBox {
         padding: 2rem;
+    }
+
+    .certificationsIntro {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .certificationsList {
+        gap: 1rem;
     }
 
     .certificationItem {
         padding: 1.25rem;
     }
 
+    .certIcon {
+        font-size: 2rem;
+    }
+
     .certTitle {
         font-size: 1.1rem;
     }
 
+    .certOrg {
+        font-size: 0.85rem;
+    }
+
+    .certDescription p {
+        font-size: 0.9rem;
+    }
+
+    .certTech {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .infoBox {
+        padding: 1.5rem;
+    }
+
+    .certificationsIntro {
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
+    }
+
+    .certificationsList {
+        gap: 1rem;
+    }
+
+    .certificationItem {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .certificationHeader {
+        gap: 0.85rem;
+        margin-bottom: 0.85rem;
+    }
+
     .certIcon {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+
+    .certTitle {
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .certOrg {
+        font-size: 0.8rem;
+    }
+
+    .certArrow {
+        font-size: 1.3rem;
+    }
+
+    .certDescription p {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 0.85rem;
+    }
+
+    .certTechHighlights {
+        gap: 0.4rem;
+    }
+
+    .certTech {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 6px;
+    }
+
+    .certFooter {
+        padding-top: 0.85rem;
+        margin-top: 0.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .certStatus,
+    .certAction {
+        font-size: 0.85rem;
+    }
+
+    .certificationsNote {
+        margin-top: 1.5rem;
+        padding: 0.85rem;
+        gap: 0.6rem;
+        border-radius: 10px;
+    }
+
+    .noteIcon {
+        font-size: 1.3rem;
+    }
+
+    .certificationsNote p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-15px);
+        }
     }
 }

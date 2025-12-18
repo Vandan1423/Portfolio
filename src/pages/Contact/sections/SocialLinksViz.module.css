@@ -89,7 +89,41 @@
     50% { transform: scale(1.1); }
 }
 
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .socialViz {
+        max-width: 350px;
+        padding: 1.5rem;
+    }
+
+    .socialOrb {
+        width: 280px;
+        height: 280px;
+    }
+
+    .socialLink {
+        width: 70px;
+        height: 70px;
+        margin: -35px 0 0 -35px;
+        transform-origin: 140px 140px;
+    }
+
+    @keyframes orbit {
+        0% {
+            transform: rotate(var(--link-angle, 0deg)) translateX(90px) rotate(calc(-1 * var(--link-angle, 0deg)));
+        }
+        100% {
+            transform: rotate(calc(var(--link-angle, 0deg) + 360deg)) translateX(90px) rotate(calc(-1 * (var(--link-angle, 0deg) + 360deg)));
+        }
+    }
+}
+
 @media (max-width: 768px) {
+    .socialViz {
+        max-width: 300px;
+        padding: 1rem;
+    }
+
     .socialOrb {
         width: 250px;
         height: 250px;
@@ -99,6 +133,7 @@
         width: 60px;
         height: 60px;
         margin: -30px 0 0 -30px;
+        transform-origin: 125px 125px;
     }
 
     .socialIcon {
@@ -121,6 +156,52 @@
         }
         100% {
             transform: rotate(calc(var(--link-angle, 0deg) + 360deg)) translateX(75px) rotate(calc(-1 * (var(--link-angle, 0deg) + 360deg)));
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .socialViz {
+        max-width: 250px;
+        padding: 0.75rem;
+    }
+
+    .socialOrb {
+        width: 200px;
+        height: 200px;
+    }
+
+    .socialLink {
+        width: 50px;
+        height: 50px;
+        margin: -25px 0 0 -25px;
+        transform-origin: 100px 100px;
+    }
+
+    .socialIcon {
+        font-size: 1rem;
+    }
+
+    .socialLabel {
+        font-size: 0.6rem;
+    }
+
+    .centerOrb {
+        width: 65px;
+        height: 65px;
+        margin: -32.5px 0 0 -32.5px;
+    }
+
+    .centerText {
+        font-size: 0.85rem;
+    }
+
+    @keyframes orbit {
+        0% {
+            transform: rotate(var(--link-angle, 0deg)) translateX(60px) rotate(calc(-1 * var(--link-angle, 0deg)));
+        }
+        100% {
+            transform: rotate(calc(var(--link-angle, 0deg) + 360deg)) translateX(60px) rotate(calc(-1 * (var(--link-angle, 0deg) + 360deg)));
         }
     }
 }

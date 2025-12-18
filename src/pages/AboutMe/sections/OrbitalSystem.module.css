@@ -89,9 +89,68 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .orbitalSystem {
+        max-width: 350px;
+        height: 350px;
+    }
+
+    .centralPlanet {
+        transform-origin: 175px 175px;
+    }
+
+    .satelliteGroup1,
+    .satelliteGroup2,
+    .satelliteGroup3 {
+        transform-origin: 175px 175px;
+    }
+}
+
 @media (max-width: 768px) {
     .orbitalSystem {
-        width: 300px;
+        max-width: 300px;
         height: 300px;
+    }
+
+    .centralPlanet {
+        transform-origin: 150px 150px;
+    }
+
+    .satelliteGroup1,
+    .satelliteGroup2,
+    .satelliteGroup3 {
+        transform-origin: 150px 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .orbitalSystem {
+        max-width: 240px;
+        height: 240px;
+    }
+
+    .centralPlanet {
+        transform-origin: 120px 120px;
+    }
+
+    .satelliteGroup1,
+    .satelliteGroup2,
+    .satelliteGroup3 {
+        transform-origin: 120px 120px;
+    }
+
+    @keyframes planetPulse {
+        0%, 100% {
+            transform: scale(1);
+            filter: url(#glow);
+        }
+        50% {
+            transform: scale(1.03);
+            filter: url(#glow) brightness(1.1);
+        }
+    }
+
+    .orbitRing {
+        opacity: 0.4;
     }
 }
