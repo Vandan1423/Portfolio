@@ -1,15 +1,14 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useCallback } from 'react';
 
 const NavigationContext = createContext(undefined);
 
-export const NavigationProvider = ({ children }) => {
+export function NavigationProvider({ children }) {
     const [currentPage, setCurrentPage] = useState('3d-portfolio');
-
     const [scrollTarget, setScrollTarget] = useState(null);
 
     const handleNavigate = useCallback((page, section = null) => {
         setCurrentPage(page);
-        // Always set scrollTarget - null will reset it, section value will set it
         setScrollTarget(section);
     }, []);
 
@@ -28,8 +27,6 @@ export const NavigationProvider = ({ children }) => {
         onNavigate: handleNavigate,
         onBack: handleBack,
         onScrollComplete: handleScrollComplete,
-        setCurrentPage,
-        setScrollTarget,
     };
 
     return (
@@ -37,14 +34,12 @@ export const NavigationProvider = ({ children }) => {
             {children}
         </NavigationContext.Provider>
     );
-};
+}
 
-export const useNavigation = () => {
+export function useNavigation() {
     const context = useContext(NavigationContext);
     if (context === undefined) {
         throw new Error('useNavigation must be used within a NavigationProvider');
     }
     return context;
-};
-
-export default NavigationContext;
+}

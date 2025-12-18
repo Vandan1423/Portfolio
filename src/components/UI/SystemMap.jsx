@@ -26,7 +26,6 @@ const SystemMap = ({ planets = [], selectedPlanet, onPlanetClick }) => {
     const centerY = 175;
 
     const handlePlanetClick = (planet) => {
-        console.log("SystemMap: Clicking planet", planet.name);
         if (onPlanetClick) {
             onPlanetClick(planet);
         }

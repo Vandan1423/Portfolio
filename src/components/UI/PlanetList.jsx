@@ -14,7 +14,6 @@ import styles from "./PlanetList.module.css";
  */
 const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
     const handlePlanetClick = (planet) => {
-        console.log("PlanetList: Clicking planet", planet.name);
         if (onPlanetClick) {
             onPlanetClick(planet);
         }

@@ -1,15 +1,14 @@
-import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import { getAllStarSystems } from '../data/starSystemsData';
 
 const StarSystemContext = createContext(undefined);
 
 const starSystems = getAllStarSystems();
 
-export const StarSystemProvider = ({ children }) => {
+export function StarSystemProvider({ children }) {
     const [currentSystemId, setCurrentSystemId] = useState('alpha-centauri');
-
     const [selectedPlanet, setSelectedPlanet] = useState(null);
-
     const [travelDestination, setTravelDestination] = useState(null);
     const [travelPhase, setTravelPhase] = useState(null);
 
@@ -56,14 +55,12 @@ export const StarSystemProvider = ({ children }) => {
             {children}
         </StarSystemContext.Provider>
     );
-};
+}
 
-export const useStarSystem = () => {
+export function useStarSystem() {
     const context = useContext(StarSystemContext);
     if (context === undefined) {
         throw new Error('useStarSystem must be used within a StarSystemProvider');
     }
     return context;
-};
-
-export default StarSystemContext;
+}

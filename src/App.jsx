@@ -320,8 +320,8 @@ function App() {
                     </Canvas>
 
                     {currentPhase === "cockpit" && (
-                        <div className="absolute top-6 left-6 text-white font-mono z-10">
-                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-green-500/30">
+                        <div className="absolute top-6 left-6 text-white font-mono z-10 helper-text">
+                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-green-500/30 w-full h-full flex flex-col justify-center">
                                 <div className="text-green-400 text-sm mb-1">
                                     COCKPIT INTERFACE
                                 </div>
@@ -334,8 +334,8 @@ function App() {
                     )}
 
                     {currentPhase === "launching" && (
-                        <div className="absolute top-6 left-6 text-white font-mono z-10">
-                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-red-500/50 animate-pulse">
+                        <div className="absolute top-6 left-6 text-white font-mono z-10 helper-text">
+                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-red-500/50 animate-pulse w-full h-full">
                                 <div className="text-red-400 text-sm mb-1 font-bold">
                                     ⚠ LAUNCH SEQUENCE ACTIVE
                                 </div>
@@ -345,8 +345,8 @@ function App() {
                     )}
 
                     {currentPhase === "exploration" && (
-                        <div className="absolute top-6 left-6 text-white font-mono z-10">
-                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-cyan-500/30 text-sm/8">
+                        <div className="absolute top-6 left-6 text-white font-mono z-10 helper-text">
+                            <div className="bg-black/50 backdrop-blur-sm p-4 rounded border border-cyan-500/30 text-sm/8 w-full h-full">
                                 <div className="text-cyan-400 text-sm mb-1">
                                     {currentSystem?.name || "UNKNOWN SYSTEM"}
                                 </div>

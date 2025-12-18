@@ -47,7 +47,6 @@ const NavigationScreen = ({
 
     // Handle planet click - this opens the planet detail scene
     const handlePlanetClick = (planet) => {
-        console.log("NavigationScreen: Planet clicked", planet.name);
         if (onPlanetSelect) {
             onPlanetSelect(planet);
         }
