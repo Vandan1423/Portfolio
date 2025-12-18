@@ -9,19 +9,26 @@ const optimizeCloudinaryUrl = (url, options = {}) => {
 
     // Extract the base URL and image path
     const parts = url.split('/upload/');
-    if (parts.length !== 2) return url;
+    if (parts.length !== 2) {
+        console.warn('Invalid Cloudinary URL format:', url);
+        return url;
+    }
 
     // Build transformation string
     const transformations = [];
 
     if (thumbnail) {
         // Smaller transformations for thumbnails
-        transformations.push('w_150,h_100,c_fill');
+        transformations.push('w_150');
+        transformations.push('h_100');
+        transformations.push('c_fill');
         transformations.push('q_60');
         transformations.push('f_auto');
     } else {
         // Full-size image optimizations
-        transformations.push(`w_${width}`);
+        if (width !== 'auto') {
+            transformations.push(`w_${width}`);
+        }
         transformations.push(`q_${quality}`);
         transformations.push(`f_${format}`);
         transformations.push('c_limit');
@@ -29,7 +36,9 @@ const optimizeCloudinaryUrl = (url, options = {}) => {
     }
 
     const transformationString = transformations.join(',');
-    return `${parts[0]}/upload/${transformationString}/${parts[1]}`;
+    const optimizedUrl = `${parts[0]}/upload/${transformationString}/${parts[1]}`;
+
+    return optimizedUrl;
 };
 
 const ImageCarousel = ({ screenshots, projectName }) => {
@@ -74,6 +83,33 @@ const ImageCarousel = ({ screenshots, projectName }) => {
         setImageLoaded({});
     }, [screenshots]);
 
+    // Preload current and adjacent images
+    useEffect(() => {
+        if (!screenshots || screenshots.length === 0) return;
+
+        const preloadImage = (index) => {
+            if (index < 0 || index >= screenshots.length) return;
+
+            const url = optimizeCloudinaryUrl(screenshots[index], { width: 1200 });
+            const img = new Image();
+            img.src = url;
+            img.onload = () => handleImageLoad(index);
+            img.onerror = () => {
+                console.error(`Failed to preload image ${index}:`, url);
+                handleImageLoad(index); // Mark as loaded even on error
+            };
+        };
+
+        // Preload current image
+        preloadImage(currentIndex);
+
+        // Preload next and previous images for smooth navigation
+        if (screenshots.length > 1) {
+            preloadImage((currentIndex + 1) % screenshots.length);
+            preloadImage((currentIndex - 1 + screenshots.length) % screenshots.length);
+        }
+    }, [currentIndex, screenshots]);
+
     if (!screenshots || screenshots.length === 0) {
         return (
             <div className={styles.noImages}>
@@ -103,8 +139,14 @@ const ImageCarousel = ({ screenshots, projectName }) => {
                         className={styles.mainImage}
                         onClick={openFullscreen}
                         onLoad={() => handleImageLoad(currentIndex)}
-                        loading="lazy"
-                        style={{ display: imageLoaded[currentIndex] ? 'block' : 'none' }}
+                        onError={() => {
+                            console.error(`Failed to load image: ${optimizedMainImage}`);
+                            handleImageLoad(currentIndex); // Still mark as loaded to show alt text
+                        }}
+                        style={{
+                            opacity: imageLoaded[currentIndex] ? 1 : 0,
+                            transition: 'opacity 0.3s ease-in-out'
+                        }}
                     />
 
                     <button

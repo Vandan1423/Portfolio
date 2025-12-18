@@ -1,0 +1,175 @@
+/**
+ * Asset Collector Utility
+ *
+ * Programmatically collects all asset URLs from data files
+ * for preloading before the main application loads.
+ *
+ * Assets include:
+ * - 3D Models (.glb files) from star systems and local models
+ * - Images (project screenshots, avatars, backgrounds)
+ * - Cube map textures for space background
+ */
+
+import { STAR_SYSTEMS } from '../data/starSystemsData';
+import projectsData from '../data/projectsData';
+
+// Cube map texture URLs from SpaceCubeMap component
+const CUBE_MAP_IMAGES = [
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048720/Star1_k9qpl9.png', // Positive X (right)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png', // Negative X (left)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048724/Star3_ptf4ey.png', // Positive Y (top)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048725/Star4_nj5osv.png', // Negative Y (bottom)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048715/Star5_rd4aab.png', // Positive Z (front)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048729/Star6_zqxvin.png', // Negative Z (back)
+];
+
+/**
+ * Collects all assets that need to be preloaded
+ * @returns {Object} Object containing arrays of models, images, and cube textures
+ */
+export const collectAssets = () => {
+    const assets = {
+        models: [],
+        images: [],
+        cubeTextures: []
+    };
+
+    // Track unique URLs to avoid duplicates
+    const seenModelUrls = new Set();
+    const seenImageUrls = new Set();
+    let saturnSkipped = false; // Track if we've logged Saturn warning
+
+    // 1. Collect 3D models from star systems
+    try {
+        Object.values(STAR_SYSTEMS).forEach(system => {
+            system.planets.forEach(planet => {
+                const url = planet.modelPath;
+
+                // Skip deleted Saturn.glb (only log once)
+                if (url === '/models/Saturn.glb') {
+                    if (!saturnSkipped) {
+                        console.warn('⚠️ Saturn.glb is deleted, skipping preload');
+                        saturnSkipped = true;
+                    }
+                    return;
+                }
+
+                // Only add unique URLs
+                if (!seenModelUrls.has(url)) {
+                    seenModelUrls.add(url);
+                    assets.models.push({
+                        url,
+                        name: planet.name,
+                        type: url.startsWith('http') ? 'model' : 'local-model',
+                        priority: 'low' // System models load after cockpit
+                    });
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error collecting star system models:', error);
+    }
+
+    // 2. Add local cockpit model (high priority - needed for first scene)
+    assets.models.unshift({
+        url: '/models/SpaceshipCockpit.glb',
+        name: 'Cockpit',
+        type: 'local-model',
+        priority: 'high'
+    });
+
+    // 3. Collect cube map textures (high priority - needed for background)
+    CUBE_MAP_IMAGES.forEach((url, idx) => {
+        assets.cubeTextures.push({
+            url,
+            name: `Space Texture ${idx + 1}`,
+            type: 'texture',
+            priority: 'high'
+        });
+    });
+
+    // 4. Collect project screenshots
+    try {
+        projectsData.forEach(project => {
+            if (project.screenshots && Array.isArray(project.screenshots)) {
+                project.screenshots.forEach((url, idx) => {
+                    if (!seenImageUrls.has(url)) {
+                        seenImageUrls.add(url);
+                        assets.images.push({
+                            url,
+                            name: `${project.name} - Screenshot ${idx + 1}`,
+                            type: 'image',
+                            priority: 'low' // Project images can load last
+                        });
+                    }
+                });
+            }
+        });
+    } catch (error) {
+        console.error('Error collecting project images:', error);
+    }
+
+    // 5. Collect additional images (avatar, backgrounds)
+    // Avatar from AboutMe page
+    const avatarUrl = 'https://res.cloudinary.com/didezuerl/image/upload/v1766049447/Avatar_fnr2xa.png';
+    if (!seenImageUrls.has(avatarUrl)) {
+        assets.images.push({
+            url: avatarUrl,
+            name: 'Avatar',
+            type: 'image',
+            priority: 'medium'
+        });
+    }
+
+    return assets;
+};
+
+/**
+ * Get all assets in priority order for optimized loading
+ * High priority: Cockpit model, cube maps (needed for first scene)
+ * Medium priority: Avatar
+ * Low priority: Star system models, project images
+ *
+ * @returns {Array} Flat array of all assets sorted by priority
+ */
+export const getAssetsInPriorityOrder = () => {
+    const assets = collectAssets();
+
+    // Flatten all assets into a single array
+    const allAssets = [
+        ...assets.models,
+        ...assets.cubeTextures,
+        ...assets.images
+    ];
+
+    // Sort by priority: high → medium → low
+    const priorityOrder = { high: 0, medium: 1, low: 2 };
+    allAssets.sort((a, b) => {
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
+
+    return allAssets;
+};
+
+/**
+ * Get total asset count
+ * @returns {number} Total number of assets to preload
+ */
+export const getTotalAssetCount = () => {
+    const assets = collectAssets();
+    return assets.models.length + assets.images.length + assets.cubeTextures.length;
+};
+
+/**
+ * Get asset statistics for logging
+ * @returns {Object} Asset count breakdown
+ */
+export const getAssetStats = () => {
+    const assets = collectAssets();
+    return {
+        models: assets.models.length,
+        images: assets.images.length,
+        cubeTextures: assets.cubeTextures.length,
+        total: assets.models.length + assets.images.length + assets.cubeTextures.length
+    };
+};

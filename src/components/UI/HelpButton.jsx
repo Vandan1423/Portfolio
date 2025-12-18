@@ -6,27 +6,21 @@ import styles from './HelpButton.module.css';
  * HelpButton Component
  *
  * Floating help button that triggers the UserGuide
- * - Shows UserGuide automatically on first visit
  * - Can be triggered by clicking the button or pressing '?' key
  * - Uses localStorage to track if user has seen the guide
- * - Pulses to attract attention for new visitors
+ * - Pulses to attract attention for new visitors who haven't opened it
  */
 const HelpButton = () => {
   const [isGuideVisible, setIsGuideVisible] = useState(false);
   const [hasSeenGuide, setHasSeenGuide] = useState(true);
 
-  // Check if this is the user's first visit
+  // Check if the user has seen the guide before
   useEffect(() => {
     const hasVisited = localStorage.getItem('portfolio-guide-seen');
 
     if (!hasVisited) {
-      // First time visitor - show guide after 2 seconds
-      const timer = setTimeout(() => {
-        setIsGuideVisible(true);
-        setHasSeenGuide(false);
-      }, 2000);
-
-      return () => clearTimeout(timer);
+      // First time visitor - button will pulse but guide won't auto-show
+      setHasSeenGuide(false);
     } else {
       setHasSeenGuide(true);
     }
