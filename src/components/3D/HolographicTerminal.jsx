@@ -1,18 +1,60 @@
 import { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
-import * as THREE from "three";
+
+// Terminal styling constants
+const TERMINAL_COLOR = "#00ff88";
+const TERMINAL_BG = "rgba(10, 25, 47, 0.98)";
+const TERMINAL_BORDER = "rgba(0, 255, 136, 0.3)";
+const TERMINAL_SHADOW_GLOW = "0 0 30px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.05)";
+const TEXT_SHADOW = "0 0 5px rgba(0, 255, 136, 0.8)";
+
+// Terminal dimensions
+const TERMINAL_WIDTH = "600px";
+const TERMINAL_HEIGHT = "360px";
+const TERMINAL_FONT_SIZE = "14px";
+
+// Animation timing constants
+const TYPING_WORD_DELAY = 150;
+const TYPING_LINE_DELAY = 300;
+const TYPING_EMPTY_LINE_DELAY = 100;
+const TYPING_INITIAL_DELAY = 500;
+const CURSOR_BLINK_INTERVAL = 500;
+const COUNTDOWN_INTERVAL = 1000;
+const LAUNCH_DELAY = 500;
+
+// Screen glow animation
+const GLOW_PULSE_SPEED = 2;
+const GLOW_PULSE_INTENSITY_MIN = 0.9;
+const GLOW_PULSE_AMPLITUDE = 0.1;
+
+// Cursor positioning (character width approximation)
+const CURSOR_CHAR_WIDTH = 8.4;
+
+// Initial boot sequence messages
+const BOOT_SEQUENCE = [
+    "INITIALIZING NAVIGATION SYSTEM...",
+    "LOADING QUANTUM DRIVE PROTOCOLS...",
+    "ESTABLISHING NEURAL LINK...",
+    "CALIBRATING WARP COORDINATES...",
+    "SYSTEMS ONLINE",
+    "",
+    "WELCOME, CAPTAIN",
+    "",
+    "Type 'clear' to clear the screen",
+    "Type 'status' for getting status of the spacecraft",
+    "Type 'launch' to begin your journey",
+    "",
+];
 
 /**
  * HolographicTerminal Component
  *
  * Interactive terminal screen in the cockpit dashboard
- * Features:
- * - Word-by-word typing animation
- * - User input capability
- * - Keyboard and mouse interaction
- * - Futuristic terminal styling
- * - Will support navigation commands later
+ * Features word-by-word typing animation, user input, and command processing
+ *
+ * @param {array} position - 3D position [x, y, z]
+ * @param {function} onCommand - Callback for processing commands
  */
 const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
     const screenRef = useRef();
@@ -21,41 +63,25 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
     const [isTyping, setIsTyping] = useState(false);
     const [cursorVisible, setCursorVisible] = useState(true);
 
-    // Initial boot sequence messages
-    const bootSequence = [
-        "INITIALIZING NAVIGATION SYSTEM...",
-        "LOADING QUANTUM DRIVE PROTOCOLS...",
-        "ESTABLISHING NEURAL LINK...",
-        "CALIBRATING WARP COORDINATES...",
-        "SYSTEMS ONLINE",
-        "",
-        "WELCOME, CAPTAIN",
-        "",
-        "Type 'clear' to clear the screen",
-        "Type 'status' for getting status of the spacecraft",
-        "Type 'launch' to begin your journey",
-        "",
-    ];
-
-    // Typing animation effect
+    // Typing animation effect for boot sequence
     useEffect(() => {
         let lineIndex = 0;
         let wordIndex = 0;
         let currentLine = "";
 
         const typeNextWord = () => {
-            if (lineIndex >= bootSequence.length) {
+            if (lineIndex >= BOOT_SEQUENCE.length) {
                 setIsTyping(false);
                 return;
             }
 
-            const line = bootSequence[lineIndex];
+            const line = BOOT_SEQUENCE[lineIndex];
 
             // Handle empty lines
             if (line === "") {
                 setTerminalLines((prev) => [...prev, ""]);
                 lineIndex++;
-                setTimeout(typeNextWord, 100);
+                setTimeout(typeNextWord, TYPING_EMPTY_LINE_DELAY);
                 return;
             }
 
@@ -69,18 +95,18 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                     return newLines;
                 });
                 wordIndex++;
-                setTimeout(typeNextWord, 150); // Delay between words
+                setTimeout(typeNextWord, TYPING_WORD_DELAY);
             } else {
                 // Move to next line
                 lineIndex++;
                 wordIndex = 0;
                 currentLine = "";
-                setTimeout(typeNextWord, 300); // Delay between lines
+                setTimeout(typeNextWord, TYPING_LINE_DELAY);
             }
         };
 
         setIsTyping(true);
-        const timeout = setTimeout(typeNextWord, 500); // Initial delay
+        const timeout = setTimeout(typeNextWord, TYPING_INITIAL_DELAY);
 
         return () => clearTimeout(timeout);
     }, []);
@@ -89,14 +115,14 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCursorVisible((prev) => !prev);
-        }, 500);
+        }, CURSOR_BLINK_INTERVAL);
         return () => clearInterval(interval);
     }, []);
 
-    // Animate screen glow
+    // Animate screen glow pulse
     useFrame((state) => {
         if (screenRef.current) {
-            const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.1 + 0.9;
+            const pulse = Math.sin(state.clock.elapsedTime * GLOW_PULSE_SPEED) * GLOW_PULSE_AMPLITUDE + GLOW_PULSE_INTENSITY_MIN;
             screenRef.current.material.emissiveIntensity = pulse;
         }
     });
@@ -113,72 +139,74 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
         }
     };
 
+    // Add lines to terminal output
+    const addTerminalLines = (...lines) => {
+        setTerminalLines((prev) => [...prev, ...lines]);
+    };
+
     // Process commands
     const handleCommand = (cmd) => {
         const command = cmd.toLowerCase().trim();
 
         // Add user input to terminal
-        setTerminalLines((prev) => [...prev, `> ${cmd}`, ""]);
+        addTerminalLines(`> ${cmd}`, "");
 
-        // Command processing (will expand this later for navigation)
-        if (command === "launch") {
-            setTerminalLines((prev) => [
-                ...prev,
-                "INITIATING LAUNCH SEQUENCE...",
-                "",
-            ]);
+        // Handle empty command
+        if (command === "") return;
 
-            // Play countdown audio
-            const audio = new Audio("/sound/Countdown.mp3");
-            audio.play().catch((err) => console.log("Audio play failed:", err));
+        // Command processing
+        switch (command) {
+            case "launch": {
+                addTerminalLines("INITIATING LAUNCH SEQUENCE...", "");
 
-            // Animated countdown on same line
-            let countdown = 3;
-            const countdownInterval = setInterval(() => {
-                if (countdown > 0) {
-                    setTerminalLines((prev) => {
-                        const newLines = [...prev];
-                        newLines[
-                            newLines.length - 1
-                        ] = `COUNTDOWN: ${countdown}...`;
-                        return newLines;
-                    });
-                    countdown--;
-                } else {
-                    setTerminalLines((prev) => {
-                        const newLines = [...prev];
-                        newLines[newLines.length - 1] = "COUNTDOWN: GO!";
-                        return newLines;
-                    });
-                    clearInterval(countdownInterval);
+                // Play countdown audio
+                const audio = new Audio("/sound/Countdown.mp3");
+                audio.play().catch((err) => console.log("Audio play failed:", err));
 
-                    // Call parent callback for launch
-                    if (onCommand) {
-                        setTimeout(() => onCommand("launch"), 500);
+                // Animated countdown
+                let countdown = 3;
+                const countdownInterval = setInterval(() => {
+                    if (countdown > 0) {
+                        setTerminalLines((prev) => {
+                            const newLines = [...prev];
+                            newLines[newLines.length - 1] = `COUNTDOWN: ${countdown}...`;
+                            return newLines;
+                        });
+                        countdown--;
+                    } else {
+                        setTerminalLines((prev) => {
+                            const newLines = [...prev];
+                            newLines[newLines.length - 1] = "COUNTDOWN: GO!";
+                            return newLines;
+                        });
+                        clearInterval(countdownInterval);
+
+                        // Call parent callback for launch
+                        if (onCommand) {
+                            setTimeout(() => onCommand("launch"), LAUNCH_DELAY);
+                        }
                     }
-                }
-            }, 1000);
-        }else if (command === "status") {
-            setTerminalLines((prev) => [
-                ...prev,
-                "SYSTEM STATUS:",
-                "  Fuel: 100%",
-                "  Shields: ONLINE",
-                "  Engines: READY",
-                "  Navigation: STANDBY",
-                "",
-            ]);
-        } else if (command === "clear") {
-            setTerminalLines([]);
-        } else if (command === "") {
-            // Empty command, just add blank line
-            setTerminalLines((prev) => [...prev]);
-        } else {
-            setTerminalLines((prev) => [
-                ...prev,
-                `Command not recognized: ${cmd}`,
-                "",
-            ]);
+                }, COUNTDOWN_INTERVAL);
+                break;
+            }
+
+            case "status":
+                addTerminalLines(
+                    "SYSTEM STATUS:",
+                    "  Fuel: 100%",
+                    "  Shields: ONLINE",
+                    "  Engines: READY",
+                    "  Navigation: STANDBY",
+                    ""
+                );
+                break;
+
+            case "clear":
+                setTerminalLines([]);
+                break;
+
+            default:
+                addTerminalLines(`Command not recognized: ${cmd}`, "");
         }
     };
 
@@ -190,8 +218,8 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                 distanceFactor={1}
                 position={[0, 0, 0.01]}
                 style={{
-                    width: "600px",
-                    height: "360px",
+                    width: TERMINAL_WIDTH,
+                    height: TERMINAL_HEIGHT,
                     pointerEvents: "auto",
                 }}
             >
@@ -200,16 +228,15 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                     style={{
                         width: "100%",
                         height: "100%",
-                        backgroundColor: "rgba(10, 25, 47, 0.98)",
-                        border: "1px solid rgba(0, 255, 136, 0.3)",
+                        backgroundColor: TERMINAL_BG,
+                        border: `1px solid ${TERMINAL_BORDER}`,
                         borderRadius: "4px",
                         padding: "16px",
                         fontFamily: '"Courier New", monospace',
-                        fontSize: "14px",
-                        color: "#00ff88",
+                        fontSize: TERMINAL_FONT_SIZE,
+                        color: TERMINAL_COLOR,
                         overflow: "auto",
-                        boxShadow:
-                            "0 0 30px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.05)",
+                        boxShadow: TERMINAL_SHADOW_GLOW,
                         cursor: "text",
                     }}
                     onClick={(e) => {
@@ -224,8 +251,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                                 key={index}
                                 style={{
                                     marginBottom: "4px",
-                                    textShadow:
-                                        "0 0 5px rgba(0, 255, 136, 0.8)",
+                                    textShadow: TEXT_SHADOW,
                                 }}
                             >
                                 {line}
@@ -242,9 +268,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                                     id="terminal-input"
                                     type="text"
                                     value={currentInput}
-                                    onChange={(e) =>
-                                        setCurrentInput(e.target.value)
-                                    }
+                                    onChange={(e) => setCurrentInput(e.target.value)}
                                     onKeyDown={handleKeyPress}
                                     onClick={(e) => e.stopPropagation()}
                                     autoFocus
@@ -253,18 +277,17 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                                         backgroundColor: "transparent",
                                         border: "none",
                                         outline: "none",
-                                        color: "#00ff88",
+                                        color: TERMINAL_COLOR,
                                         fontFamily: "inherit",
                                         fontSize: "inherit",
-                                        textShadow:
-                                            "0 0 5px rgba(0, 255, 136, 0.8)",
+                                        textShadow: TEXT_SHADOW,
                                         caretColor: "transparent",
                                     }}
                                 />
                                 <span
                                     style={{
                                         position: "absolute",
-                                        left: `${currentInput.length * 8.4}px`,
+                                        left: `${currentInput.length * CURSOR_CHAR_WIDTH}px`,
                                         top: "0",
                                         opacity: cursorVisible ? 1 : 0,
                                         pointerEvents: "none",
@@ -280,22 +303,16 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                     {isTyping && (
                         <div style={{ display: "flex", alignItems: "center" }}>
                             <span style={{ marginRight: "8px" }}>{">"}</span>
-                            <span
-                                style={{
-                                    opacity: cursorVisible ? 1 : 0,
-                                }}
-                            >
-                                █
-                            </span>
+                            <span style={{ opacity: cursorVisible ? 1 : 0 }}>█</span>
                         </div>
                     )}
                 </div>
             </Html>
 
-            {/* Screen glow light - subtle */}
+            {/* Screen glow light */}
             <pointLight
                 position={[0, 0, 0.5]}
-                color="#00ff88"
+                color={TERMINAL_COLOR}
                 intensity={0.8}
                 distance={2}
             />

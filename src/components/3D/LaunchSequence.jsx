@@ -2,39 +2,89 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
+// Animation phase durations (seconds)
+const DURATION_TRAVEL = 10;
+const DURATION_FLASH_IN = 0.3;
+const DURATION_PORTAL_HOLD = 0.5;
+const DURATION_FADE_OUT = 2;
+
+// Camera effects
+const CAMERA_SHAKE_INTENSITY = 0.01;
+const CAMERA_SHAKE_FREQUENCY_X = 20;
+const CAMERA_SHAKE_FREQUENCY_Y = 15;
+const FOV_NORMAL = 75;
+const FOV_MAX_INCREASE = 35; // 75 + 35 = 110 degrees at max speed
+const FOV_LERP_SPEED = 2;
+
+// Wormhole positioning
+const WORMHOLE_OVERSHOOT = 5; // Units past camera for full engulfment
+const TRAVEL_COMPLETION_THRESHOLD = 0.99;
+
+// Speed and velocity
+const MAX_SPEED = 15;
+const VELOCITY_EXIT_REDUCTION = 0.5; // Reduce to 50% during exit
+
+// Camera restoration during exit
+const CAMERA_RESTORE_LERP_SPEED = 3;
+
+// White flash overlay
+const FLASH_OVERLAY_SIZE = 200;
+const FLASH_OVERLAY_DISTANCE = 1; // Distance in front of camera
+
+// Star streaks configuration
+const STAR_COUNT = 1000;
+const STAR_SPREAD_XY = 100;
+const STAR_DEPTH_RANGE = 200;
+const STAR_MIN_DISTANCE = 10;
+const STAR_MOVEMENT_SPEED = 50;
+const STAR_RESET_DISTANCE = 10;
+const STAR_SIZE_MIN = 0.1;
+const STAR_SIZE_MAX_INCREASE = 0.4;
+const STAR_OPACITY = 0.8;
+const STAR_MIN_VELOCITY = 0.5;
+const STAR_MAX_VELOCITY_RANGE = 1.5;
+
+// Seeded random constants (mathematical constants for variation)
+const SEED_X = 3.14159;
+const SEED_Y = 2.71828;
+const SEED_Z = 1.41421;
+const SEED_VEL = 1.61803;
+
 /**
- * LaunchSequence Component - TRUE FPP Cockpit View
+ * Seeded random number generator for consistent star positions
+ */
+const seededRandom = (seed) => {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+};
+
+/**
+ * LaunchSequence Component
  *
- * Complete cinematic launch sequence from INSIDE cockpit perspective:
- * 1. User types "launch" in terminal (handled by parent)
- * 2. Countdown: 3... 2... 1... GO! with Countdown.mp3
- * 3. Camera STAYS IN COCKPIT (FPP view maintained)
- * 4. Wormhole MOVES TOWARD camera (not camera toward wormhole)
- * 5. Stars stream toward camera as speed increases
- * 6. Relativistic effects: FOV increase, camera shake, background rotation
- * 7. Wormhole engulfs cockpit with white flash
- * 8. Hold white for 0.5s
- * 9. Fade from white revealing star system
+ * Cinematic launch sequence with true first-person perspective
+ * Camera remains in cockpit while wormhole approaches
  *
- * Key features:
- * - TRUE First Person Perspective - camera never leaves cockpit
- * - Cockpit visible throughout entire sequence
- * - Wormhole approaches camera
- * - Camera shake intensity based on speed
- * - Star streaking toward camera
- * - Smooth exponential acceleration
- * - White flash transition
- * - Background rotation synced to velocity (relativistic physics)
+ * Phases:
+ * 1. Traveling: Wormhole approaches, camera shakes, FOV increases
+ * 2. Entering: White flash as wormhole engulfs cockpit
+ * 3. Portal: Hold white screen
+ * 4. Exiting: Fade to reveal star system
+ *
+ * @param {boolean} isActive - Whether sequence is active
+ * @param {function} onSequenceComplete - Callback when sequence completes
+ * @param {object} wormholeRef - Reference to wormhole object to animate
+ * @param {array} initialWormholePosition - Starting position [x, y, z]
+ * @param {function} onVelocityChange - Callback for velocity updates (0-1 range)
  */
 const LaunchSequence = ({
     isActive,
     onSequenceComplete,
-    wormholeRef, // Need ref to the wormhole to move it
-    initialWormholePosition = [0, 0, -300], // Wormhole starts 300 units away
-    onVelocityChange, // Callback to pass velocity to parent for background rotation
+    wormholeRef,
+    initialWormholePosition = [0, 0, -300],
+    onVelocityChange,
 }) => {
     const { camera } = useThree();
-    const [phase, setPhase] = useState("idle"); // idle, traveling, entering, portal, exiting, complete
+    const [phase, setPhase] = useState("idle");
     const [whiteFlashOpacity, setWhiteFlashOpacity] = useState(0);
 
     // Animation state
@@ -44,14 +94,13 @@ const LaunchSequence = ({
         initialCameraPos: new THREE.Vector3(),
         initialWormholeZ: initialWormholePosition[2],
         speed: 0,
-        maxSpeed: 15, // Max speed value
-        targetWormholeZ: 0, // Wormhole moves to camera position (fully engulfs it)
+        maxSpeed: MAX_SPEED,
+        targetWormholeZ: 0,
     });
 
-    // Initialize - camera stays in place!
+    // Initialize sequence - camera stays in place (true FPP)
     useEffect(() => {
         if (isActive && phase === "idle") {
-            // Store initial camera position (never changes - TRUE FPP!)
             animationState.current.initialCameraPos.copy(camera.position);
             animationState.current.startTime = Date.now();
             animationState.current.elapsedTime = 0;
@@ -62,8 +111,8 @@ const LaunchSequence = ({
                 animationState.current.initialWormholeZ = wormholeRef.current.position.z;
             }
 
-            // Set target to camera position so wormhole fully engulfs it
-            animationState.current.targetWormholeZ = camera.position.z + 5; // Move 5 units past camera
+            // Set target so wormhole fully engulfs camera
+            animationState.current.targetWormholeZ = camera.position.z + WORMHOLE_OVERSHOOT;
 
             console.log("🚀 Launch sequence initiated - TRUE FPP View!");
             console.log("Camera stays at:", camera.position);
@@ -78,51 +127,44 @@ const LaunchSequence = ({
         animationState.current.elapsedTime += delta;
         const t = animationState.current.elapsedTime;
 
-        // === PHASE 1: TRAVELING - WORMHOLE APPROACHES CAMERA ===
+        // Phase 1: Traveling - Wormhole approaches camera
         if (phase === "traveling") {
-            // Acceleration (0-10 seconds) - exponential ease-in
-            const duration = 10; // 10 seconds for wormhole to reach camera
-            const progress = Math.min(t / duration, 1);
+            const progress = Math.min(t / DURATION_TRAVEL, 1);
             const easedProgress = Math.pow(progress, 2); // Quadratic ease-in
 
             animationState.current.speed = easedProgress * animationState.current.maxSpeed;
 
-            // Pass velocity factor to parent (0-1 range for background rotation)
-            if (onVelocityChange) {
-                onVelocityChange(easedProgress);
-            }
+            // Update velocity for parent (background rotation)
+            onVelocityChange?.(easedProgress);
 
-            // === WORMHOLE MOVEMENT (moves TOWARD camera) ===
+            // Move wormhole toward camera
             if (wormholeRef?.current) {
-                const wormholeTotalDistance = animationState.current.initialWormholeZ - animationState.current.targetWormholeZ;
-                const wormholeTraveledDistance = easedProgress * wormholeTotalDistance;
-                const newWormholeZ = animationState.current.initialWormholeZ - wormholeTraveledDistance;
-
-                wormholeRef.current.position.z = newWormholeZ;
+                const totalDistance = animationState.current.initialWormholeZ - animationState.current.targetWormholeZ;
+                const traveledDistance = easedProgress * totalDistance;
+                wormholeRef.current.position.z = animationState.current.initialWormholeZ - traveledDistance;
             }
 
-            // === CAMERA STAYS IN COCKPIT - ONLY SHAKE ===
+            // Camera shake based on speed
             const speedRatio = animationState.current.speed / animationState.current.maxSpeed;
-            const shakeIntensity = speedRatio * 0.01; // Reduced from 0.08 for smoother experience
-            const shakeX = Math.sin(state.clock.elapsedTime * 20) * shakeIntensity;
-            const shakeY = Math.cos(state.clock.elapsedTime * 15) * shakeIntensity;
+            const shakeIntensity = speedRatio * CAMERA_SHAKE_INTENSITY;
+            const shakeX = Math.sin(state.clock.elapsedTime * CAMERA_SHAKE_FREQUENCY_X) * shakeIntensity;
+            const shakeY = Math.cos(state.clock.elapsedTime * CAMERA_SHAKE_FREQUENCY_Y) * shakeIntensity;
 
-            // Camera only shakes, doesn't move forward/backward
             camera.position.set(
                 animationState.current.initialCameraPos.x + shakeX,
                 animationState.current.initialCameraPos.y + shakeY,
-                animationState.current.initialCameraPos.z // Z NEVER CHANGES - TRUE FPP!
+                animationState.current.initialCameraPos.z // Z never changes (true FPP)
             );
 
-            // FOV increase (speed tunnel effect)
-            const newFov = 75 + speedRatio * 35; // 75 to 110 degrees
+            // FOV increase for speed tunnel effect
+            const newFov = FOV_NORMAL + speedRatio * FOV_MAX_INCREASE;
             if (Math.abs(camera.fov - newFov) > 0.1) {
                 camera.fov = newFov;
                 camera.updateProjectionMatrix();
             }
 
             // Check if wormhole has reached camera
-            if (progress >= 0.99) {
+            if (progress >= TRAVEL_COMPLETION_THRESHOLD) {
                 console.log("⚡ Wormhole engulfing cockpit!");
                 console.log("Final wormhole Z:", wormholeRef?.current?.position.z);
                 console.log("Camera stayed at Z:", camera.position.z);
@@ -131,76 +173,62 @@ const LaunchSequence = ({
             }
         }
 
-        // === PHASE 2: ENTERING WORMHOLE (instant white flash) ===
+        // Phase 2: Entering wormhole (white flash)
         else if (phase === "entering") {
-            // Keep velocity at max during entry
-            if (onVelocityChange) {
-                onVelocityChange(1);
-            }
-            // Rapid white flash (0.3 seconds)
-            const flashTime = Math.min(t / 0.3, 1);
-            setWhiteFlashOpacity(flashTime);
+            onVelocityChange?.(1); // Max velocity during entry
 
-            if (flashTime >= 1) {
+            const flashProgress = Math.min(t / DURATION_FLASH_IN, 1);
+            setWhiteFlashOpacity(flashProgress);
+
+            if (flashProgress >= 1) {
                 console.log("🌀 Inside wormhole portal!");
                 setPhase("portal");
                 animationState.current.elapsedTime = 0;
             }
         }
 
-        // === PHASE 3: PORTAL TRANSIT (white screen holds) ===
+        // Phase 3: Portal transit (white screen hold)
         else if (phase === "portal") {
-            // Maintain max velocity during portal transit
-            if (onVelocityChange) {
-                onVelocityChange(1);
-            }
-            // Hold white screen for 0.5 seconds
-            if (t > 0.5) {
+            onVelocityChange?.(1); // Maintain max velocity
+
+            if (t > DURATION_PORTAL_HOLD) {
                 console.log("✨ Exiting wormhole!");
                 setPhase("exiting");
                 animationState.current.elapsedTime = 0;
 
-                // Transition to exploration mode immediately
-                // This hides cockpit and moves camera before white flash fades
-                if (onSequenceComplete) {
-                    onSequenceComplete();
-                }
+                // Trigger exploration mode transition
+                onSequenceComplete?.();
             }
         }
 
-        // === PHASE 4: EXITING WORMHOLE (fade from white) ===
+        // Phase 4: Exiting wormhole (fade from white)
         else if (phase === "exiting") {
-            // Fade from white to reveal star system (2 seconds)
-            const fadeTime = Math.min(t / 2, 1);
-            setWhiteFlashOpacity(1 - fadeTime);
+            const fadeProgress = Math.min(t / DURATION_FADE_OUT, 1);
+            setWhiteFlashOpacity(1 - fadeProgress);
 
-            // Gradually reduce velocity during exit
-            if (onVelocityChange) {
-                onVelocityChange(1 - fadeTime * 0.5); // Reduce to 50% velocity
-            }
+            // Gradually reduce velocity
+            onVelocityChange?.(1 - fadeProgress * VELOCITY_EXIT_REDUCTION);
 
             // Restore normal FOV
-            const restoredFov = THREE.MathUtils.lerp(camera.fov, 75, delta * 2);
-            camera.fov = restoredFov;
+            camera.fov = THREE.MathUtils.lerp(camera.fov, FOV_NORMAL, delta * FOV_LERP_SPEED);
             camera.updateProjectionMatrix();
 
             // Reset camera shake
             const restoredX = THREE.MathUtils.lerp(
                 camera.position.x,
                 animationState.current.initialCameraPos.x,
-                delta * 3
+                delta * CAMERA_RESTORE_LERP_SPEED
             );
             const restoredY = THREE.MathUtils.lerp(
                 camera.position.y,
                 animationState.current.initialCameraPos.y,
-                delta * 3
+                delta * CAMERA_RESTORE_LERP_SPEED
             );
             camera.position.set(restoredX, restoredY, camera.position.z);
 
-            if (fadeTime >= 1) {
+            if (fadeProgress >= 1) {
                 console.log("🌟 Star system revealed!");
                 setPhase("complete");
-                // onSequenceComplete already called at start of exiting phase
             }
         }
     });
@@ -209,8 +237,8 @@ const LaunchSequence = ({
         <>
             {/* White flash overlay for wormhole entry/exit */}
             {whiteFlashOpacity > 0 && (
-                <mesh position={[0, 0, camera.position.z - 1]}>
-                    <planeGeometry args={[200, 200]} />
+                <mesh position={[0, 0, camera.position.z - FLASH_OVERLAY_DISTANCE]}>
+                    <planeGeometry args={[FLASH_OVERLAY_SIZE, FLASH_OVERLAY_SIZE]} />
                     <meshBasicMaterial
                         color="#ffffff"
                         transparent
@@ -235,17 +263,14 @@ const LaunchSequence = ({
 };
 
 /**
- * Seeded random number generator for consistent star positions
- */
-const seededRandom = (seed) => {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
-};
-
-/**
  * StarStreaks Component
- * Creates the hyperspace star streaking effect
+ *
+ * Creates hyperspace star streaking effect
  * Stars move toward camera as speed increases
+ *
+ * @param {number} speed - Current speed value
+ * @param {number} maxSpeed - Maximum speed value
+ * @param {number} cameraZ - Camera Z position for star reset
  */
 const StarStreaks = ({ speed = 0, maxSpeed = 1, cameraZ = 0 }) => {
     const pointsRef = useRef();
@@ -253,24 +278,23 @@ const StarStreaks = ({ speed = 0, maxSpeed = 1, cameraZ = 0 }) => {
 
     // Generate star positions using seeded random for consistency
     const { positions, velocities } = useMemo(() => {
-        const count = 1000;
-        const pos = new Float32Array(count * 3);
+        const pos = new Float32Array(STAR_COUNT * 3);
         const vel = [];
 
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < STAR_COUNT; i++) {
             const i3 = i * 3;
 
-            // Use seeded random based on index
-            const x = (seededRandom(i * 3.14159) - 0.5) * 100;
-            const y = (seededRandom(i * 2.71828) - 0.5) * 100;
-            const z = -seededRandom(i * 1.41421) * 200 - 10; // Behind camera
+            // Seeded random positions for consistency
+            const x = (seededRandom(i * SEED_X) - 0.5) * STAR_SPREAD_XY;
+            const y = (seededRandom(i * SEED_Y) - 0.5) * STAR_SPREAD_XY;
+            const z = -seededRandom(i * SEED_Z) * STAR_DEPTH_RANGE - STAR_MIN_DISTANCE;
 
             pos[i3] = x;
             pos[i3 + 1] = y;
             pos[i3 + 2] = z;
 
             vel.push({
-                speed: 0.5 + seededRandom(i * 1.61803) * 1.5,
+                speed: STAR_MIN_VELOCITY + seededRandom(i * SEED_VEL) * STAR_MAX_VELOCITY_RANGE,
             });
         }
 
@@ -286,14 +310,14 @@ const StarStreaks = ({ speed = 0, maxSpeed = 1, cameraZ = 0 }) => {
             const i3 = i * 3;
 
             // Move stars toward camera based on speed
-            pos[i3 + 2] += speed * delta * 50 * velocities[i].speed;
+            pos[i3 + 2] += speed * delta * STAR_MOVEMENT_SPEED * velocities[i].speed;
 
             // Reset stars that pass the camera
-            if (pos[i3 + 2] > cameraZ + 10) {
-                pos[i3 + 2] = cameraZ - 200;
-                // Use seeded random for reset positions
-                pos[i3] = (seededRandom(i * 3.14159 + state.clock.elapsedTime) - 0.5) * 100;
-                pos[i3 + 1] = (seededRandom(i * 2.71828 + state.clock.elapsedTime) - 0.5) * 100;
+            if (pos[i3 + 2] > cameraZ + STAR_RESET_DISTANCE) {
+                pos[i3 + 2] = cameraZ - STAR_DEPTH_RANGE;
+                // Randomize X/Y positions on reset
+                pos[i3] = (seededRandom(i * SEED_X + state.clock.elapsedTime) - 0.5) * STAR_SPREAD_XY;
+                pos[i3 + 1] = (seededRandom(i * SEED_Y + state.clock.elapsedTime) - 0.5) * STAR_SPREAD_XY;
             }
         }
 
@@ -311,10 +335,10 @@ const StarStreaks = ({ speed = 0, maxSpeed = 1, cameraZ = 0 }) => {
                 />
             </bufferGeometry>
             <pointsMaterial
-                size={0.1 + speedRatio * 0.4} // Size increases with speed
+                size={STAR_SIZE_MIN + speedRatio * STAR_SIZE_MAX_INCREASE}
                 color="#ffffff"
                 transparent
-                opacity={0.8}
+                opacity={STAR_OPACITY}
                 sizeAttenuation={true}
                 blending={THREE.AdditiveBlending}
             />

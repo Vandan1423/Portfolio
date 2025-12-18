@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, Stars } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { useRef, useState, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { getSectionData } from "../../data/sectionData";
@@ -7,20 +7,59 @@ import PlanetInfoPanel from "../UI/PlanetInfoPanel";
 import useKeyboardShortcut from "../../hooks/useKeyboardShortcut";
 import DockingSpacecraft from "./DockingSpacecraft";
 
+// Camera configuration
+const CAMERA_POSITION = [0, 0, 15];
+const CAMERA_FOV = 50;
+const CAMERA_NEAR = 0.1;
+const CAMERA_FAR = 1000;
+
+// Lighting configuration
+const LIGHTS = {
+    ambient: { intensity: 2 },
+    key: { position: [10, 5, 10], intensity: 1.5, color: "#ffffff" },
+    rim: { position: [-10, 0, -5], intensity: 0.8, color: "#00ffff" },
+};
+
+// Planet positioning
+const PLANET_GROUP_OFFSET = [-4, 0, 0];
+const LINE_START_POINT = [0, 0, 0];
+const LINE_END_POINT = [8, 0, 0];
+const LINE_COLOR = "#00ffff";
+
+// Planet rotation settings
+const ROTATION_SENSITIVITY = 0.005;
+const ROTATION_FRICTION = 0.95;
+const IDLE_ROTATION_SPEED = 0.002;
+const IDLE_ROTATION_THRESHOLD = 0.0001;
+
+// Planet scale normalization
+const SMALL_PLANET_MULTIPLIER = 200; // For planets with scale < 1
+const NORMAL_PLANET_MULTIPLIER = 1.2;
+const SMALL_PLANET_THRESHOLD = 1;
+
+// Corner frame configuration
+const CORNER_SIZE = 80;
+const CORNER_OFFSET = 4; // Tailwind units (top-4, left-4, etc.)
+const CORNER_STROKE_PRIMARY = 2;
+const CORNER_STROKE_SECONDARY = 1;
+const CORNER_OPACITY_PRIMARY = 0.7;
+const CORNER_OPACITY_SECONDARY = 0.3;
+const CORNER_COLOR = "#00ffff";
+
+// Corner frame path data
+const CORNER_PATHS = [
+    { d: "M 0 30 L 0 0 L 30 0", strokeWidth: CORNER_STROKE_PRIMARY, opacity: CORNER_OPACITY_PRIMARY },
+    { d: "M 0 50 L 0 0 L 50 0", strokeWidth: CORNER_STROKE_SECONDARY, opacity: CORNER_OPACITY_SECONDARY },
+];
+
 /**
  * PlanetDetailScene Component
  *
  * Isolated scene showing a single planet with detailed information
- * Features:
- * - Single planet rendered in center-left of scene
- * - User can rotate the planet (only the planet, not the scene)
- * - Glowing ring around planet
- * - 3D connecting line from planet to info panel
- * - Cyberpunk themed info panel
- * - Docking sequence for navigation
+ * Features interactive planet rotation, docking sequence, and cyberpunk UI
  *
- * Props:
  * @param {object} planet - Planet object with name, modelPath, scale, orbitColor
+ * @param {string} systemId - Star system ID
  * @param {function} onBack - Callback to return to solar system view
  * @param {function} onDockComplete - Callback when docking sequence completes
  */
@@ -97,10 +136,10 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
             {/* Three.js Canvas */}
             <Canvas
                 camera={{
-                    position: [0, 0, 15],
-                    fov: 50,
-                    near: 0.1,
-                    far: 1000,
+                    position: CAMERA_POSITION,
+                    fov: CAMERA_FOV,
+                    near: CAMERA_NEAR,
+                    far: CAMERA_FAR,
                 }}
                 gl={{ antialias: true, alpha: true }}
             >
@@ -192,50 +231,49 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
 
 /**
  * PlanetDetailContent - 3D Scene Contents
- * Handles the Three.js rendering of planet, glow, line, etc.
+ *
+ * Handles Three.js rendering of planet, lighting, connecting line, and spacecraft
+ *
+ * @param {object} planet - Planet data
+ * @param {object} planetData - Section data for the planet
+ * @param {boolean} isDocking - Whether docking sequence is active
+ * @param {function} onDockComplete - Callback when docking completes
  */
 const PlanetDetailContent = ({ planet, planetData, isDocking, onDockComplete }) => {
     // Calculate planet scale for spacecraft docking
     const planetScale = useMemo(() => {
-        return planet.scale < 1 ? planet.scale * 200 : planet.scale * 1.2;
+        return planet.scale < SMALL_PLANET_THRESHOLD
+            ? planet.scale * SMALL_PLANET_MULTIPLIER
+            : planet.scale * NORMAL_PLANET_MULTIPLIER;
     }, [planet.scale]);
 
     return (
         <>
-            {/* Ambient Lighting */}
-            <ambientLight intensity={2} />
-
-            {/* Key Light - from front-right */}
+            {/* Scene lighting */}
+            <ambientLight intensity={LIGHTS.ambient.intensity} />
             <pointLight
-                position={[10, 5, 10]}
-                intensity={1.5}
-                color="#ffffff"
+                position={LIGHTS.key.position}
+                intensity={LIGHTS.key.intensity}
+                color={LIGHTS.key.color}
+            />
+            <pointLight
+                position={LIGHTS.rim.position}
+                intensity={LIGHTS.rim.intensity}
+                color={LIGHTS.rim.color}
             />
 
-            {/* Rim Light - cyan accent */}
-            <pointLight
-                position={[-10, 0, -5]}
-                intensity={0.8}
-                color="#00ffff"
-            />
-
-            {/* Planet Group - positioned left of center */}
-            <group position={[-4, 0, 0]}>
-                {/* Interactive Planet */}
+            {/* Planet group - positioned left of center */}
+            <group position={PLANET_GROUP_OFFSET}>
                 <InteractivePlanet planet={planet} planetData={planetData} />
-
-                {/* Connecting Line to Info Panel */}
                 <ConnectingLine3D
-                    startPoint={[0, 0, 0]}
-                    endPoint={[8, 0, 0]}
-                    color="#00ffff"
+                    startPoint={LINE_START_POINT}
+                    endPoint={LINE_END_POINT}
+                    color={LINE_COLOR}
                 />
-
-                {/* Docking Spacecraft */}
                 <DockingSpacecraft
                     isDocking={isDocking}
                     planetScale={planetScale}
-                    planetPosition={new THREE.Vector3(0, 0, 0)}
+                    planetPosition={new THREE.Vector3(...LINE_START_POINT)}
                     onDockComplete={onDockComplete}
                 />
             </group>
@@ -274,8 +312,8 @@ const InteractivePlanet = ({ planet, planetData }) => {
 
             // Only allow rotation around Y-axis (vertical axis)
             rotationVelocity.current = {
-                x: 0, // Disable X-axis rotation
-                y: deltaX * 0.005,
+                x: 0,
+                y: deltaX * ROTATION_SENSITIVITY,
             };
 
             previousMousePosition.current = { x: e.clientX, y: e.clientY };
@@ -306,11 +344,11 @@ const InteractivePlanet = ({ planet, planetData }) => {
 
             // Apply friction when not dragging
             if (!isDragging.current) {
-                rotationVelocity.current.y *= 0.95;
+                rotationVelocity.current.y *= ROTATION_FRICTION;
 
                 // Idle rotation when velocity is very low
-                if (Math.abs(rotationVelocity.current.y) < 0.0001) {
-                    planetRef.current.rotation.y += 0.002;
+                if (Math.abs(rotationVelocity.current.y) < IDLE_ROTATION_THRESHOLD) {
+                    planetRef.current.rotation.y += IDLE_ROTATION_SPEED;
                 }
             }
         }
@@ -318,19 +356,13 @@ const InteractivePlanet = ({ planet, planetData }) => {
 
     // Calculate appropriate scale (normalize different planet scales)
     const normalizedScale = useMemo(() => {
-        // Get custom scale multiplier from planet data (default: 1.0)
         const scaleMultiplier = planetData?.detailScaleMultiplier || 1.0;
 
-        // Saturn has a very small scale (0.015), others are 2-5
         // Normalize to make all planets similar size in detail view
-        let baseScale;
-        if (planet.scale < 1) {
-            baseScale = planet.scale * 200; // Saturn: 0.015 * 200 = 3
-        } else {
-            baseScale = planet.scale * 1.2;
-        }
+        const baseScale = planet.scale < SMALL_PLANET_THRESHOLD
+            ? planet.scale * SMALL_PLANET_MULTIPLIER
+            : planet.scale * NORMAL_PLANET_MULTIPLIER;
 
-        // Apply custom scale multiplier
         return baseScale * scaleMultiplier;
     }, [planet.scale, planetData]);
 
@@ -402,90 +434,64 @@ const ConnectingLine3D = ({ startPoint, endPoint, color = "#00ffff" }) => {
 };
 
 /**
+ * Corner SVG - Reusable corner decoration
+ *
+ * @param {string} corner - Corner position ("topLeft" | "topRight" | "bottomLeft" | "bottomRight")
+ */
+const CornerSVG = ({ corner }) => {
+    const paths = {
+        topLeft: [
+            "M 0 30 L 0 0 L 30 0",
+            "M 0 50 L 0 0 L 50 0",
+        ],
+        topRight: [
+            "M 50 0 L 80 0 L 80 30",
+            "M 30 0 L 80 0 L 80 50",
+        ],
+        bottomLeft: [
+            "M 0 50 L 0 80 L 30 80",
+            "M 0 30 L 0 80 L 50 80",
+        ],
+        bottomRight: [
+            "M 80 50 L 80 80 L 50 80",
+            "M 80 30 L 80 80 L 30 80",
+        ],
+    };
+
+    return (
+        <svg width={CORNER_SIZE} height={CORNER_SIZE} viewBox={`0 0 ${CORNER_SIZE} ${CORNER_SIZE}`}>
+            {CORNER_PATHS.map((pathConfig, index) => (
+                <path
+                    key={index}
+                    d={paths[corner][index]}
+                    stroke={CORNER_COLOR}
+                    strokeWidth={pathConfig.strokeWidth}
+                    fill="none"
+                    opacity={pathConfig.opacity}
+                />
+            ))}
+        </svg>
+    );
+};
+
+/**
  * CornerFrame - Cyberpunk corner frame overlay
  */
 const CornerFrame = () => {
+    const corners = [
+        { position: "top-4 left-4", type: "topLeft" },
+        { position: "top-4 right-4", type: "topRight" },
+        { position: "bottom-4 left-4", type: "bottomLeft" },
+        { position: "bottom-4 right-4", type: "bottomRight" },
+    ];
+
     return (
         <div className="absolute inset-0 pointer-events-none z-30">
-            {/* Top Left Corner */}
-            <div className="absolute top-4 left-4">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                    <path
-                        d="M 0 30 L 0 0 L 30 0"
-                        stroke="#00ffff"
-                        strokeWidth="2"
-                        fill="none"
-                        opacity="0.7"
-                    />
-                    <path
-                        d="M 0 50 L 0 0 L 50 0"
-                        stroke="#00ffff"
-                        strokeWidth="1"
-                        fill="none"
-                        opacity="0.3"
-                    />
-                </svg>
-            </div>
-
-            {/* Top Right Corner */}
-            <div className="absolute top-4 right-4">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                    <path
-                        d="M 50 0 L 80 0 L 80 30"
-                        stroke="#00ffff"
-                        strokeWidth="2"
-                        fill="none"
-                        opacity="0.7"
-                    />
-                    <path
-                        d="M 30 0 L 80 0 L 80 50"
-                        stroke="#00ffff"
-                        strokeWidth="1"
-                        fill="none"
-                        opacity="0.3"
-                    />
-                </svg>
-            </div>
-
-            {/* Bottom Left Corner */}
-            <div className="absolute bottom-4 left-4">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                    <path
-                        d="M 0 50 L 0 80 L 30 80"
-                        stroke="#00ffff"
-                        strokeWidth="2"
-                        fill="none"
-                        opacity="0.7"
-                    />
-                    <path
-                        d="M 0 30 L 0 80 L 50 80"
-                        stroke="#00ffff"
-                        strokeWidth="1"
-                        fill="none"
-                        opacity="0.3"
-                    />
-                </svg>
-            </div>
-
-            {/* Bottom Right Corner */}
-            <div className="absolute bottom-4 right-4">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                    <path
-                        d="M 80 50 L 80 80 L 50 80"
-                        stroke="#00ffff"
-                        strokeWidth="2"
-                        fill="none"
-                        opacity="0.7"
-                    />
-                    <path
-                        d="M 80 30 L 80 80 L 30 80"
-                        stroke="#00ffff"
-                        strokeWidth="1"
-                        fill="none"
-                        opacity="0.3"
-                    />
-                </svg>
-            </div>
+            {corners.map(({ position, type }) => (
+                <div key={type} className={`absolute ${position}`}>
+                    <CornerSVG corner={type} />
+                </div>
+            ))}
         </div>
     );
 };

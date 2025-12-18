@@ -1,23 +1,25 @@
 import { useGLTF } from "@react-three/drei";
 import { useMemo, forwardRef } from "react";
 
+// Spacecraft model path
+const SPACECRAFT_MODEL_PATH = "/models/SpaceshipCockpit.glb";
+
 /**
  * SpacecraftModel Component
  *
- * Reusable spacecraft model component (SpaceshipCockpit.glb)
- * Loads and displays the 3D spacecraft model with cloning to avoid side effects
+ * Reusable spacecraft model component
+ * Clones scene to avoid side effects when used in multiple locations
  *
- * Props:
- * @param {number} scale - Model scale (default: 1)
- * @param {array} position - Position [x, y, z] (default: [0, 0, 0])
- * @param {array} rotation - Rotation [x, y, z] in radians (default: [0, 0, 0])
+ * @param {number} scale - Model scale
+ * @param {array} position - Position [x, y, z]
+ * @param {array} rotation - Rotation [x, y, z] in radians
+ * @param {object} ref - Forward ref for parent control
  */
 const SpacecraftModel = forwardRef(
     ({ scale = 1, position = [0, 0, 0], rotation = [0, 0, 0] }, ref) => {
-        const { scene } = useGLTF("/models/SpaceshipCockpit.glb");
+        const { scene } = useGLTF(SPACECRAFT_MODEL_PATH);
 
         // Clone to avoid side effects with other uses of this model
-        // (e.g., cockpit interior view uses same model)
         const clonedScene = useMemo(() => scene.clone(), [scene]);
 
         return (

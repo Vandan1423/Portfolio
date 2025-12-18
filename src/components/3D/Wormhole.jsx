@@ -3,15 +3,79 @@ import { useFrame, extend } from "@react-three/fiber";
 import * as THREE from "three";
 import { shaderMaterial } from "@react-three/drei";
 
+// Geometry configuration
+const THROAT_SEGMENTS = 64;
+const THROAT_LATHE_SEGMENTS = 64;
+const THROAT_LENGTH = 8;
+const THROAT_RADIUS_MULTIPLIER = 0.25;
+const THROAT_BASE_RADIUS = 1.0;
+
+const TUNNEL_RADIUS = 0.8;
+const TUNNEL_LENGTH = 7;
+const TUNNEL_RADIAL_SEGMENTS = 32;
+
+const PORTAL_RADIUS = 4;
+const PORTAL_SEGMENTS = 128;
+const PORTAL_Z_OFFSET = 4.2;
+
+const RIM_INNER_RADIUS = 2.8;
+const RIM_OUTER_RADIUS = 4.2;
+const RIM_SEGMENTS = 128;
+const RIM_Z_OFFSET = 4.4;
+
+// Particle configuration
+const PARTICLE_COUNT = 600;
+const PARTICLE_MIN_RADIUS = 2.5;
+const PARTICLE_RADIUS_RANGE = 2.5;
+const PARTICLE_HEIGHT_VARIATION = 2;
+const PARTICLE_Z_DISTANCE = 4.5;
+const PARTICLE_SIZE = 0.12;
+const PARTICLE_OPACITY = 0.9;
+const PARTICLE_MIN_SPEED = 0.3;
+const PARTICLE_SPEED_RANGE = 0.7;
+const PARTICLE_ROTATION_SPEED = 0.015;
+const PARTICLE_WAVE_AMPLITUDE = 0.8;
+const PARTICLE_BRIGHTNESS_MIN = 0.6;
+const PARTICLE_BRIGHTNESS_RANGE = 0.4;
+
+const SPARKLE_COUNT = 150;
+const SPARKLE_MIN_RADIUS = 5;
+const SPARKLE_RADIUS_RANGE = 4;
+const SPARKLE_Z_VARIATION = 12;
+const SPARKLE_ROTATION_SPEED = 0.001;
+const SPARKLE_PULSE_SPEED = 3;
+const SPARKLE_OPACITY_BASE = 0.7;
+const SPARKLE_OPACITY_AMPLITUDE = 0.3;
+
+// Animation speeds
+const WORMHOLE_ROTATION_SPEED = 0.03;
+
+// Lighting configuration
+const LIGHT_CORE_INTENSITY = 2;
+const LIGHT_CORE_DISTANCE = 15;
+
+const LIGHT_RIM_INTENSITY = 8;
+const LIGHT_RIM_DISTANCE = 10;
+const LIGHT_RIM_Z_OFFSET = 4.5;
+
+const LIGHT_ACCENT_INTENSITY = 3;
+const LIGHT_ACCENT_DISTANCE = 8;
+const LIGHT_ACCENT_OFFSET = 3;
+const LIGHT_ACCENT_Z_OFFSET = 4;
+
+const LIGHT_SIDE_INTENSITY = 2;
+const LIGHT_SIDE_DISTANCE = 12;
+const LIGHT_SIDE_OFFSET = 6;
+
 /**
- * PROCEDURAL WORMHOLE - Fixed Version
+ * Procedural Wormhole Component
  *
- * Changes from previous version:
- * 1. Ultra-bright rim edges (new RimGlowMaterial shader)
- * 2. Transparent center so you can see the tunnel
- * 3. Visible tunnel/throat structure
- * 4. Reduced core brightness
- * 5. Better depth perception
+ * Features:
+ * - Ultra-bright rim edges
+ * - Transparent center showing tunnel
+ * - Visible throat structure
+ * - Particle effects
+ * - Multiple color schemes
  */
 
 // ============================================
@@ -434,67 +498,73 @@ const Wormhole = forwardRef(({
     // Throat geometry (hourglass)
     const throatGeometry = useMemo(() => {
         const points = [];
-        const segments = 64;
 
-        for (let i = 0; i <= segments; i++) {
-            const t = i / segments;
-            const z = (t - 0.5) * 8;
-            const a = 1.0;
-            const radius = Math.sqrt(a * a + z * z * 0.25);
+        for (let i = 0; i <= THROAT_SEGMENTS; i++) {
+            const t = i / THROAT_SEGMENTS;
+            const z = (t - 0.5) * THROAT_LENGTH;
+            const radius = Math.sqrt(
+                THROAT_BASE_RADIUS * THROAT_BASE_RADIUS +
+                z * z * THROAT_RADIUS_MULTIPLIER
+            );
             points.push(new THREE.Vector2(radius, z));
         }
 
-        return new THREE.LatheGeometry(points, 64);
+        return new THREE.LatheGeometry(points, THROAT_LATHE_SEGMENTS);
     }, []);
 
     // Inner tunnel cylinder
     const tunnelGeometry = useMemo(() => {
-        return new THREE.CylinderGeometry(0.8, 0.8, 7, 32, 1, true);
+        return new THREE.CylinderGeometry(
+            TUNNEL_RADIUS,
+            TUNNEL_RADIUS,
+            TUNNEL_LENGTH,
+            TUNNEL_RADIAL_SEGMENTS,
+            1,
+            true
+        );
     }, []);
 
     // Particles
     const particleData = useMemo(() => {
-        const count = 600;
-        const positions = new Float32Array(count * 3);
-        const colors = new Float32Array(count * 3);
+        const positions = new Float32Array(PARTICLE_COUNT * 3);
+        const colors = new Float32Array(PARTICLE_COUNT * 3);
         const velocities = [];
 
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
             const i3 = i * 3;
             const side = Math.random() > 0.5 ? 1 : -1;
             const angle = Math.random() * Math.PI * 2;
-            const radius = 2.5 + Math.random() * 2.5;
-            const heightOffset = (Math.random() - 0.5) * 2;
+            const radius = PARTICLE_MIN_RADIUS + Math.random() * PARTICLE_RADIUS_RANGE;
+            const heightOffset = (Math.random() - 0.5) * PARTICLE_HEIGHT_VARIATION;
 
             positions[i3] = Math.cos(angle) * radius;
             positions[i3 + 1] = Math.sin(angle) * radius;
-            positions[i3 + 2] = side * 4.5 + heightOffset;
+            positions[i3 + 2] = side * PARTICLE_Z_DISTANCE + heightOffset;
 
-            const brightness = 0.6 + Math.random() * 0.4;
+            const brightness = PARTICLE_BRIGHTNESS_MIN + Math.random() * PARTICLE_BRIGHTNESS_RANGE;
             colors[i3] = 0.3 * brightness;
             colors[i3 + 1] = 0.9 * brightness;
             colors[i3 + 2] = brightness;
 
             velocities.push({
-                speed: 0.3 + Math.random() * 0.7,
+                speed: PARTICLE_MIN_SPEED + Math.random() * PARTICLE_SPEED_RANGE,
                 phase: Math.random() * Math.PI * 2,
             });
         }
 
-        return { positions, colors, velocities, count };
+        return { positions, colors, velocities, count: PARTICLE_COUNT };
     }, []);
 
     // Sparkles
     const sparkleData = useMemo(() => {
-        const count = 150;
-        const positions = new Float32Array(count * 3);
-        const phases = new Float32Array(count);
+        const positions = new Float32Array(SPARKLE_COUNT * 3);
+        const phases = new Float32Array(SPARKLE_COUNT);
 
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < SPARKLE_COUNT; i++) {
             const i3 = i * 3;
             const angle = Math.random() * Math.PI * 2;
-            const radius = 5 + Math.random() * 4;
-            const z = (Math.random() - 0.5) * 12;
+            const radius = SPARKLE_MIN_RADIUS + Math.random() * SPARKLE_RADIUS_RANGE;
+            const z = (Math.random() - 0.5) * SPARKLE_Z_VARIATION;
 
             positions[i3] = Math.cos(angle) * radius;
             positions[i3 + 1] = Math.sin(angle) * radius;
@@ -502,7 +572,7 @@ const Wormhole = forwardRef(({
             phases[i] = Math.random() * Math.PI * 2;
         }
 
-        return { positions, phases, count };
+        return { positions, phases, count: SPARKLE_COUNT };
     }, []);
 
     // Animation
@@ -510,27 +580,20 @@ const Wormhole = forwardRef(({
         const time = state.clock.elapsedTime;
 
         if (groupRef.current) {
-            groupRef.current.rotation.z = time * 0.03;
+            groupRef.current.rotation.z = time * WORMHOLE_ROTATION_SPEED;
         }
 
-        [vortexFrontRef, vortexBackRef].forEach((ref) => {
-            if (ref.current) ref.current.uTime = time;
-        });
-
-        [rimFrontRef, rimBackRef].forEach((ref) => {
-            if (ref.current) ref.current.uTime = time;
-        });
-
-        [coronaFrontRef, coronaBackRef].forEach((ref) => {
+        // Update shader uniforms
+        [vortexFrontRef, vortexBackRef, rimFrontRef, rimBackRef, coronaFrontRef, coronaBackRef].forEach((ref) => {
             if (ref.current) ref.current.uTime = time;
         });
 
         if (throatRef.current) throatRef.current.uTime = time;
         if (tunnelGlowRef.current) tunnelGlowRef.current.uTime = time;
 
+        // Animate particles
         if (particlesRef.current) {
-            const positions =
-                particlesRef.current.geometry.attributes.position.array;
+            const positions = particlesRef.current.geometry.attributes.position.array;
 
             for (let i = 0; i < particleData.count; i++) {
                 const i3 = i * 3;
@@ -543,27 +606,26 @@ const Wormhole = forwardRef(({
                 const currentAngle = Math.atan2(y, x);
                 const radius = Math.sqrt(x * x + y * y);
 
-                const newAngle = currentAngle + vel.speed * 0.015;
+                const newAngle = currentAngle + vel.speed * PARTICLE_ROTATION_SPEED;
                 positions[i3] = Math.cos(newAngle) * radius;
                 positions[i3 + 1] = Math.sin(newAngle) * radius;
 
                 const side = z > 0 ? 1 : -1;
-                positions[i3 + 2] =
-                    side * 4.5 + Math.sin(time * vel.speed + vel.phase) * 0.8;
+                positions[i3 + 2] = side * PARTICLE_Z_DISTANCE + Math.sin(time * vel.speed + vel.phase) * PARTICLE_WAVE_AMPLITUDE;
             }
 
             particlesRef.current.geometry.attributes.position.needsUpdate = true;
         }
 
+        // Animate sparkles
         if (sparklesRef.current) {
-            const positions =
-                sparklesRef.current.geometry.attributes.position.array;
+            const positions = sparklesRef.current.geometry.attributes.position.array;
 
             for (let i = 0; i < sparkleData.count; i++) {
                 const i3 = i * 3;
                 const x = positions[i3];
                 const y = positions[i3 + 1];
-                const angle = Math.atan2(y, x) + 0.001;
+                const angle = Math.atan2(y, x) + SPARKLE_ROTATION_SPEED;
                 const radius = Math.sqrt(x * x + y * y);
 
                 positions[i3] = Math.cos(angle) * radius;
@@ -571,8 +633,7 @@ const Wormhole = forwardRef(({
             }
 
             sparklesRef.current.geometry.attributes.position.needsUpdate = true;
-            sparklesRef.current.material.opacity =
-                Math.sin(time * 3) * 0.3 + 0.7;
+            sparklesRef.current.material.opacity = Math.sin(time * SPARKLE_PULSE_SPEED) * SPARKLE_OPACITY_AMPLITUDE + SPARKLE_OPACITY_BASE;
         }
     });
 
@@ -617,9 +678,9 @@ const Wormhole = forwardRef(({
                 />
             </mesh>
 
-            {/* === FRONT PORTAL === */}
-            <mesh position={[0, 0, 4.2]}>
-                <circleGeometry args={[4, 128]} />
+            {/* Front portal */}
+            <mesh position={[0, 0, PORTAL_Z_OFFSET]}>
+                <circleGeometry args={[PORTAL_RADIUS, PORTAL_SEGMENTS]} />
                 <vortexDiskMaterial
                     ref={vortexFrontRef}
                     transparent
@@ -633,9 +694,9 @@ const Wormhole = forwardRef(({
                 />
             </mesh>
 
-            {/* ULTRA-BRIGHT RIM - Front */}
-            <mesh position={[0, 0, 4.4]}>
-                <ringGeometry args={[2.8, 4.2, 128]} />
+            {/* Front rim */}
+            <mesh position={[0, 0, RIM_Z_OFFSET]}>
+                <ringGeometry args={[RIM_INNER_RADIUS, RIM_OUTER_RADIUS, RIM_SEGMENTS]} />
                 <rimGlowMaterial
                     ref={rimFrontRef}
                     transparent
@@ -647,9 +708,9 @@ const Wormhole = forwardRef(({
                 />
             </mesh>
 
-            {/* === BACK PORTAL === */}
-            <mesh position={[0, 0, -4.2]} rotation={[0, Math.PI, 0]}>
-                <circleGeometry args={[4, 128]} />
+            {/* Back portal */}
+            <mesh position={[0, 0, -PORTAL_Z_OFFSET]} rotation={[0, Math.PI, 0]}>
+                <circleGeometry args={[PORTAL_RADIUS, PORTAL_SEGMENTS]} />
                 <vortexDiskMaterial
                     ref={vortexBackRef}
                     transparent
@@ -663,9 +724,9 @@ const Wormhole = forwardRef(({
                 />
             </mesh>
 
-            {/* ULTRA-BRIGHT RIM - Back */}
-            <mesh position={[0, 0, -4.4]} rotation={[0, Math.PI, 0]}>
-                <ringGeometry args={[2.8, 4.2, 128]} />
+            {/* Back rim */}
+            <mesh position={[0, 0, -RIM_Z_OFFSET]} rotation={[0, Math.PI, 0]}>
+                <ringGeometry args={[RIM_INNER_RADIUS, RIM_OUTER_RADIUS, RIM_SEGMENTS]} />
                 <rimGlowMaterial
                     ref={rimBackRef}
                     transparent
@@ -695,10 +756,10 @@ const Wormhole = forwardRef(({
                     />
                 </bufferGeometry>
                 <pointsMaterial
-                    size={0.12}
+                    size={PARTICLE_SIZE}
                     vertexColors
                     transparent
-                    opacity={0.9}
+                    opacity={PARTICLE_OPACITY}
                     sizeAttenuation
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
@@ -706,92 +767,67 @@ const Wormhole = forwardRef(({
             </points>
             {/* === LIGHTING === */}
 
-            {/* Core - REDUCED */}
+            {/* Core */}
             <pointLight
                 position={[0, 0, 0]}
                 color={colors.tunnel}
-                intensity={2}
-                distance={15}
+                intensity={LIGHT_CORE_INTENSITY}
+                distance={LIGHT_CORE_DISTANCE}
             />
 
-            {/* Portal rims - BRIGHT */}
-            <pointLight
-                position={[0, 0, 4.5]}
-                color={colors.outer}
-                intensity={8}
-                distance={10}
-            />
-            <pointLight
-                position={[0, 0, -4.5]}
-                color={colors.outer}
-                intensity={8}
-                distance={10}
-            />
+            {/* Portal rims */}
+            {[LIGHT_RIM_Z_OFFSET, -LIGHT_RIM_Z_OFFSET].map((z, i) => (
+                <pointLight
+                    key={`rim-${i}`}
+                    position={[0, 0, z]}
+                    color={colors.outer}
+                    intensity={LIGHT_RIM_INTENSITY}
+                    distance={LIGHT_RIM_DISTANCE}
+                />
+            ))}
 
-            {/* Rim accents */}
-            <pointLight
-                position={[3, 0, 4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
-            <pointLight
-                position={[-3, 0, 4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
-            <pointLight
-                position={[0, 3, 4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
-            <pointLight
-                position={[0, -3, 4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
+            {/* Front rim accents */}
+            {[
+                [LIGHT_ACCENT_OFFSET, 0, LIGHT_ACCENT_Z_OFFSET],
+                [-LIGHT_ACCENT_OFFSET, 0, LIGHT_ACCENT_Z_OFFSET],
+                [0, LIGHT_ACCENT_OFFSET, LIGHT_ACCENT_Z_OFFSET],
+                [0, -LIGHT_ACCENT_OFFSET, LIGHT_ACCENT_Z_OFFSET],
+            ].map((pos, i) => (
+                <pointLight
+                    key={`front-accent-${i}`}
+                    position={pos}
+                    color={colors.highlight}
+                    intensity={LIGHT_ACCENT_INTENSITY}
+                    distance={LIGHT_ACCENT_DISTANCE}
+                />
+            ))}
 
-            <pointLight
-                position={[3, 0, -4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
-            <pointLight
-                position={[-3, 0, -4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
-            <pointLight
-                position={[0, 3, -4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
-            <pointLight
-                position={[0, -3, -4]}
-                color={colors.highlight}
-                intensity={3}
-                distance={8}
-            />
+            {/* Back rim accents */}
+            {[
+                [LIGHT_ACCENT_OFFSET, 0, -LIGHT_ACCENT_Z_OFFSET],
+                [-LIGHT_ACCENT_OFFSET, 0, -LIGHT_ACCENT_Z_OFFSET],
+                [0, LIGHT_ACCENT_OFFSET, -LIGHT_ACCENT_Z_OFFSET],
+                [0, -LIGHT_ACCENT_OFFSET, -LIGHT_ACCENT_Z_OFFSET],
+            ].map((pos, i) => (
+                <pointLight
+                    key={`back-accent-${i}`}
+                    position={pos}
+                    color={colors.highlight}
+                    intensity={LIGHT_ACCENT_INTENSITY}
+                    distance={LIGHT_ACCENT_DISTANCE}
+                />
+            ))}
 
             {/* Side lights */}
-            <pointLight
-                position={[6, 0, 0]}
-                color={colors.throat2}
-                intensity={2}
-                distance={12}
-            />
-            <pointLight
-                position={[-6, 0, 0]}
-                color={colors.throat2}
-                intensity={2}
-                distance={12}
-            />
+            {[LIGHT_SIDE_OFFSET, -LIGHT_SIDE_OFFSET].map((x, i) => (
+                <pointLight
+                    key={`side-${i}`}
+                    position={[x, 0, 0]}
+                    color={colors.throat2}
+                    intensity={LIGHT_SIDE_INTENSITY}
+                    distance={LIGHT_SIDE_DISTANCE}
+                />
+            ))}
         </group>
     );
 });
