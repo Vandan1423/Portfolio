@@ -31,10 +31,10 @@ const projectsData = [
         liveDemo: "https://airbnb-replica-six.vercel.app/",
         status: "Live",
         screenshots: [
-            "/images/AirBnb_Replica/AirBnbSS1.png",
-            "/images/AirBnb_Replica/AirBnbSS2.png",
-            "/images/AirBnb_Replica/AirBnbSS3.png",
-            "/images/AirBnb_Replica/AirBnbSS4.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049712/AirBnbSS1_ibbckp.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049705/AirBnbSS2_fcl8ld.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049690/AirBnbSS3_dorpvl.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049692/AirBnbSS4_ri2etw.png",
         ],
     },
     {
@@ -66,10 +66,10 @@ const projectsData = [
         status: "Live",
         note: "Currently developing an upgraded React.js version with enhanced features and modern component architecture",
         screenshots: [
-            "/images/GamingClub/GamingClubSS1.png",
-            "/images/GamingClub/GamingClubSS2.png",
-            "/images/GamingClub/GamingClubSS3.png",
-            "/images/GamingClub/GamingClubSS4.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049751/GamingClubSS1_cvoxkv.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049753/GamingClubSS2_buefbz.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049751/GamingClubSS3_imvmlj.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049765/GamingClubSS4_ydtefk.png",
         ],
     },
     {
@@ -99,10 +99,10 @@ const projectsData = [
         liveDemo: "https://astronomy-club-iit-indore.vercel.app/",
         status: "Live",
         screenshots: [
-            "/images/AstroClub/AstroClubSS1.png",
-            "/images/AstroClub/AstroClubSS2.png",
-            "/images/AstroClub/AstroClubSS3.png",
-            "/images/AstroClub/AstroClubSS4.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049816/AstroClubSS1_vd99lp.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049816/AstroClubSS2_z0ei6d.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049826/AstroClubSS3_ffk8cc.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049830/AstroClubSS4_egogkk.png",
         ],
     },
     {
@@ -138,14 +138,14 @@ const projectsData = [
         liveDemo: null,
         status: "Completed",
         screenshots: [
-            "/images/AcademicPortal/StudentSS1.png",
-            "/images/AcademicPortal/StudentSS2.png",
-            "/images/AcademicPortal/StudentSS3.png",
-            "/images/AcademicPortal/FacultySS1.png",
-            "/images/AcademicPortal/FacultySS2.png",
-            "/images/AcademicPortal/FacultySS3.png",
-            "/images/AcademicPortal/FacultySS4.png",
-            "/images/AcademicPortal/FacultySS5.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049548/StudentSS1_rceg8h.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049541/StudentSS2_kathil.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049542/StudentSS3_hqzo07.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049540/FacultySS1_yxi3d4.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049541/FacultySS2_pi89ah.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049543/FacultySS3_y7xflh.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049542/FacultySS4_rbrz8a.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766049542/FacultySS5_wblrrp.png",
         ],
     },
     {
@@ -168,7 +168,7 @@ const projectsData = [
         github: "https://github.com/Vandan1423/SimonSaysGame",
         liveDemo: "https://simonsaysgame-omega.vercel.app",
         status: "Live",
-        screenshots: ["/images/SimonSay/SimonSaySS.png"],
+        screenshots: ["https://res.cloudinary.com/didezuerl/image/upload/v1766049880/SimonSaySS_fthyku.png"],
     },
     {
         id: 6,
@@ -197,8 +197,8 @@ const projectsData = [
         liveDemo: null,
         status: "Completed",
         screenshots: [
-            "/images/SpotifyClone/SpotifySS1.png",
-            "/images/SpotifyClone/SpotifySS2.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050147/SpotifySS1_h0ylhn.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050147/SpotifySS2_qrmmoe.png",
         ],
     },
     {
@@ -228,9 +228,9 @@ const projectsData = [
         liveDemo: null,
         status: "Completed",
         screenshots: [
-            "/images/AmazonClone/AmazonSS1.png",
-            "/images/AmazonClone/AmazonSS2.png",
-            "/images/AmazonClone/AmazonSS3.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050195/AmazonSS1_ibaaqm.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050187/AmazonSS2_edvpjo.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050188/AmazonSS3_cykba1.png",
         ],
     },
 ];

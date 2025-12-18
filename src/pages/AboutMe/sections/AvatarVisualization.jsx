@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styles from './AvatarVisualization.module.css';
+import React, { useState, useEffect, useRef } from "react";
+import styles from "./AvatarVisualization.module.css";
 
 const AvatarVisualization = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -25,9 +25,11 @@ const AvatarVisualization = () => {
             <div
                 className={styles.avatarWrapper}
                 style={{
-                    transform: `translate(${mousePosition.x / 30}px, ${mousePosition.y / 30}px)
+                    transform: `translate(${mousePosition.x / 30}px, ${
+                        mousePosition.y / 30
+                    }px)
                                rotateY(${(mousePosition.x / 30) * 0.5}deg)
-                               rotateX(${-(mousePosition.y / 30) * 0.5}deg)`
+                               rotateX(${-(mousePosition.y / 30) * 0.5}deg)`,
                 }}
             >
                 {/* Particle Orbit System */}
@@ -36,13 +38,13 @@ const AvatarVisualization = () => {
                         <div
                             key={i}
                             className={styles.orbitParticle}
-                            style={{ '--orbit-delay': `${i * 0.5}s` }}
+                            style={{ "--orbit-delay": `${i * 0.5}s` }}
                         />
                     ))}
                 </div>
 
                 <img
-                    src="/images/Avatar.png"
+                    src="https://res.cloudinary.com/didezuerl/image/upload/v1766049375/Avatar_ygwbqw.png"
                     alt="Avatar"
                     className={styles.avatarImage}
                 />

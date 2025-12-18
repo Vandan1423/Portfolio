@@ -2,17 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-// Cube map texture paths (order: +X, -X, +Y, -Y, +Z, -Z)
+// Cube map texture paths from Cloudinary (order: +X, -X, +Y, -Y, +Z, -Z)
 const CUBE_MAP_IMAGES = [
-    'Star1.png', // Positive X (right)
-    'Star2.png', // Negative X (left)
-    'Star3.png', // Positive Y (top)
-    'Star4.png', // Negative Y (bottom)
-    'Star5.png', // Positive Z (front)
-    'Star6.png', // Negative Z (back)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048720/Star1_k9qpl9.png', // Positive X (right)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png', // Negative X (left)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048724/Star3_ptf4ey.png', // Positive Y (top)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048725/Star4_nj5osv.png', // Negative Y (bottom)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048715/Star5_rd4aab.png', // Positive Z (front)
+    'https://res.cloudinary.com/didezuerl/image/upload/v1766048729/Star6_zqxvin.png', // Negative Z (back)
 ];
-
-const CUBE_MAP_PATH = '/images/';
 
 // Background sphere geometry
 const SPHERE_RADIUS = 400;
@@ -47,7 +45,6 @@ const SpaceCubeMap = ({
     // Load cube map texture
     useEffect(() => {
         const loader = new THREE.CubeTextureLoader();
-        loader.setPath(CUBE_MAP_PATH);
 
         const texture = loader.load(
             CUBE_MAP_IMAGES,

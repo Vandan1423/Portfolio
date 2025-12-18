@@ -337,7 +337,7 @@ const OortCloud = ({ innerRadius, outerRadius, sunPosition }) => {
  * Sun Component
  */
 const Sun = ({ position }) => {
-    const { scene } = useGLTF("/models/Sun.glb");
+    const { scene } = useGLTF("https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb");
     const sunRef = useRef();
 
     useFrame((state) => {
@@ -439,11 +439,11 @@ const Planet = ({
 };
 
 // Preload all planet models
-useGLTF.preload("/models/Sun.glb");
-useGLTF.preload("/models/Pluto.glb");
-useGLTF.preload("/models/Earth.glb");
-useGLTF.preload("/models/Planet1.glb");
-useGLTF.preload("/models/Planet2.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb");
 useGLTF.preload("/models/Saturn.glb");
 
 export default StarSystem;

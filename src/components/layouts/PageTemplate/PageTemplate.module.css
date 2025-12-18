@@ -1,20 +1,22 @@
 .container {
     width: 100%;
     min-height: 100vh;
-    background: url('/images/Star2.png') center/cover no-repeat fixed;
+    background: url("https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png")
+        center/cover no-repeat fixed;
     background-color: #0a0e27;
     position: relative;
     overflow-y: auto;
 }
 
 .container::before {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(180deg,
+    background: linear-gradient(
+        180deg,
         rgba(10, 14, 39, 0.3) 0%,
         rgba(10, 14, 39, 0.2) 50%,
         rgba(10, 14, 39, 0.3) 100%

@@ -404,17 +404,12 @@
 
     .badgeInner {
         width: 90px;
-    }
-    .badgeInner {
-        width: 90px;
         height: 90px;
     }
 
-    .statItem:nth-child(1) {
-        .statItem:nth-child(2),
-        .statItem:nth-child(3) {
-            bottom: 10px;
-        }
+    .statItem:nth-child(2),
+    .statItem:nth-child(3) {
+        bottom: 10px;
     }
 }
 
@@ -424,39 +419,6 @@
         height: 220px;
     }
 
-    .skillOrbit,
-    .statsRing,
-    .connectionLines {
-        width: 220px;
-        height: 220px;
-    }
-
-    .skillDot {
-        width: 32px;
-        height: 32px;
-    }
-
-    /* Adjust positions for smaller radius (95px) */
-    .skillDot:nth-child(1) {
-        left: calc(50% + 95px);
-    }
-    .skillDot:nth-child(2) {
-        top: calc(50% - 82.27px);
-        left: calc(50% + 47.5px);
-    }
-    .skillDot:nth-child(3) {
-        top: calc(50% - 82.27px);
-        left: calc(50% - 47.5px);
-    }
-    .skillDot:nth-child(4) {
-        left: calc(50% - 95px);
-    }
-    .skillDot:nth-child(5) {
-        .certificateBadge {
-            width: 220px;
-            height: 220px;
-        }
-    }
     .statsRing {
         width: 220px;
         height: 220px;

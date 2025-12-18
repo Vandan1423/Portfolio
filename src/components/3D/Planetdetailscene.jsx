@@ -48,8 +48,16 @@ const CORNER_COLOR = "#00ffff";
 
 // Corner frame path data
 const CORNER_PATHS = [
-    { d: "M 0 30 L 0 0 L 30 0", strokeWidth: CORNER_STROKE_PRIMARY, opacity: CORNER_OPACITY_PRIMARY },
-    { d: "M 0 50 L 0 0 L 50 0", strokeWidth: CORNER_STROKE_SECONDARY, opacity: CORNER_OPACITY_SECONDARY },
+    {
+        d: "M 0 30 L 0 0 L 30 0",
+        strokeWidth: CORNER_STROKE_PRIMARY,
+        opacity: CORNER_OPACITY_PRIMARY,
+    },
+    {
+        d: "M 0 50 L 0 0 L 50 0",
+        strokeWidth: CORNER_STROKE_SECONDARY,
+        opacity: CORNER_OPACITY_SECONDARY,
+    },
 ];
 
 /**
@@ -127,7 +135,8 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
         <div
             className="w-full h-screen relative overflow-hidden"
             style={{
-                backgroundImage: "url(/images/Star2.png)",
+                backgroundImage:
+                    "url(https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png)",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
@@ -206,9 +215,11 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-40">
                     <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
                         <p className="text-cyan-400 text-sm text-center">
-                            Press <span className="font-bold text-white">D</span> to
+                            Press{" "}
+                            <span className="font-bold text-white">D</span> to
                             dock with planet • Press{" "}
-                            <span className="font-bold text-white">X</span> to cancel
+                            <span className="font-bold text-white">X</span> to
+                            cancel
                         </p>
                     </div>
                 </div>
@@ -220,7 +231,8 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                     <div className="bg-orange-500/20 backdrop-blur-md px-6 py-3 rounded-lg border border-orange-500/50">
                         <p className="text-orange-400 text-sm text-center font-bold">
                             🚀 Docking sequence initiated... Press{" "}
-                            <span className="font-bold text-white">X</span> to cancel
+                            <span className="font-bold text-white">X</span> to
+                            cancel
                         </p>
                     </div>
                 </div>
@@ -239,7 +251,12 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
  * @param {boolean} isDocking - Whether docking sequence is active
  * @param {function} onDockComplete - Callback when docking completes
  */
-const PlanetDetailContent = ({ planet, planetData, isDocking, onDockComplete }) => {
+const PlanetDetailContent = ({
+    planet,
+    planetData,
+    isDocking,
+    onDockComplete,
+}) => {
     // Calculate planet scale for spacecraft docking
     const planetScale = useMemo(() => {
         return planet.scale < SMALL_PLANET_THRESHOLD
@@ -347,7 +364,10 @@ const InteractivePlanet = ({ planet, planetData }) => {
                 rotationVelocity.current.y *= ROTATION_FRICTION;
 
                 // Idle rotation when velocity is very low
-                if (Math.abs(rotationVelocity.current.y) < IDLE_ROTATION_THRESHOLD) {
+                if (
+                    Math.abs(rotationVelocity.current.y) <
+                    IDLE_ROTATION_THRESHOLD
+                ) {
                     planetRef.current.rotation.y += IDLE_ROTATION_SPEED;
                 }
             }
@@ -359,9 +379,10 @@ const InteractivePlanet = ({ planet, planetData }) => {
         const scaleMultiplier = planetData?.detailScaleMultiplier || 1.0;
 
         // Normalize to make all planets similar size in detail view
-        const baseScale = planet.scale < SMALL_PLANET_THRESHOLD
-            ? planet.scale * SMALL_PLANET_MULTIPLIER
-            : planet.scale * NORMAL_PLANET_MULTIPLIER;
+        const baseScale =
+            planet.scale < SMALL_PLANET_THRESHOLD
+                ? planet.scale * SMALL_PLANET_MULTIPLIER
+                : planet.scale * NORMAL_PLANET_MULTIPLIER;
 
         return baseScale * scaleMultiplier;
     }, [planet.scale, planetData]);
@@ -440,26 +461,18 @@ const ConnectingLine3D = ({ startPoint, endPoint, color = "#00ffff" }) => {
  */
 const CornerSVG = ({ corner }) => {
     const paths = {
-        topLeft: [
-            "M 0 30 L 0 0 L 30 0",
-            "M 0 50 L 0 0 L 50 0",
-        ],
-        topRight: [
-            "M 50 0 L 80 0 L 80 30",
-            "M 30 0 L 80 0 L 80 50",
-        ],
-        bottomLeft: [
-            "M 0 50 L 0 80 L 30 80",
-            "M 0 30 L 0 80 L 50 80",
-        ],
-        bottomRight: [
-            "M 80 50 L 80 80 L 50 80",
-            "M 80 30 L 80 80 L 30 80",
-        ],
+        topLeft: ["M 0 30 L 0 0 L 30 0", "M 0 50 L 0 0 L 50 0"],
+        topRight: ["M 50 0 L 80 0 L 80 30", "M 30 0 L 80 0 L 80 50"],
+        bottomLeft: ["M 0 50 L 0 80 L 30 80", "M 0 30 L 0 80 L 50 80"],
+        bottomRight: ["M 80 50 L 80 80 L 50 80", "M 80 30 L 80 80 L 30 80"],
     };
 
     return (
-        <svg width={CORNER_SIZE} height={CORNER_SIZE} viewBox={`0 0 ${CORNER_SIZE} ${CORNER_SIZE}`}>
+        <svg
+            width={CORNER_SIZE}
+            height={CORNER_SIZE}
+            viewBox={`0 0 ${CORNER_SIZE} ${CORNER_SIZE}`}
+        >
             {CORNER_PATHS.map((pathConfig, index) => (
                 <path
                     key={index}

@@ -18,7 +18,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "personal-info",
                 name: "Personal Info",
-                modelPath: "/models/Pluto.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb",
                 scale: 2.0,
                 size: 1.2,
                 orbitRadius: 15,
@@ -35,7 +35,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "education",
                 name: "Education",
-                modelPath: "/models/Earth.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb",
                 scale: 2.2,
                 size: 0.9,
                 orbitRadius: 30,
@@ -52,7 +52,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "interests",
                 name: "Interests & Hobbies",
-                modelPath: "/models/Planet2.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
                 scale: 3,
                 size: 1,
                 orbitRadius: 40,
@@ -69,7 +69,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "tech-stack",
                 name: "Tech Stack",
-                modelPath: "/models/Planet1.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb",
                 scale: 3,
                 size: 1.0,
                 orbitRadius: 75,
@@ -103,7 +103,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "resume",
                 name: "Resume",
-                modelPath: "/models/Pluto.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb",
                 scale: 2.0,
                 size: 1.2,
                 orbitRadius: 95,
@@ -120,7 +120,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "certifications",
                 name: "Certifications",
-                modelPath: "/models/Pluto.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb",
                 scale: 2.0,
                 size: 1.2,
                 orbitRadius: 140,
@@ -148,7 +148,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "project-1",
                 name: "AirBnb Replica",
-                modelPath: "/models/Earth.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb",
                 scale: 2.2,
                 size: 1.3,
                 orbitRadius: 15,
@@ -165,7 +165,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "project-2",
                 name: "Gaming Club Website",
-                modelPath: "/models/Planet1.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb",
                 scale: 3,
                 size: 1.1,
                 orbitRadius: 40,
@@ -182,7 +182,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "project-3",
                 name: "Astronomy Club Website",
-                modelPath: "/models/Planet2.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
                 scale: 3,
                 size: 1.2,
                 orbitRadius: 75,
@@ -199,7 +199,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "project-4",
                 name: "Movie Recommendation System",
-                modelPath: "/models/Pluto.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb",
                 scale: 2.0,
                 size: 1.2,
                 orbitRadius: 85,
@@ -227,7 +227,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "exp-1",
                 name: "Astronomy Club - Web Dev",
-                modelPath: "/models/Earth.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb",
                 scale: 2.2,
                 size: 1.3,
                 orbitRadius: 15,
@@ -244,7 +244,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "exp-2",
                 name: "Gaming Club - Technicals",
-                modelPath: "/models/Planet1.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb",
                 scale: 3,
                 size: 1.2,
                 orbitRadius: 25,
@@ -278,7 +278,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "exp-4",
                 name: "ISRO-NRSC Challenge",
-                modelPath: "/models/Planet2.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
                 scale: 3,
                 size: 1.0,
                 orbitRadius: 75,
@@ -295,7 +295,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "exp-5",
                 name: "Web Development Course",
-                modelPath: "/models/Pluto.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb",
                 scale: 2.0,
                 size: 1.2,
                 orbitRadius: 85,
@@ -324,7 +324,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "contact-form",
                 name: "Send Message",
-                modelPath: "/models/Earth.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb",
                 scale: 2.2,
                 size: 1.2,
                 orbitRadius: 20,
@@ -341,7 +341,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "contact-info",
                 name: "Contact Information",
-                modelPath: "/models/Planet1.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb",
                 scale: 3,
                 size: 1.0,
                 orbitRadius: 40,
@@ -386,7 +386,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "journey-achievements",
                 name: "Achievement Cluster",
-                modelPath: "/models/Planet2.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
                 scale: 3,
                 size: 0.95,
                 orbitRadius: 40,
@@ -414,7 +414,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "frontend-tech",
                 name: "Frontend",
-                modelPath: "/models/Earth.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb",
                 scale: 2.2,
                 size: 1.15,
                 orbitRadius: 15,
@@ -431,7 +431,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "backend-tech",
                 name: "Backend",
-                modelPath: "/models/Planet1.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb",
                 scale: 3,
                 size: 1.05,
                 orbitRadius: 30,
@@ -448,7 +448,7 @@ export const STAR_SYSTEMS = {
             {
                 id: "tools-tech",
                 name: "Tools & Dev Ops",
-                modelPath: "/models/Planet2.glb",
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
                 scale: 3,
                 size: 1.0,
                 orbitRadius: 45,
