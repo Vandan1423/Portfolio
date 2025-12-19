@@ -74,6 +74,10 @@
 .content {
     position: relative;
     padding: 1.5625rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
 }
 
 /* Header Section */
@@ -127,7 +131,6 @@
 
 /* Scrollable Content */
 .scrollableContent {
-    max-height: 340px;
     overflow-y: auto;
     padding-right: 0.75rem;
     display: flex;
