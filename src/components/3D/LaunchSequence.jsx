@@ -83,9 +83,14 @@ const LaunchSequence = ({
     initialWormholePosition = [0, 0, -300],
     onVelocityChange,
 }) => {
-    const { camera } = useThree();
+    const { camera: threeCamera } = useThree();
     const [phase, setPhase] = useState("idle");
     const [whiteFlashOpacity, setWhiteFlashOpacity] = useState(0);
+    const [currentSpeed, setCurrentSpeed] = useState(0);
+
+    // Store camera in ref to avoid React 19 mutation warnings
+    const cameraRef = useRef(threeCamera);
+    cameraRef.current = threeCamera;
 
     // Animation state
     const animationState = useRef({
@@ -101,6 +106,7 @@ const LaunchSequence = ({
     // Initialize sequence - camera stays in place (true FPP)
     useEffect(() => {
         if (isActive && phase === "idle") {
+            const camera = cameraRef.current;
             animationState.current.initialCameraPos.copy(camera.position);
             animationState.current.startTime = Date.now();
             animationState.current.elapsedTime = 0;
@@ -115,11 +121,12 @@ const LaunchSequence = ({
             animationState.current.targetWormholeZ = camera.position.z + WORMHOLE_OVERSHOOT;
             setPhase("traveling");
         }
-    }, [isActive, phase, camera, wormholeRef]);
+    }, [isActive, phase, wormholeRef]);
 
     useFrame((state, delta) => {
         if (!isActive) return;
 
+        const camera = cameraRef.current;
         animationState.current.elapsedTime += delta;
         const t = animationState.current.elapsedTime;
 
@@ -129,6 +136,7 @@ const LaunchSequence = ({
             const easedProgress = Math.pow(progress, 2); // Quadratic ease-in
 
             animationState.current.speed = easedProgress * animationState.current.maxSpeed;
+            setCurrentSpeed(animationState.current.speed);
 
             // Update velocity for parent (background rotation)
             onVelocityChange?.(easedProgress);
@@ -153,11 +161,8 @@ const LaunchSequence = ({
             );
 
             // FOV increase for speed tunnel effect
-            const newFov = FOV_NORMAL + speedRatio * FOV_MAX_INCREASE;
-            if (Math.abs(camera.fov - newFov) > 0.1) {
-                camera.fov = newFov;
-                camera.updateProjectionMatrix();
-            }
+            camera.fov = FOV_NORMAL + speedRatio * FOV_MAX_INCREASE;
+            camera.updateProjectionMatrix();
 
             // Check if wormhole has reached camera
             if (progress >= TRAVEL_COMPLETION_THRESHOLD) {
@@ -227,7 +232,7 @@ const LaunchSequence = ({
         <>
             {/* White flash overlay for wormhole entry/exit */}
             {whiteFlashOpacity > 0 && (
-                <mesh position={[0, 0, camera.position.z - FLASH_OVERLAY_DISTANCE]}>
+                <mesh position={[0, 0, threeCamera.position.z - FLASH_OVERLAY_DISTANCE]}>
                     <planeGeometry args={[FLASH_OVERLAY_SIZE, FLASH_OVERLAY_SIZE]} />
                     <meshBasicMaterial
                         color="#ffffff"
@@ -243,9 +248,9 @@ const LaunchSequence = ({
             {/* Star streaking effect during travel */}
             {phase === "traveling" && (
                 <StarStreaks
-                    speed={animationState.current.speed}
-                    maxSpeed={animationState.current.maxSpeed}
-                    cameraZ={camera.position.z}
+                    speed={currentSpeed}
+                    maxSpeed={MAX_SPEED}
+                    cameraZ={threeCamera.position.z}
                 />
             )}
         </>

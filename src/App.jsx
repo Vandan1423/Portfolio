@@ -1,25 +1,29 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, lazy, Suspense } from "react";
 import * as THREE from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
-import CockpitInterior from "./components/3D/CockpitInterior";
-import Wormhole from "./components/3D/Wormhole";
-import LaunchSequence from "./components/3D/LaunchSequence";
-import StarSystem from "./components/3D/StarSystem";
-import SpaceCubeMap from "./components/3D/SpaceCubeMap";
-import NavigationScreen from "./components/UI/NavigationScreen";
-import PlanetDetailScene from "./components/3D/PlanetDetailScene";
-import AboutMe from "./pages/AboutMe/AboutMe";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
-import Projects from "./pages/Projects/Projects";
-import Experience from "./pages/Experience/Experience";
-import Contact from "./pages/Contact/Contact";
-import Technologies from "./pages/Technologies/Technologies";
-import Journey from "./pages/Journey/Journey";
 import HelpButton from "./components/UI/HelpButton";
 import "./App.css";
+
+// Lazy load heavy 3D components
+const CockpitInterior = lazy(() => import("./components/3D/CockpitInterior"));
+const Wormhole = lazy(() => import("./components/3D/Wormhole"));
+const LaunchSequence = lazy(() => import("./components/3D/LaunchSequence"));
+const StarSystem = lazy(() => import("./components/3D/StarSystem"));
+const SpaceCubeMap = lazy(() => import("./components/3D/SpaceCubeMap"));
+const PlanetDetailScene = lazy(() => import("./components/3D/PlanetDetailScene"));
+const NavigationScreen = lazy(() => import("./components/UI/NavigationScreen"));
+
+// Lazy load page components
+const AboutMe = lazy(() => import("./pages/AboutMe/AboutMe"));
+const Projects = lazy(() => import("./pages/Projects/Projects"));
+const Experience = lazy(() => import("./pages/Experience/Experience"));
+const Contact = lazy(() => import("./pages/Contact/Contact"));
+const Technologies = lazy(() => import("./pages/Technologies/Technologies"));
+const Journey = lazy(() => import("./pages/Journey/Journey"));
 
 // Constants
 const CAMERA_POSITIONS = {
@@ -272,21 +276,27 @@ function App() {
 
     // Render non-3D pages (including mobile)
     if (currentPage !== "3d-portfolio" || isMobile) {
-        return pageComponents[currentPage] || pageComponents["about-me"];
+        return (
+            <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
+                {pageComponents[currentPage] || pageComponents["about-me"]}
+            </Suspense>
+        );
     }
 
     return (
         <div className="w-full h-screen bg-deep-space relative overflow-hidden">
             {currentPhase === "planet-detail" && selectedPlanet ? (
-                <PlanetDetailScene
-                    planet={selectedPlanet}
-                    systemId={currentSystem?.id}
-                    onBack={() => {
-                        setSelectedPlanet(null);
-                        setCurrentPhase("exploration");
-                    }}
-                    onDockComplete={handleDockingComplete}
-                />
+                <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
+                    <PlanetDetailScene
+                        planet={selectedPlanet}
+                        systemId={currentSystem?.id}
+                        onBack={() => {
+                            setSelectedPlanet(null);
+                            setCurrentPhase("exploration");
+                        }}
+                        onDockComplete={handleDockingComplete}
+                    />
+                </Suspense>
             ) : (
                 <>
                     <Canvas
@@ -316,7 +326,9 @@ function App() {
                         }}
                     >
                         <color attach="background" args={["#000000"]} />
-                        <SpaceCubeMap />
+                        <Suspense fallback={null}>
+                            <SpaceCubeMap />
+                        </Suspense>
                         <ambientLight intensity={0.3} />
                         <pointLight
                             position={[0, 0, 0]}
@@ -350,18 +362,20 @@ function App() {
                         {/* Cockpit interior for cockpit and launching phases */}
                         {(currentPhase === "cockpit" ||
                             currentPhase === "launching") && (
-                            <CockpitInterior
-                                onCommand={handleLaunchCommand}
-                                showTerminal={
-                                    currentPhase === "cockpit" &&
-                                    travelPhase !== "preparing"
-                                }
-                            />
+                            <Suspense fallback={null}>
+                                <CockpitInterior
+                                    onCommand={handleLaunchCommand}
+                                    showTerminal={
+                                        currentPhase === "cockpit" &&
+                                        travelPhase !== "preparing"
+                                    }
+                                />
+                            </Suspense>
                         )}
 
                         {/* Wormhole and launch sequence */}
                         {currentPhase === "launching" && (
-                            <>
+                            <Suspense fallback={null}>
                                 <Wormhole
                                     ref={wormholeRef}
                                     position={[0, 0, -300]}
@@ -392,16 +406,18 @@ function App() {
                                         setTravelPhase(null);
                                     }}
                                 />
-                            </>
+                            </Suspense>
                         )}
 
                         {/* Star system for exploration phase */}
                         {currentPhase === "exploration" && currentSystem && (
-                            <StarSystem
-                                visible={true}
-                                planets={currentSystem.planets || []}
-                                animationsPaused={false}
-                            />
+                            <Suspense fallback={null}>
+                                <StarSystem
+                                    visible={true}
+                                    planets={currentSystem.planets || []}
+                                    animationsPaused={false}
+                                />
+                            </Suspense>
                         )}
                     </Canvas>
 
@@ -414,25 +430,27 @@ function App() {
 
                     {/* Navigation screen for exploration phase */}
                     {currentPhase === "exploration" && (
-                        <NavigationScreen
-                            isVisible={isNavigationVisible}
-                            onClose={() => setNavigationVisible(false)}
-                            onPlanetSelect={(planet) => {
-                                setSelectedPlanet(planet);
-                                setTimeout(() => {
-                                    setCurrentPhase("planet-detail");
+                        <Suspense fallback={null}>
+                            <NavigationScreen
+                                isVisible={isNavigationVisible}
+                                onClose={() => setNavigationVisible(false)}
+                                onPlanetSelect={(planet) => {
+                                    setSelectedPlanet(planet);
+                                    setTimeout(() => {
+                                        setCurrentPhase("planet-detail");
+                                        setNavigationVisible(false);
+                                    }, TRANSITION_DELAYS.PLANET_SELECTION);
+                                }}
+                                onSystemTravelSelect={(systemId) => {
+                                    handleSystemTravel(systemId);
                                     setNavigationVisible(false);
-                                }, TRANSITION_DELAYS.PLANET_SELECTION);
-                            }}
-                            onSystemTravelSelect={(systemId) => {
-                                handleSystemTravel(systemId);
-                                setNavigationVisible(false);
-                            }}
-                            currentSystemId={currentSystem?.id}
-                            selectedPlanet={selectedPlanet}
-                            planets={currentSystem?.planets || []}
-                            starSystems={starSystems}
-                        />
+                                }}
+                                currentSystemId={currentSystem?.id}
+                                selectedPlanet={selectedPlanet}
+                                planets={currentSystem?.planets || []}
+                                starSystems={starSystems}
+                            />
+                        </Suspense>
                     )}
 
                     {/* Black transition screen when switching to cockpit */}
