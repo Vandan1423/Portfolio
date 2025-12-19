@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import styles from "./Planetinfopanel.module.css";
+import styles from "./PlanetInfoPanel.module.css";
 
 /**
  * PlanetInfoPanel Component
