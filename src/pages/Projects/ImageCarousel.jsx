@@ -10,7 +10,6 @@ const optimizeCloudinaryUrl = (url, options = {}) => {
     // Extract the base URL and image path
     const parts = url.split('/upload/');
     if (parts.length !== 2) {
-        console.warn('Invalid Cloudinary URL format:', url);
         return url;
     }
 
@@ -95,7 +94,6 @@ const ImageCarousel = ({ screenshots, projectName }) => {
             img.src = url;
             img.onload = () => handleImageLoad(index);
             img.onerror = () => {
-                console.error(`Failed to preload image ${index}:`, url);
                 handleImageLoad(index); // Mark as loaded even on error
             };
         };

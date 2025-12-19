@@ -17,7 +17,6 @@
  * Call this during the initial asset loading phase
  */
 export const preloadAllComponents = () => {
-    console.log('📦 Preloading component chunks...');
 
     // Preload 3D components (highest priority - user sees these first)
     import("../components/3D/CockpitInterior");
@@ -35,6 +34,4 @@ export const preloadAllComponents = () => {
     import("../pages/Contact/Contact");
     import("../pages/Technologies/Technologies");
     import("../pages/Journey/Journey");
-
-    console.log('✅ Component chunk preload initiated');
 };

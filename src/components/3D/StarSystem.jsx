@@ -15,10 +15,10 @@ const SUN_PULSE_SPEED = 2;
 const SUN_PULSE_AMPLITUDE = 0.1;
 const SUN_PULSE_BASE = 0.9;
 
-// Asteroid belt configuration
+// Asteroid belt configuration - OPTIMIZED for performance
 const ASTEROID_INNER_RADIUS = 58;
 const ASTEROID_OUTER_RADIUS = 67;
-const ASTEROID_COUNT = 2000;
+const ASTEROID_COUNT = 500; // Reduced from 2000 to 500 (75% reduction)
 const ASTEROID_MIN_SIZE = 0.1;
 const ASTEROID_MAX_SIZE_RANGE = 0.3;
 const ASTEROID_Y_VARIATION = 2;
@@ -29,10 +29,10 @@ const ASTEROID_COLOR = "#8b8680";
 const ASTEROID_ROUGHNESS = 0.9;
 const ASTEROID_METALNESS = 0.1;
 
-// Oort cloud configuration
+// Oort cloud configuration - OPTIMIZED for performance
 const OORT_INNER_RADIUS = 150;
 const OORT_OUTER_RADIUS = 200;
-const OORT_PARTICLE_COUNT = 3000;
+const OORT_PARTICLE_COUNT = 800; // Reduced from 3000 to 800 (73% reduction)
 const OORT_MIN_SIZE = 0.05;
 const OORT_MAX_SIZE_RANGE = 0.15;
 const OORT_MIN_ORBIT_SPEED = 0.001;
@@ -438,12 +438,8 @@ const Planet = ({
     return <primitive ref={planetRef} object={scene.clone()} scale={scale} />;
 };
 
-// Preload all planet models
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb");
-useGLTF.preload("/models/Saturn.glb");
+// REMOVED preload calls - models now load on-demand with Suspense
+// This significantly reduces initial load time
+// Models are cached after first load for subsequent uses
 
 export default StarSystem;

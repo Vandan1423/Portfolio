@@ -37,8 +37,7 @@ const preloadTexture = (asset) => {
                 resolve({ success: true, asset });
             },
             undefined,
-            (error) => {
-                console.warn(`⚠️ Failed to load texture: ${asset.name}`, error);
+            () => {
                 resolve({ success: false, asset });
             }
         );
@@ -61,8 +60,7 @@ const preloadImage = (asset) => {
             resolve({ success: true, asset });
         };
 
-        img.onerror = (error) => {
-            console.warn(`⚠️ Failed to load image: ${asset.name}`, error);
+        img.onerror = () => {
             resolve({ success: false, asset }); // Resolve anyway to continue
         };
 
@@ -81,8 +79,7 @@ const preloadModel = (asset) => {
             // Use useGLTF.preload from @react-three/drei
             useGLTF.preload(asset.url);
             resolve({ success: true, asset });
-        } catch (error) {
-            console.warn(`⚠️ Failed to preload model: ${asset.name}`, error);
+        } catch {
             resolve({ success: false, asset }); // Resolve anyway to continue
         }
     });
@@ -131,7 +128,6 @@ const useAssetPreloader = (onComplete) => {
             try {
                 // Immediately start preloading component chunks in parallel
                 // This way components load alongside assets for faster initial render
-                console.log('🚀 Starting component chunk preload...');
                 try {
                     const { preloadAllComponents } = await import('../../utils/componentPreloader');
                     preloadAllComponents();
@@ -146,7 +142,6 @@ const useAssetPreloader = (onComplete) => {
                 setTotalAssets(total);
 
                 if (total === 0) {
-                    console.warn('⚠️ No assets to load');
                     setIsComplete(true);
                     if (onComplete) onComplete();
                     return;
