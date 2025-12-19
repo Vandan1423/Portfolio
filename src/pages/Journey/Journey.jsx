@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import PageTemplate from '../../components/layouts/PageTemplate/PageTemplate';
-import useScrollToSection from '../../hooks/useScrollToSection';
-import { useNavigation } from '../../context/NavigationContext';
-import journeyData from '../../data/journeyData';
-import styles from './Journey.module.css';
+import React, { useState, useEffect, useRef } from "react";
+import PageTemplate from "../../components/layouts/PageTemplate/PageTemplate";
+import useScrollToSection from "../../hooks/useScrollToSection";
+import { useNavigation } from "../../context/NavigationContext";
+import journeyData from "../../data/journeyData";
+import styles from "./Journey.module.css";
 
 const Journey = () => {
     const { scrollTarget, onScrollComplete } = useNavigation();
@@ -21,16 +21,26 @@ const Journey = () => {
                 entries.forEach((entry) => {
                     const index = parseInt(entry.target.dataset.index);
 
-                    if (entry.isIntersecting && entry.intersectionRatio >= VISIBILITY_THRESHOLD) {
-                        setVisibleItems((prev) => [...new Set([...prev, index])]);
-                    } else if (!entry.isIntersecting || entry.intersectionRatio < HIDE_THRESHOLD) {
-                        setVisibleItems((prev) => prev.filter((i) => i !== index));
+                    if (
+                        entry.isIntersecting &&
+                        entry.intersectionRatio >= VISIBILITY_THRESHOLD
+                    ) {
+                        setVisibleItems((prev) => [
+                            ...new Set([...prev, index]),
+                        ]);
+                    } else if (
+                        !entry.isIntersecting ||
+                        entry.intersectionRatio < HIDE_THRESHOLD
+                    ) {
+                        setVisibleItems((prev) =>
+                            prev.filter((i) => i !== index)
+                        );
                     }
                 });
             },
             {
                 threshold: [0, 0.3, 0.5, 0.7, 1],
-                rootMargin: '-10% 0px -10% 0px',
+                rootMargin: "-10% 0px -10% 0px",
             }
         );
 
@@ -46,27 +56,6 @@ const Journey = () => {
             title="My Journey"
             subtitle="A timeline of growth, learning, and achievement"
         >
-            <section className={styles.heroSection}>
-                <div className={styles.heroContent}>
-                    <div className={styles.heroTitle}>
-                        <h1 className={styles.mainTitle}>My Journey</h1>
-                        <div className={styles.titleUnderline} />
-                    </div>
-                    <p className={styles.heroSubtitle}>
-                        From curious beginner to passionate developer - a timeline of growth, learning, and achievement
-                    </p>
-                    <div className={styles.heroStars}>
-                        <span className={styles.heroStar} style={{ '--star-delay': '0s' }} />
-                        <span className={styles.heroStar} style={{ '--star-delay': '0.3s' }} />
-                        <span className={styles.heroStar} style={{ '--star-delay': '0.6s' }} />
-                    </div>
-                </div>
-                <div className={styles.scrollIndicator}>
-                    <div className={styles.scrollArrow} />
-                    <span className={styles.scrollText}>Scroll to Explore</span>
-                </div>
-            </section>
-
             <section className={styles.timelineSection}>
                 <div className={styles.timelineWrapper}>
                     <div className={styles.timelinePath}>
@@ -89,36 +78,58 @@ const Journey = () => {
                                         registerRef(sectionId)(el);
                                     }}
                                     data-index={index}
-                                    className={`${styles.timelineCard} ${isLeft ? styles.left : styles.right} ${
-                                        isVisible ? styles.visible : ''
-                                    }`}
+                                    className={`${styles.timelineCard} ${
+                                        isLeft ? styles.left : styles.right
+                                    } ${isVisible ? styles.visible : ""}`}
                                     style={{
-                                        '--card-delay': `${index * 0.15}s`,
-                                        '--card-color': item.color,
+                                        "--card-delay": `${index * 0.15}s`,
+                                        "--card-color": item.color,
                                     }}
                                 >
                                     <div className={styles.cardContent}>
-                                        <div className={styles.cardGradientBorder} />
+                                        <div
+                                            className={
+                                                styles.cardGradientBorder
+                                            }
+                                        />
 
                                         <div className={styles.cardHeader}>
-                                            <span className={styles.cardCategory}>{item.category}</span>
-                                            <span className={styles.cardYear}>{item.year}</span>
+                                            <span
+                                                className={styles.cardCategory}
+                                            >
+                                                {item.category}
+                                            </span>
+                                            <span className={styles.cardYear}>
+                                                {item.year}
+                                            </span>
                                         </div>
 
-                                        <h3 className={styles.cardTitle}>{item.title}</h3>
-                                        <p className={styles.cardDescription}>{item.description}</p>
+                                        <h3 className={styles.cardTitle}>
+                                            {item.title}
+                                        </h3>
+                                        <p className={styles.cardDescription}>
+                                            {item.description}
+                                        </p>
 
                                         <div className={styles.cardParticles}>
-                                            <div className={`${styles.particle} ${styles.particle1}`} />
-                                            <div className={`${styles.particle} ${styles.particle2}`} />
-                                            <div className={`${styles.particle} ${styles.particle3}`} />
+                                            <div
+                                                className={`${styles.particle} ${styles.particle1}`}
+                                            />
+                                            <div
+                                                className={`${styles.particle} ${styles.particle2}`}
+                                            />
+                                            <div
+                                                className={`${styles.particle} ${styles.particle3}`}
+                                            />
                                         </div>
                                     </div>
 
                                     <div className={styles.cardNode}>
                                         <div className={styles.nodeOuterRing} />
                                         <div className={styles.nodeInnerCircle}>
-                                            <span className={styles.nodeIcon}>{item.icon}</span>
+                                            <span className={styles.nodeIcon}>
+                                                {item.icon}
+                                            </span>
                                         </div>
                                         <div className={styles.nodePulse} />
                                     </div>
@@ -146,10 +157,24 @@ const Journey = () => {
                                 strokeWidth="3"
                                 strokeLinecap="round"
                             />
-                            <circle className={styles.infinityDot} cx="50" cy="50" r="5" fill="#818CF8" />
-                            <circle className={styles.infinityDot} cx="150" cy="50" r="5" fill="#818CF8" />
+                            <circle
+                                className={styles.infinityDot}
+                                cx="50"
+                                cy="50"
+                                r="5"
+                                fill="#818CF8"
+                            />
+                            <circle
+                                className={styles.infinityDot}
+                                cx="150"
+                                cy="50"
+                                r="5"
+                                fill="#818CF8"
+                            />
                         </svg>
-                        <p className={styles.infinityText}>The Journey Continues...</p>
+                        <p className={styles.infinityText}>
+                            The Journey Continues...
+                        </p>
                     </div>
                 </div>
             </section>

@@ -11,7 +11,7 @@
  * Only shows on first visit to optimize returning user experience.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import LoaderBackground from "./LoaderBackground";
 import RocketAnimation from "./RocketAnimation";
 import ProgressDisplay from "./ProgressDisplay";
@@ -55,18 +55,30 @@ const RocketLoader = ({ children }) => {
         initialFirstVisit ? "loading" : "complete"
     );
     const [smoothProgress, setSmoothProgress] = useState(0);
+    const [shouldRenderApp, setShouldRenderApp] = useState(!initialFirstVisit);
+
+    // Prevent multiple calls to handleLoadComplete
+    const loadCompleteCalledRef = useRef(false);
 
     // Handle loading completion
     const handleLoadComplete = () => {
+        // Prevent being called multiple times
+        if (loadCompleteCalledRef.current) {
+            return;
+        }
+        loadCompleteCalledRef.current = true;
+
         // Hold at 100% for a moment to let user see completion
         setTimeout(() => {
             // Phase 1: Fade to white (smooth transition)
             setTransitionPhase("fading-out");
 
             setTimeout(() => {
-                // Phase 2: Mark visit and complete
+                // Phase 2: Mark visit and allow app to render
                 setVisited();
                 setTransitionPhase("complete");
+                // Only NOW allow the app to render
+                setShouldRenderApp(true);
             }, 1500);
         }, 1000); // Hold at 100% for 1 second
     };
@@ -91,8 +103,15 @@ const RocketLoader = ({ children }) => {
         return () => clearInterval(interval);
     }, [progress]);
 
-    // Skip loader if not first visit
-    if (!isFirstVisit || transitionPhase === "complete") {
+    // CRITICAL: Only render children after loading is FULLY complete
+    // This prevents the cockpit interior from showing during asset loading
+    if (!isFirstVisit) {
+        // Not first visit - render immediately
+        return <>{children}</>;
+    }
+
+    if (shouldRenderApp && transitionPhase === "complete") {
+        // Loading complete and transition finished - render app
         return <>{children}</>;
     }
 

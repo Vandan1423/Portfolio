@@ -46,13 +46,19 @@ const SpaceCubeMap = ({
     useEffect(() => {
         const loader = new THREE.CubeTextureLoader();
 
+        console.log('🌌 Loading cube map for cockpit background...');
+
         const texture = loader.load(
             CUBE_MAP_IMAGES,
             (loadedTexture) => {
                 loadedTexture.colorSpace = THREE.SRGBColorSpace;
                 setCubeTexture(loadedTexture);
+                console.log('✅ Cube map loaded and ready');
             },
-            undefined,
+            (progress) => {
+                // Progress callback
+                console.log(`📦 Cube map loading: ${progress.loaded}/${progress.total}`);
+            },
             (error) => {
                 console.error('❌ Error loading cube map:', error);
             }

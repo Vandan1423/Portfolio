@@ -121,6 +121,18 @@ export const collectAssets = () => {
         });
     }
 
+    // PlanetDetailScene CSS background (also in cube map, but needs to be preloaded as image for CSS)
+    const planetDetailBgUrl = 'https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png';
+    if (!seenImageUrls.has(planetDetailBgUrl)) {
+        seenImageUrls.add(planetDetailBgUrl);
+        assets.images.push({
+            url: planetDetailBgUrl,
+            name: 'Planet Detail Background',
+            type: 'image',
+            priority: 'high' // High priority since used in planet detail scenes
+        });
+    }
+
     return assets;
 };
 
