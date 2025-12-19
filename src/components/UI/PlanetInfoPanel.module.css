@@ -4,9 +4,9 @@
     position: absolute;
     right: 8rem;
     top: 20%;
-    transform: translateY(-50%);
     z-index: 40;
     width: 550px;
+    height: 50vh;
 }
 
 /* Main Panel */

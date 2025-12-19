@@ -13,7 +13,7 @@
 .panel {
     position: fixed;
     left: 50%;
-    top: 20%;
+    top: 10%;
     transform: translate(-50%, -50%);
     width: 600px;
     max-height: 55vh;

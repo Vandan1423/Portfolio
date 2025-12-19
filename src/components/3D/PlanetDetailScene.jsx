@@ -203,30 +203,91 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                 </div>
             </div>
 
-            {/* Docking Hint */}
+            {/* Docking Hint - Sleek & Eye-Catching */}
             {!isDocking && (
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-40">
-                    <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-lg border border-cyan-400/30">
-                        <p className="text-cyan-400 text-sm text-center">
-                            Press{" "}
-                            <span className="font-bold text-white">D</span> to
-                            dock with planet • Press{" "}
-                            <span className="font-bold text-white">X</span> to
-                            cancel
-                        </p>
+                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40">
+                    <div className="relative group">
+                        {/* Animated gradient background */}
+                        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-xl opacity-75 blur group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
+
+                        {/* Main card */}
+                        <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 rounded-xl border border-cyan-400/50 shadow-2xl">
+                            {/* Main action */}
+                            <div className="flex items-center justify-center gap-4 mb-2">
+                                <div className="flex items-center gap-3">
+                                    {/* Key visual */}
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-cyan-400 blur-lg opacity-50 animate-pulse"></div>
+                                        <kbd className="relative inline-flex items-center justify-center w-10 h-10 font-bold text-xl text-black bg-gradient-to-br from-cyan-300 to-cyan-500 rounded-lg shadow-lg transform hover:scale-110 transition-transform">
+                                            D
+                                        </kbd>
+                                    </div>
+
+                                    {/* Text */}
+                                    <div className="text-left">
+                                        <p className="text-sm text-cyan-300/70 leading-tight">
+                                            Press D to
+                                        </p>
+                                        <p className="text-lg font-bold text-white leading-tight">
+                                            Dock with Planet
+                                        </p>
+                                        <p className="text-xs text-cyan-300/60 mt-0.5">
+                                            and explore content
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Divider */}
+                            <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent my-3"></div>
+
+                            {/* Secondary action */}
+                            <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+                                <span>Press</span>
+                                <kbd className="px-2 py-1 font-mono font-bold text-white bg-gray-800 border border-gray-600 rounded shadow-sm">
+                                    X
+                                </kbd>
+                                <span>to cancel</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
 
-            {/* Docking Status */}
+            {/* Docking Status - Sleek Progress Indicator */}
             {isDocking && (
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-40">
-                    <div className="bg-orange-500/20 backdrop-blur-md px-6 py-3 rounded-lg border border-orange-500/50">
-                        <p className="text-orange-400 text-sm text-center font-bold">
-                            🚀 Docking sequence initiated... Press{" "}
-                            <span className="font-bold text-white">X</span> to
-                            cancel
-                        </p>
+                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40">
+                    <div className="relative">
+                        {/* Animated gradient background */}
+                        <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 rounded-xl opacity-75 blur animate-pulse"></div>
+
+                        {/* Main card */}
+                        <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 px-8 py-5 rounded-xl border border-orange-400/50 shadow-2xl">
+                            {/* Status message */}
+                            <div className="flex items-center justify-center gap-3 mb-3 p-4">
+                                <div className="relative">
+                                    <div className="w-3 h-3 bg-orange-400 rounded-full animate-ping absolute"></div>
+                                    <div className="w-3 h-3 bg-orange-500 rounded-full relative"></div>
+                                </div>
+                                <p className="text-lg font-bold text-white">
+                                    Docking Sequence Active
+                                </p>
+                            </div>
+
+                            {/* Progress bar */}
+                            <div className="w-64 h-1 bg-gray-800 rounded-full overflow-hidden mb-3">
+                                <div className="h-full bg-gradient-to-r from-orange-400 to-red-500 rounded-full animate-pulse" style={{ width: '100%' }}></div>
+                            </div>
+
+                            {/* Cancel action */}
+                            <div className="flex items-center justify-center gap-2 text-xs text-gray-400 p-4">
+                                <span>Press</span>
+                                <kbd className="px-2 py-1 font-mono font-bold text-white bg-gray-800 border border-orange-600 rounded shadow-sm">
+                                    X
+                                </kbd>
+                                <span>to abort docking</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
