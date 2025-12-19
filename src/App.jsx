@@ -6,6 +6,7 @@ import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import HelpButton from "./components/UI/HelpButton";
+import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import "./App.css";
 
 // Lazy load heavy 3D components
@@ -163,12 +164,50 @@ function App() {
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [systemStatus, setSystemStatus] = useState("SYSTEMS STANDBY");
     const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
+    const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(true);
+    const [isFullscreenCheckComplete, setIsFullscreenCheckComplete] = useState(false);
 
     // Refs for 3D scene management
     const cameraRef = useRef();
     const wormholeRef = useRef();
     const isCameraTransitioningRef = useRef(false);
     const prevPhaseRef = useRef(currentPhase);
+
+    // Check if user is already in fullscreen mode on mount
+    useEffect(() => {
+        const checkFullscreen = () => {
+            const isFullscreen = !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.msFullscreenElement
+            );
+
+            // If already in fullscreen, don't show the prompt
+            if (isFullscreen) {
+                setShowFullscreenPrompt(false);
+            }
+            setIsFullscreenCheckComplete(true);
+        };
+
+        checkFullscreen();
+
+        // Listen for fullscreen changes (for future enhancements)
+        const handleFullscreenChange = () => {
+            // Currently we don't show the prompt again if user exits fullscreen
+            // (they've already made their choice)
+            // Future enhancement: could add logic here if needed
+        };
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+        document.addEventListener("msfullscreenchange", handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullscreenChange);
+            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+            document.removeEventListener("msfullscreenchange", handleFullscreenChange);
+        };
+    }, []);
 
     // Handle camera positioning based on current phase
     useEffect(() => {
@@ -285,7 +324,15 @@ function App() {
 
     return (
         <div className="w-full h-screen bg-deep-space relative overflow-hidden">
-            {currentPhase === "planet-detail" && selectedPlanet ? (
+            {/* Fullscreen prompt - shows on initial load if not already in fullscreen */}
+            {isFullscreenCheckComplete && showFullscreenPrompt && (
+                <FullscreenPrompt onDismiss={() => setShowFullscreenPrompt(false)} />
+            )}
+
+            {/* Only render 3D content after fullscreen check is complete and prompt is dismissed */}
+            {isFullscreenCheckComplete && !showFullscreenPrompt && (
+                <>
+                    {currentPhase === "planet-detail" && selectedPlanet ? (
                 <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
                     <PlanetDetailScene
                         planet={selectedPlanet}
@@ -457,11 +504,13 @@ function App() {
                     {isTransitioning && (
                         <div className="absolute inset-0 bg-black z-30 pointer-events-none" />
                     )}
+
+                    {/* Help Button - Available on all pages */}
+                    <HelpButton />
                 </>
             )}
-
-            {/* Help Button - Available on all pages */}
-            <HelpButton />
+            </>
+        )}
         </div>
     );
 }
