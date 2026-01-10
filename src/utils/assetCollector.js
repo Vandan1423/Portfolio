@@ -37,22 +37,12 @@ export const collectAssets = () => {
     // Track unique URLs to avoid duplicates
     const seenModelUrls = new Set();
     const seenImageUrls = new Set();
-    let saturnSkipped = false; // Track if we've logged Saturn warning
 
     // 1. Collect 3D models from star systems
     try {
         Object.values(STAR_SYSTEMS).forEach(system => {
             system.planets.forEach(planet => {
                 const url = planet.modelPath;
-
-                // Skip deleted Saturn.glb (only log once)
-                if (url === '/models/Saturn.glb') {
-                    if (!saturnSkipped) {
-                        console.warn('⚠️ Saturn.glb is deleted, skipping preload');
-                        saturnSkipped = true;
-                    }
-                    return;
-                }
 
                 // Only add unique URLs
                 if (!seenModelUrls.has(url)) {

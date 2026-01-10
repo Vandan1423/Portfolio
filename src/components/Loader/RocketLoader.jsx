@@ -60,6 +60,9 @@ const RocketLoader = ({ children }) => {
     // Prevent multiple calls to handleLoadComplete
     const loadCompleteCalledRef = useRef(false);
 
+    // Emergency timeout (90 seconds - last resort if everything else fails)
+    const emergencyTimeoutRef = useRef(null);
+
     // Handle loading completion
     const handleLoadComplete = () => {
         // Prevent being called multiple times
@@ -102,6 +105,24 @@ const RocketLoader = ({ children }) => {
 
         return () => clearInterval(interval);
     }, [progress]);
+
+    // Emergency timeout - force app to load after 90 seconds no matter what
+    useEffect(() => {
+        if (!isFirstVisit) return; // Only for first visit
+
+        emergencyTimeoutRef.current = setTimeout(() => {
+            console.warn('⚠️ EMERGENCY TIMEOUT - Forcing app to load after 90 seconds');
+            if (!loadCompleteCalledRef.current) {
+                handleLoadComplete();
+            }
+        }, 90000); // 90 seconds
+
+        return () => {
+            if (emergencyTimeoutRef.current) {
+                clearTimeout(emergencyTimeoutRef.current);
+            }
+        };
+    }, [isFirstVisit]);
 
     // CRITICAL: Only render children after loading is FULLY complete
     // This prevents the cockpit interior from showing during asset loading

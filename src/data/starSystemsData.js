@@ -86,8 +86,8 @@ export const STAR_SYSTEMS = {
             {
                 id: "achievements",
                 name: "Achievements",
-                modelPath: "/models/Saturn.glb",
-                scale: 0.00007,
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
+                scale: 3,
                 size: 1.1,
                 orbitRadius: 85,
                 orbitSpeed: 0.15,
@@ -261,8 +261,8 @@ export const STAR_SYSTEMS = {
             {
                 id: "exp-3",
                 name: "PRIUS Fellowship",
-                modelPath: "/models/Saturn.glb",
-                scale: 0.00007,
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
+                scale: 3,
                 size: 1.1,
                 orbitRadius: 45,
                 orbitSpeed: 0.2,
@@ -369,8 +369,8 @@ export const STAR_SYSTEMS = {
             {
                 id: "journey-milestones",
                 name: "Milestone Station",
-                modelPath: "/models/Saturn.glb",
-                scale: 0.00007,
+                modelPath: "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
+                scale: 3,
                 size: 1.25,
                 orbitRadius: 20,
                 orbitSpeed: 0.24,
