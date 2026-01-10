@@ -18,6 +18,10 @@ import * as THREE from 'three';
 
 // Maximum number of assets to load concurrently
 const CONCURRENT_LOAD_LIMIT = 5;
+// Max time before we bail out and render the app anyway (ms)
+const FALLBACK_COMPLETE_MS = 12000;
+// Only these priorities block initial render
+const CRITICAL_PRIORITIES = new Set(['high', 'medium']);
 
 /**
  * Preload a texture using THREE.js TextureLoader
@@ -137,21 +141,29 @@ const useAssetPreloader = (onComplete) => {
 
                 // Get all assets in priority order
                 const allAssets = getAssetsInPriorityOrder();
-                const total = allAssets.length;
 
-                setTotalAssets(total);
+                // Split into critical (block initial render) and optional (load later)
+                const criticalAssets = allAssets.filter(asset => CRITICAL_PRIORITIES.has(asset.priority));
+                const optionalAssets = allAssets.filter(asset => !CRITICAL_PRIORITIES.has(asset.priority));
 
-                if (total === 0) {
+                const totalCritical = criticalAssets.length;
+                setTotalAssets(totalCritical);
+
+                if (totalCritical === 0) {
                     setIsComplete(true);
                     if (onComplete) onComplete();
+                    // Still load optional assets in the background so later scenes are cached
+                    if (optionalAssets.length) {
+                        optionalAssets.forEach(asset => preloadAsset(asset));
+                    }
                     return;
                 }
 
                 let loaded = 0;
 
-                // Process assets in batches for concurrent loading
-                for (let i = 0; i < allAssets.length; i += CONCURRENT_LOAD_LIMIT) {
-                    const batch = allAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
+                // Process critical assets in batches for concurrent loading
+                for (let i = 0; i < criticalAssets.length; i += CONCURRENT_LOAD_LIMIT) {
+                    const batch = criticalAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
 
                     // Load batch concurrently
                     const results = await Promise.all(
@@ -161,7 +173,7 @@ const useAssetPreloader = (onComplete) => {
                     // Update progress for each asset in batch
                     results.forEach(result => {
                         loaded++;
-                        const progressPercent = (loaded / total) * 100;
+                        const progressPercent = (loaded / totalCritical) * 100;
 
                         setLoadedCount(loaded);
                         setProgress(progressPercent);
@@ -169,7 +181,7 @@ const useAssetPreloader = (onComplete) => {
                     });
 
                     // Small delay between batches to avoid overwhelming the browser
-                    if (i + CONCURRENT_LOAD_LIMIT < allAssets.length) {
+                    if (i + CONCURRENT_LOAD_LIMIT < criticalAssets.length) {
                         await new Promise(resolve => setTimeout(resolve, 50));
                     }
                 }
@@ -183,6 +195,11 @@ const useAssetPreloader = (onComplete) => {
                     setTimeout(() => onComplete(), 100);
                 }
 
+                // Fire and forget optional assets so later navigation is smoother
+                if (optionalAssets.length) {
+                    optionalAssets.forEach(asset => preloadAsset(asset));
+                }
+
             } catch (error) {
                 console.error('❌ Error during asset preloading:', error);
                 // Even on error, mark as complete to avoid blocking
@@ -194,7 +211,20 @@ const useAssetPreloader = (onComplete) => {
             }
         };
 
+        // Safety timeout: never block the app beyond the fallback window
+        const fallbackTimer = setTimeout(() => {
+            if (!completeCalledRef.current) {
+                completeCalledRef.current = true;
+                setIsComplete(true);
+                if (onComplete) onComplete();
+            }
+        }, FALLBACK_COMPLETE_MS);
+
         loadAssets();
+
+        return () => {
+            clearTimeout(fallbackTimer);
+        };
     }, [onComplete]);
 
     return {

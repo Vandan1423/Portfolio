@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { Suspense } from "react";
 import HolographicTerminal from "./HolographicTerminal";
 
 // Cockpit model configuration
@@ -20,6 +21,23 @@ const COCKPIT_LIGHTS = [
 ];
 
 /**
+ * CockpitModel Component (Inner component that uses the model)
+ */
+const CockpitModel = () => {
+    const { scene } = useGLTF(COCKPIT_MODEL_PATH);
+    const clonedScene = scene.clone();
+
+    return (
+        <primitive
+            object={clonedScene}
+            position={COCKPIT_POSITION}
+            rotation={COCKPIT_ROTATION}
+            scale={COCKPIT_SCALE}
+        />
+    );
+};
+
+/**
  * CockpitInterior Component
  *
  * Renders spaceship cockpit with interactive holographic terminal
@@ -29,18 +47,12 @@ const COCKPIT_LIGHTS = [
  * @param {boolean} showTerminal - Whether to show the terminal (default: true)
  */
 const CockpitInterior = ({ onCommand, showTerminal = true }) => {
-    const { scene } = useGLTF(COCKPIT_MODEL_PATH);
-    const clonedScene = scene.clone();
-
     return (
         <group>
-            {/* Main cockpit model */}
-            <primitive
-                object={clonedScene}
-                position={COCKPIT_POSITION}
-                rotation={COCKPIT_ROTATION}
-                scale={COCKPIT_SCALE}
-            />
+            {/* Main cockpit model wrapped in Suspense */}
+            <Suspense fallback={null}>
+                <CockpitModel />
+            </Suspense>
 
             {/* Holographic terminal (hidden during launch sequence) */}
             {showTerminal && (
@@ -64,6 +76,8 @@ const CockpitInterior = ({ onCommand, showTerminal = true }) => {
     );
 };
 
-useGLTF.preload(COCKPIT_MODEL_PATH);
+// ❌ Removed preload - model loads only when CockpitInterior renders
+// This reduces initial bundle size and speeds up first page load
+// useGLTF.preload(COCKPIT_MODEL_PATH);
 
 export default CockpitInterior;
