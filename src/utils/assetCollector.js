@@ -47,11 +47,13 @@ export const collectAssets = () => {
                 // Only add unique URLs
                 if (!seenModelUrls.has(url)) {
                     seenModelUrls.add(url);
+                    // Saturn.glb is 12MB - mark as deferred to prevent blocking initial load
+                    const isHeavyModel = url.includes('Saturn.glb');
                     assets.models.push({
                         url,
                         name: planet.name,
                         type: url.startsWith('http') ? 'model' : 'local-model',
-                        priority: 'low' // System models load after cockpit
+                        priority: isHeavyModel ? 'deferred' : 'low' // Heavy models load lazily
                     });
                 }
             });
@@ -60,12 +62,13 @@ export const collectAssets = () => {
         console.error('Error collecting star system models:', error);
     }
 
-    // 2. Add local cockpit model (high priority - needed for first scene)
+    // 2. Add local cockpit model (deferred priority - 12MB, loads lazily)
+    // Changed from 'high' to 'deferred' to prevent blocking initial load
     assets.models.unshift({
         url: '/models/SpaceshipCockpit.glb',
         name: 'Cockpit',
         type: 'local-model',
-        priority: 'high'
+        priority: 'deferred' // Load after initial screen
     });
 
     // 3. Collect cube map textures (high priority - needed for background)
@@ -127,10 +130,49 @@ export const collectAssets = () => {
 };
 
 /**
+ * Get only critical assets that block the initial load screen
+ * Critical assets: Cube map textures, planet detail background
+ * Non-critical: Heavy 3D models (12MB+), project screenshots
+ *
+ * @returns {Array} Array of critical assets only
+ */
+export const getCriticalAssetsOnly = () => {
+    const assets = collectAssets();
+
+    // Flatten all assets
+    const allAssets = [
+        ...assets.models,
+        ...assets.cubeTextures,
+        ...assets.images
+    ];
+
+    // Filter to only high priority assets (cube textures mostly)
+    return allAssets.filter(asset => asset.priority === 'high');
+};
+
+/**
+ * Get non-critical assets that can load in background after initial screen
+ * @returns {Array} Array of deferred and low priority assets
+ */
+export const getDeferredAssets = () => {
+    const assets = collectAssets();
+
+    const allAssets = [
+        ...assets.models,
+        ...assets.cubeTextures,
+        ...assets.images
+    ];
+
+    // Return medium, low, and deferred priority assets
+    return allAssets.filter(asset => ['medium', 'low', 'deferred'].includes(asset.priority));
+};
+
+/**
  * Get all assets in priority order for optimized loading
- * High priority: Cockpit model, cube maps (needed for first scene)
+ * High priority: Cube maps (needed for background)
  * Medium priority: Avatar
- * Low priority: Star system models, project images
+ * Low priority: Small planet models, project images
+ * Deferred: Heavy models (12MB+) - load after initial screen
  *
  * @returns {Array} Flat array of all assets sorted by priority
  */
@@ -144,8 +186,8 @@ export const getAssetsInPriorityOrder = () => {
         ...assets.images
     ];
 
-    // Sort by priority: high → medium → low
-    const priorityOrder = { high: 0, medium: 1, low: 2 };
+    // Sort by priority: high → medium → low → deferred
+    const priorityOrder = { high: 0, medium: 1, low: 2, deferred: 3 };
     allAssets.sort((a, b) => {
         return priorityOrder[a.priority] - priorityOrder[b.priority];
     });

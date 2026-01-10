@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -82,6 +82,32 @@ const StarSystem = ({
 }) => {
     const groupRef = useRef();
     const centralStarRef = useRef();
+
+    // Dynamic model preloading - only loads when component mounts (exploration phase)
+    // This prevents blocking the initial page load
+    useEffect(() => {
+        // Model paths to preload
+        const modelPaths = [
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
+            "/models/Saturn.glb",
+        ];
+
+        // Use requestIdleCallback for low-priority background loading
+        // Falls back to setTimeout if not supported
+        const preloadModels = () => {
+            modelPaths.forEach(path => useGLTF.preload(path));
+        };
+
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(preloadModels, { timeout: 2000 });
+        } else {
+            setTimeout(preloadModels, 100);
+        }
+    }, []); // Empty dependency array - run once on mount
 
     useFrame((state) => {
         // Pause system rotation when animations are paused
@@ -438,12 +464,7 @@ const Planet = ({
     return <primitive ref={planetRef} object={scene.clone()} scale={scale} />;
 };
 
-// Preload all planet models
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb");
-useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb");
-useGLTF.preload("/models/Saturn.glb");
+// Removed static preloads - models now load dynamically when component mounts
+// This significantly improves initial page load time
 
 export default StarSystem;

@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { getAssetsInPriorityOrder } from '../../utils/assetCollector';
+import { getCriticalAssetsOnly, getDeferredAssets } from '../../utils/assetCollector';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -183,13 +183,20 @@ const useAssetPreloader = (onComplete) => {
                     console.warn('⚠️ Could not preload components:', error);
                 }
 
-                // Get all assets in priority order
-                const allAssets = getAssetsInPriorityOrder();
-                const total = allAssets.length;
+                // TIERED LOADING STRATEGY:
+                // Phase 1: Load only critical assets (cube textures) - blocks initial screen
+                // Phase 2: Load deferred assets (heavy models) in background after app loads
 
-                setTotalAssets(total);
+                // Get critical assets only (high priority)
+                const criticalAssets = getCriticalAssetsOnly();
+                const criticalCount = criticalAssets.length;
 
-                if (total === 0) {
+                // For progress tracking, only count critical assets initially
+                setTotalAssets(criticalCount);
+
+                console.log(`📦 Loading ${criticalCount} critical assets first (cube maps, essential textures)`);
+
+                if (criticalCount === 0) {
                     setIsComplete(true);
                     if (onComplete) onComplete();
                     return;
@@ -197,9 +204,9 @@ const useAssetPreloader = (onComplete) => {
 
                 let loaded = 0;
 
-                // Process assets in batches for concurrent loading
-                for (let i = 0; i < allAssets.length; i += CONCURRENT_LOAD_LIMIT) {
-                    const batch = allAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
+                // Phase 1: Load critical assets in batches
+                for (let i = 0; i < criticalAssets.length; i += CONCURRENT_LOAD_LIMIT) {
+                    const batch = criticalAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
 
                     // Load batch concurrently
                     const results = await Promise.all(
@@ -209,7 +216,7 @@ const useAssetPreloader = (onComplete) => {
                     // Update progress for each asset in batch
                     results.forEach(result => {
                         loaded++;
-                        const progressPercent = (loaded / total) * 100;
+                        const progressPercent = (loaded / criticalCount) * 100;
 
                         setLoadedCount(loaded);
                         setProgress(progressPercent);
@@ -221,19 +228,63 @@ const useAssetPreloader = (onComplete) => {
                         }
                     });
 
-                    // Small delay between batches to avoid overwhelming the browser
-                    if (i + CONCURRENT_LOAD_LIMIT < allAssets.length) {
+                    // Small delay between batches
+                    if (i + CONCURRENT_LOAD_LIMIT < criticalAssets.length) {
                         await new Promise(resolve => setTimeout(resolve, 50));
                     }
                 }
 
+                // Critical assets loaded - mark as complete and show app!
                 setIsComplete(true);
+
+                console.log(`✅ Critical assets loaded! App ready to show.`);
 
                 // Call complete callback - but only once!
                 if (onComplete && !completeCalledRef.current) {
                     completeCalledRef.current = true;
-                    // Small delay before calling onComplete to let UI update
                     setTimeout(() => onComplete(), 100);
+                }
+
+                // Phase 2: Load deferred assets in background (don't block)
+                // This includes heavy 12MB models that load lazily
+                const deferredAssets = getDeferredAssets();
+                if (deferredAssets.length > 0) {
+                    console.log(`📦 Loading ${deferredAssets.length} deferred assets in background (heavy models, images)`);
+
+                    // Use requestIdleCallback for low-priority background loading
+                    const loadDeferredInBackground = () => {
+                        let deferredLoaded = 0;
+
+                        // Load deferred assets (don't update progress bar - app is already shown)
+                        const loadDeferredBatch = async () => {
+                            for (let i = 0; i < deferredAssets.length; i += CONCURRENT_LOAD_LIMIT) {
+                                const batch = deferredAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
+
+                                const results = await Promise.all(
+                                    batch.map(asset => preloadAsset(asset))
+                                );
+
+                                deferredLoaded += batch.length;
+                                console.log(`📥 Background: Loaded ${deferredLoaded}/${deferredAssets.length} deferred assets`);
+
+                                // Longer delay for background loading (don't compete with main app)
+                                await new Promise(resolve => setTimeout(resolve, 500));
+                            }
+
+                            console.log(`✅ All deferred assets loaded in background`);
+                        };
+
+                        loadDeferredBatch().catch(error => {
+                            console.warn('⚠️ Error loading deferred assets:', error);
+                        });
+                    };
+
+                    // Start background loading after a delay (let app render first)
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(loadDeferredInBackground, { timeout: 3000 });
+                    } else {
+                        setTimeout(loadDeferredInBackground, 2000);
+                    }
                 }
 
             } catch (error) {
