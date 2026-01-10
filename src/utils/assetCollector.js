@@ -62,13 +62,13 @@ export const collectAssets = () => {
         console.error('Error collecting star system models:', error);
     }
 
-    // 2. Add local cockpit model (high priority - CRITICAL for first scene!)
-    // Must load during loading screen since it's the first thing users see
+    // 2. Add local cockpit model (medium priority - loads early but doesn't block)
+    // Too large (12MB) to block loading screen, but loads immediately after
     assets.models.unshift({
         url: '/models/SpaceshipCockpit.glb',
         name: 'Cockpit',
         type: 'local-model',
-        priority: 'high' // CRITICAL - first 3D scene users see
+        priority: 'medium' // Loads right after critical assets
     });
 
     // 3. Collect cube map textures (high priority - needed for background)
@@ -131,8 +131,10 @@ export const collectAssets = () => {
 
 /**
  * Get only critical assets that block the initial load screen
- * Critical assets: Cockpit model (12MB), cube map textures, planet detail background
- * Non-critical: Exploration models (Saturn), project screenshots
+ * Critical = 'high' priority: Cube map textures, planet detail background
+ * These load FAST (small files) to show loading screen quickly
+ *
+ * Medium priority (cockpit) loads after these but before app shows
  *
  * @returns {Array} Array of critical assets only
  */
@@ -146,8 +148,7 @@ export const getCriticalAssetsOnly = () => {
         ...assets.images
     ];
 
-    // Filter to only high priority assets
-    // This includes: Cockpit (essential!), cube textures, essential images
+    // Filter to only high priority assets (small, fast to load)
     return allAssets.filter(asset => asset.priority === 'high');
 };
 

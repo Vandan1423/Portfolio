@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { getCriticalAssetsOnly, getDeferredAssets } from '../../utils/assetCollector';
+import { getCriticalAssetsOnly, getDeferredAssets, collectAssets } from '../../utils/assetCollector';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -184,17 +184,18 @@ const useAssetPreloader = (onComplete) => {
                 }
 
                 // TIERED LOADING STRATEGY:
-                // Phase 1: Load only critical assets (cube textures) - blocks initial screen
-                // Phase 2: Load deferred assets (heavy models) in background after app loads
+                // Phase 1: Critical assets (cube textures) - fast, blocks screen
+                // Phase 2: Medium assets (cockpit) - loads during screen, doesn't block
+                // Phase 3: Deferred assets (heavy models) - background after app loads
 
                 // Get critical assets only (high priority)
                 const criticalAssets = getCriticalAssetsOnly();
                 const criticalCount = criticalAssets.length;
 
-                // For progress tracking, only count critical assets initially
+                // For progress tracking, only count critical assets
                 setTotalAssets(criticalCount);
 
-                console.log(`📦 Loading ${criticalCount} critical assets first (cube maps, essential textures)`);
+                console.log(`📦 Loading ${criticalCount} critical assets (cube maps, textures)`);
 
                 if (criticalCount === 0) {
                     setIsComplete(true);
@@ -204,7 +205,7 @@ const useAssetPreloader = (onComplete) => {
 
                 let loaded = 0;
 
-                // Phase 1: Load critical assets in batches
+                // Phase 1: Load critical assets FAST
                 for (let i = 0; i < criticalAssets.length; i += CONCURRENT_LOAD_LIMIT) {
                     const batch = criticalAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
 
@@ -234,12 +235,30 @@ const useAssetPreloader = (onComplete) => {
                     }
                 }
 
-                // Critical assets loaded - mark as complete and show app!
+                // Critical assets done!
+                console.log(`✅ Critical assets loaded!`);
+
+                // Phase 1.5: Load medium priority assets (cockpit) - still during loading screen
+                const allAssets = collectAssets();
+                const mediumAssets = [...allAssets.models, ...allAssets.images].filter(
+                    asset => asset.priority === 'medium'
+                );
+
+                if (mediumAssets.length > 0) {
+                    console.log(`📦 Loading ${mediumAssets.length} medium priority assets (cockpit)`);
+
+                    for (let i = 0; i < mediumAssets.length; i += CONCURRENT_LOAD_LIMIT) {
+                        const batch = mediumAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
+                        await Promise.all(batch.map(asset => preloadAsset(asset)));
+                    }
+
+                    console.log(`✅ Medium assets loaded (cockpit ready)`);
+                }
+
+                // All essential assets loaded - show app!
                 setIsComplete(true);
 
-                console.log(`✅ Critical assets loaded! App ready to show.`);
-
-                // Call complete callback - but only once!
+                // Call complete callback
                 if (onComplete && !completeCalledRef.current) {
                     completeCalledRef.current = true;
                     setTimeout(() => onComplete(), 100);
