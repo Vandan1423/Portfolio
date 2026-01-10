@@ -64,7 +64,6 @@ const CockpitInterior = ({ onCommand, showTerminal = true }) => {
     );
 };
 
-// REMOVED preload - model loads on-demand with Suspense boundary
-// This reduces initial bundle load time significantly
+useGLTF.preload(COCKPIT_MODEL_PATH);
 
 export default CockpitInterior;

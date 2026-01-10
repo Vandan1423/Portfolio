@@ -8,8 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "optimize-models": "bash scripts/optimize-models.sh",
-    "download-external-models": "bash scripts/download-optimize-external-models.sh"
+    "optimize-models": "bash scripts/optimize-models.sh"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

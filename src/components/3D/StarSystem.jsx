@@ -438,8 +438,12 @@ const Planet = ({
     return <primitive ref={planetRef} object={scene.clone()} scale={scale} />;
 };
 
-// REMOVED preload calls - models now load on-demand with Suspense
-// This significantly reduces initial load time
-// Models are cached after first load for subsequent uses
+// Preload all planet models
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb");
+useGLTF.preload("https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb");
+useGLTF.preload("/models/Saturn.glb");
 
 export default StarSystem;
