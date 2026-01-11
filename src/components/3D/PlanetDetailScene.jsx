@@ -230,17 +230,17 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                 <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40 docking-hint">
                     <div className="relative group">
                         {/* Animated gradient background */}
-                        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-xl opacity-75 blur group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
+                        <div className="absolute -inset-1 bg-linear-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-xl opacity-75 blur group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
 
                         {/* Main card */}
-                        <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 rounded-xl border border-cyan-400/50 shadow-2xl">
+                        <div className="relative bg-linear-to-br from-gray-900 via-black to-gray-900 p-4 rounded-xl border border-cyan-400/50 shadow-2xl">
                             {/* Main action */}
                             <div className="flex items-center justify-center gap-4 mb-2">
                                 <div className="flex items-center gap-3">
                                     {/* Key visual */}
                                     <div className="relative">
                                         <div className="absolute inset-0 bg-cyan-400 blur-lg opacity-50 animate-pulse"></div>
-                                        <kbd className="relative inline-flex items-center justify-center w-10 h-10 font-bold text-xl text-black bg-gradient-to-br from-cyan-300 to-cyan-500 rounded-lg shadow-lg transform hover:scale-110 transition-transform">
+                                        <kbd className="relative inline-flex items-center justify-center w-10 h-10 font-bold text-xl text-black bg-linear-to-br from-cyan-300 to-cyan-500 rounded-lg shadow-lg transform hover:scale-110 transition-transform">
                                             D
                                         </kbd>
                                     </div>
@@ -261,7 +261,7 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                             </div>
 
                             {/* Divider */}
-                            <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent my-3"></div>
+                            <div className="h-px bg-linear-to-r from-transparent via-cyan-400/30 to-transparent my-3"></div>
 
                             {/* Secondary action */}
                             <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
@@ -281,10 +281,10 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                 <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40">
                     <div className="relative">
                         {/* Animated gradient background */}
-                        <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 rounded-xl opacity-75 blur animate-pulse"></div>
+                        <div className="absolute -inset-1 bg-linear-to-r from-orange-500 via-red-500 to-orange-600 rounded-xl opacity-75 blur animate-pulse"></div>
 
                         {/* Main card */}
-                        <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 px-8 py-5 rounded-xl border border-orange-400/50 shadow-2xl">
+                        <div className="relative bg-linear-to-br from-gray-900 via-black to-gray-900 px-8 py-5 rounded-xl border border-orange-400/50 shadow-2xl">
                             {/* Status message */}
                             <div className="flex items-center justify-center gap-3 mb-3 p-4">
                                 <div className="relative">
@@ -298,7 +298,7 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
 
                             {/* Progress bar */}
                             <div className="w-64 h-1 bg-gray-800 rounded-full overflow-hidden mb-3">
-                                <div className="h-full bg-gradient-to-r from-orange-400 to-red-500 rounded-full animate-pulse" style={{ width: '100%' }}></div>
+                                <div className="h-full bg-linear-to-r from-orange-400 to-red-500 rounded-full animate-pulse" style={{ width: '100%' }}></div>
                             </div>
 
                             {/* Cancel action */}
