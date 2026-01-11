@@ -703,6 +703,11 @@
 }
 
 @media (max-width: 768px) {
+    .spaceBackground {
+        background-image: none !important;
+        background-color: var(--color-space-deep);
+    }
+
     .container {
         padding: 0;
     }

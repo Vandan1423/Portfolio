@@ -42,6 +42,11 @@
 }
 
 @media (max-width: 768px) {
+    .container {
+        background-image: none !important;
+        background-color: #0a0e27;
+    }
+
     .backButton {
         top: 2rem;
         left: 1rem;

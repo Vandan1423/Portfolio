@@ -2,6 +2,42 @@
 const projectsData = [
     {
         id: 1,
+        name: "IMMERSIVE 3D PORTFOLIO",
+        shortDescription:
+            "Interactive space-themed portfolio featuring 3D spacecraft models, holographic UI panels, and explorable solar system navigation built with React Three Fiber and Three.js.",
+        keyFeatures: [
+            "3D Spacecraft Models - Detailed GLTF models with realistic textures, animations including launch sequences and docking mechanics",
+            "Explorable Solar System - Interactive planet navigation system allowing users to explore different sections (About, Skills, Projects, Contact) through space travel",
+            "Holographic UI Panels - Futuristic interface with smooth transitions, animated content reveals, and gesture-safe touch controls",
+            "Custom Visual Effects - GLSL shaders for engine glow, particle systems for starfields and space dust, HDR environment lighting",
+            "Performance Optimized - Draco/GLTF compression, code-splitting, lazy loading, and progressive asset loading maintaining 60 FPS on mid-range devices",
+        ],
+        technologies: [
+            "React",
+            "Three.js",
+            "@react-three/fiber",
+            "@react-three/drei",
+            "GLSL Shaders",
+            "Vite",
+            "CSS Modules",
+            "Responsive Design",
+        ],
+        role: "Solo Developer - Architected and implemented entire 3D experience from scene setup to custom animations, optimized rendering pipeline, and built reusable UI component library",
+        challenges:
+            "Optimizing complex 3D scenes for web performance while maintaining visual fidelity. Implementing smooth animation sequences with proper state management. Creating responsive layouts that work across desktop and mobile while handling touch gestures safely. Managing asset loading and compression to minimize bundle size without sacrificing quality.",
+        impact: "Created an immersive portfolio experience showcasing advanced web development skills. Successfully implemented complex 3D interactions with Three.js while maintaining excellent performance metrics. Demonstrated proficiency in 3D graphics programming, shader development, and performance optimization. Built a unique, memorable user experience that stands out from traditional portfolios.",
+        github: "https://github.com/Vandan1423/portfolio",
+        liveDemo: "https://vandan-nagori.vercel.app/",
+        status: "Live",
+        screenshots: [
+            "https://res.cloudinary.com/didezuerl/image/upload/v1736000000/portfolio-ss1.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1736000000/portfolio-ss2.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1736000000/portfolio-ss3.png",
+            "https://res.cloudinary.com/didezuerl/image/upload/v1736000000/portfolio-ss4.png",
+        ],
+    },
+    {
+        id: 2,
         name: "AIRBNB REPLICA",
         shortDescription:
             "Full-featured rental marketplace platform with complete booking management, user authentication, and interactive mapping functionality.",
@@ -38,7 +74,7 @@ const projectsData = [
         ],
     },
     {
-        id: 2,
+        id: 3,
         name: "GAMING CLUB WEBSITE - IIT INDORE",
         shortDescription:
             "Official Gaming Club website featuring tournament management, event registration, and member directory serving the IIT Indore gaming community.",
@@ -73,7 +109,7 @@ const projectsData = [
         ],
     },
     {
-        id: 3,
+        id: 4,
         name: "ASTRONOMY CLUB WEBSITE - IIT INDORE",
         shortDescription:
             "Official Astronomy Club website showcasing research projects, astronomy news, and club activities with an immersive space-themed user experience.",
@@ -106,7 +142,7 @@ const projectsData = [
         ],
     },
     {
-        id: 4,
+        id: 5,
         name: "EDUCONNECT - ACADEMIC PORTAL",
         shortDescription:
             "Comprehensive academic management system featuring dual role-based portals for students and faculty with real-time scheduling and resource management.",
@@ -149,7 +185,7 @@ const projectsData = [
         ],
     },
     {
-        id: 5,
+        id: 6,
         name: "SIMON SAYS GAME",
         shortDescription:
             "Interactive memory game built with vanilla JavaScript featuring dynamic pattern generation, progressive difficulty levels, and engaging visual feedback.",
@@ -171,7 +207,7 @@ const projectsData = [
         screenshots: ["https://res.cloudinary.com/didezuerl/image/upload/v1766049880/SimonSaySS_fthyku.png"],
     },
     {
-        id: 6,
+        id: 7,
         name: "SPOTIFY CLONE",
         shortDescription:
             "Pixel-perfect frontend clone of Spotify's web interface built with HTML and CSS, replicating the music streaming platform's design and layout.",
@@ -202,7 +238,7 @@ const projectsData = [
         ],
     },
     {
-        id: 7,
+        id: 8,
         name: "AMAZON CLONE",
         shortDescription:
             "Frontend replica of Amazon's e-commerce interface showcasing product layouts, navigation systems, and responsive design principles using pure HTML and CSS.",
