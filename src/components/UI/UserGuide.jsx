@@ -73,12 +73,12 @@ const UserGuide = ({ onClose, isVisible }) => {
           text: 'View all planets in your current star system. Click any planet to enter its orbit and view detailed information.'
         },
         {
-          heading: 'A3: TACTICAL MAP',
+          heading: 'A2: TACTICAL MAP',
           text: 'Visual overview of the star system showing planetary orbits. Click planets directly from the map.'
         },
         {
-          heading: 'A2: WARP DRIVE',
-          text: 'Travel between different star systems. Each system represents a different section of the portfolio.'
+          heading: 'A3: WARP DRIVE',
+          text: 'Travel between different star systems. Each system represents a different page of the portfolio.'
         }
       ]
     },
@@ -95,7 +95,7 @@ const UserGuide = ({ onClose, isVisible }) => {
           shortcuts: [
             { key: 'Left Click + Drag', action: 'Rotate around star system' },
             { key: 'Scroll Wheel', action: 'Zoom in/out (50-300 units)' },
-            { key: 'Click Planet', action: 'Select planet for docking' }
+            { key: 'Right Click + Drag', action: 'Pan camera view' }
           ]
         },
         {
@@ -128,7 +128,7 @@ const UserGuide = ({ onClose, isVisible }) => {
       content: [
         {
           heading: 'Six Star Systems',
-          text: 'Navigate between systems using the WARP DRIVE (A2) in the navigation dashboard:'
+          text: 'Navigate between systems using the WARP DRIVE (A3) in the navigation dashboard:'
         },
         {
           heading: 'Available Systems',

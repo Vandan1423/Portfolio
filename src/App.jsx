@@ -4,9 +4,11 @@ import { useState, useRef, useEffect, useMemo, lazy, Suspense } from "react";
 import * as THREE from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
+import { useTutorial } from "./context/TutorialContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import HelpButton from "./components/UI/HelpButton";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
+import TutorialOverlay from "./components/Tutorial/TutorialOverlay";
 import "./App.css";
 
 // Lazy load heavy 3D components
@@ -136,7 +138,7 @@ const StatusDisplay = ({ phase, systemStatus, currentSystemName }) => {
                 </div>
                 <div className="text-xs text-gray-400">{systemStatus}</div>
                 {config.helper && (
-                    <div className={`text-xs ${config.textColor}/60 mt-1`}>
+                    <div className={`text-xs ${config.textColor}/60 mt-1 navigation-hint`}>
                         {config.helper}
                     </div>
                 )}
@@ -158,6 +160,9 @@ function App() {
         setCurrentSystemId,
         starSystems,
     } = useStarSystem();
+
+    // Tutorial context
+    const { isActive: tutorialActive, currentStep: tutorialStep, nextStep: tutorialNextStep, completeStep: tutorialCompleteStep } = useTutorial();
 
     // Component state
     const [currentPhase, setCurrentPhase] = useState("cockpit");
@@ -242,6 +247,50 @@ function App() {
         }
     }, [currentPage, currentPhase]);
 
+    // Tutorial: Detect camera movement for EXPLORATION_ARRIVAL -> NAVIGATION_PROMPT
+    useEffect(() => {
+        if (!tutorialActive || tutorialStep !== 'EXPLORATION_ARRIVAL') return;
+
+        let hasMoved = false;
+
+        const handleMouseDown = () => {
+            // User started dragging - wait a bit to ensure they actually moved
+            setTimeout(() => {
+                if (!hasMoved) {
+                    hasMoved = true;
+                    tutorialCompleteStep('EXPLORATION_ARRIVAL', {
+                        id: 'pilots-license',
+                        icon: '🚀',
+                        name: "PILOT'S LICENSE",
+                        description: "Successfully completed your first wormhole jump"
+                    });
+                    tutorialNextStep('NAVIGATION_PROMPT');
+                }
+            }, 500);
+        };
+
+        const handleWheel = () => {
+            if (!hasMoved) {
+                hasMoved = true;
+                tutorialCompleteStep('EXPLORATION_ARRIVAL', {
+                    id: 'pilots-license',
+                    icon: '🚀',
+                    name: "PILOT'S LICENSE",
+                    description: "Successfully completed your first wormhole jump"
+                });
+                tutorialNextStep('NAVIGATION_PROMPT');
+            }
+        };
+
+        window.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('wheel', handleWheel);
+
+        return () => {
+            window.removeEventListener('mousedown', handleMouseDown);
+            window.removeEventListener('wheel', handleWheel);
+        };
+    }, [tutorialActive, tutorialStep, tutorialCompleteStep, tutorialNextStep]);
+
     // Handler for launch command from cockpit terminal
     const handleLaunchCommand = (command) => {
         if (command !== "launch") return;
@@ -286,12 +335,34 @@ function App() {
         if (!planet || !currentSystem) return;
 
         const pageSlug = currentSystem.page.toLowerCase().replace(/\s+/g, "-");
-        onNavigate(pageSlug, planet.sectionId);
+
+        // If tutorial is active, add a small delay to let MISSION_COMPLETE show
+        if (tutorialActive) {
+            setTimeout(() => {
+                onNavigate(pageSlug, planet.sectionId);
+            }, 2000); // 2 second delay to show the completion message
+        } else {
+            // Navigate immediately when not in tutorial
+            onNavigate(pageSlug, planet.sectionId);
+        }
     };
 
     // Keyboard shortcuts
     const { isActive: isNavigationVisible, setIsActive: setNavigationVisible } =
         useKeyboardShortcut("n");
+
+    // Tutorial: Detect "N" key press for step 5 -> 6
+    useEffect(() => {
+        if (tutorialActive && tutorialStep === 'NAVIGATION_PROMPT' && isNavigationVisible) {
+            tutorialCompleteStep('NAVIGATION_PROMPT', {
+                id: 'navigator',
+                icon: '🧭',
+                name: "NAVIGATOR",
+                description: "Accessed tactical navigation"
+            });
+            tutorialNextStep('NAV_LOCAL_SECTOR');
+        }
+    }, [isNavigationVisible, tutorialActive, tutorialStep, tutorialCompleteStep, tutorialNextStep]);
 
     useKeyboardShortcut("Escape", () => {
         if (currentPhase === "planet-detail") {
@@ -451,6 +522,12 @@ function App() {
                                         }
 
                                         setTravelPhase(null);
+
+                                        // Tutorial: Activate tutorial after launch sequence
+                                        if (!tutorialActive && tutorialStep === 'WAITING_FOR_LAUNCH') {
+                                            // Activate tutorial and start from exploration
+                                            tutorialNextStep('EXPLORATION_ARRIVAL');
+                                        }
                                     }}
                                 />
                             </Suspense>
@@ -507,6 +584,9 @@ function App() {
 
                     {/* Help Button - Available on all pages */}
                     <HelpButton />
+
+                    {/* Tutorial Overlay - Guides first-time users */}
+                    <TutorialOverlay />
                 </>
             )}
             </>

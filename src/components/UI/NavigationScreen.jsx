@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useTutorial } from "../../context/TutorialContext";
 import SystemMap from "./SystemMap";
 import PlanetList from "./PlanetList";
 import styles from "./NavigationScreen.module.css";
@@ -37,12 +38,43 @@ const NavigationScreen = ({
     const [currentView, setCurrentView] = useState("main-menu");
     // Views: 'main-menu', 'planet-list', 'system-map', 'system-travel'
 
+    // Tutorial context
+    const { isActive: tutorialActive, currentStep: tutorialStep, nextStep: tutorialNextStep, completeStep: tutorialCompleteStep } = useTutorial();
+
     const handleViewChange = (view) => {
         setCurrentView(view);
+
+        // Tutorial: Track navigation menu clicks
+        if (tutorialActive) {
+            if (tutorialStep === 'NAV_LOCAL_SECTOR' && view === 'planet-list') {
+                tutorialNextStep('NAV_PLANET_LIST');
+            } else if (tutorialStep === 'NAV_TACTICAL_MAP' && view === 'system-map') {
+                tutorialNextStep('NAV_MAP_VIEW');
+            } else if (tutorialStep === 'NAV_WARP_DRIVE' && view === 'system-travel') {
+                tutorialCompleteStep('NAV_WARP_DRIVE', {
+                    id: 'warp-capable',
+                    icon: '⚡',
+                    name: "WARP CAPABLE",
+                    description: "Mastered inter-system navigation"
+                });
+                tutorialNextStep('NAV_SYSTEM_LIST');
+            }
+        }
     };
 
     const handleBack = () => {
         setCurrentView("main-menu");
+
+        // Tutorial: Track back button clicks
+        if (tutorialActive) {
+            if (tutorialStep === 'NAV_PLANET_LIST') {
+                tutorialNextStep('NAV_TACTICAL_MAP');
+            } else if (tutorialStep === 'NAV_MAP_VIEW') {
+                tutorialNextStep('NAV_WARP_DRIVE');
+            } else if (tutorialStep === 'NAV_SYSTEM_LIST') {
+                tutorialNextStep('PLANET_SELECTION');
+            }
+        }
     };
 
     // Handle planet click - this opens the planet detail scene
@@ -50,10 +82,22 @@ const NavigationScreen = ({
         if (onPlanetSelect) {
             onPlanetSelect(planet);
         }
+
+        // Tutorial: Step 9 -> Step 10 (planet selected)
+        // Delay slightly to ensure planet detail scene is rendered
+        if (tutorialActive && tutorialStep === 'PLANET_SELECTION') {
+            setTimeout(() => {
+                tutorialNextStep('PLANET_DOCKING');
+            }, 800); // Wait for navigation to close and planet scene to render
+        }
     };
 
     // Reset view when navigation closes
     const handleClose = () => {
+        // During tutorial, don't allow closing by clicking backdrop
+        if (tutorialActive) {
+            return;
+        }
         setCurrentView("main-menu");
         onClose();
     };
@@ -129,7 +173,9 @@ const NavigationScreen = ({
                                                 DASHBOARD
                                             </h2>
                                             <motion.div
-                                                className={styles.titleUnderline}
+                                                className={
+                                                    styles.titleUnderline
+                                                }
                                                 initial={{ width: 0 }}
                                                 animate={{ width: "100%" }}
                                                 transition={{
@@ -145,8 +191,16 @@ const NavigationScreen = ({
                                             className={styles.closeButton}
                                             aria-label="Close Navigation"
                                         >
-                                            <div className={styles.closeButtonFrame}>
-                                                <span className={styles.closeButtonIcon}>
+                                            <div
+                                                className={
+                                                    styles.closeButtonFrame
+                                                }
+                                            >
+                                                <span
+                                                    className={
+                                                        styles.closeButtonIcon
+                                                    }
+                                                >
                                                     ×
                                                 </span>
                                             </div>
@@ -155,7 +209,9 @@ const NavigationScreen = ({
 
                                     {/* Subtitle/Status */}
                                     <div className={styles.statusBar}>
-                                        <div className={styles.statusIndicator}></div>
+                                        <div
+                                            className={styles.statusIndicator}
+                                        ></div>
                                         <p className={styles.statusText}>
                                             {currentView === "main-menu" &&
                                                 "System Online"}
@@ -169,7 +225,9 @@ const NavigationScreen = ({
                                     </div>
 
                                     {/* Decorative Tech Elements */}
-                                    <div className={styles.headerBottomLine}></div>
+                                    <div
+                                        className={styles.headerBottomLine}
+                                    ></div>
                                 </div>
 
                                 {/* Content Area */}
@@ -205,8 +263,12 @@ const NavigationScreen = ({
                                             <SystemTravelList
                                                 key="system-travel"
                                                 starSystems={starSystems}
-                                                currentSystemId={currentSystemId}
-                                                onSystemSelect={onSystemTravelSelect}
+                                                currentSystemId={
+                                                    currentSystemId
+                                                }
+                                                onSystemSelect={
+                                                    onSystemTravelSelect
+                                                }
                                             />
                                         )}
                                     </AnimatePresence>
@@ -215,15 +277,28 @@ const NavigationScreen = ({
                                 {/* Footer - Back Button */}
                                 {currentView !== "main-menu" && (
                                     <div className={styles.footer}>
-                                        <div className={styles.footerTopLine}></div>
+                                        <div
+                                            className={styles.footerTopLine}
+                                        ></div>
 
                                         <button
                                             onClick={handleBack}
                                             className={styles.backButton}
+                                            data-tutorial="back-button"
                                         >
-                                            <div className={styles.backButtonBg}></div>
-                                            <div className={styles.backButtonHighlight}></div>
-                                            <span className={styles.backButtonText}>
+                                            <div
+                                                className={styles.backButtonBg}
+                                            ></div>
+                                            <div
+                                                className={
+                                                    styles.backButtonHighlight
+                                                }
+                                            ></div>
+                                            <span
+                                                className={
+                                                    styles.backButtonText
+                                                }
+                                            >
                                                 <span>←</span>
                                                 <span>RETURN</span>
                                             </span>
@@ -249,14 +324,15 @@ const MainMenu = ({ onViewChange }) => {
             id: "planet-list",
             title: "LOCAL SECTOR",
             code: "A1",
-            description: "Navigate current star system",
+            description:
+                "Explore planets of this star system",
             available: true,
             color: "cyan",
         },
         {
             id: "system-map",
             title: "TACTICAL MAP",
-            code: "A3",
+            code: "A2",
             description: "System overview & coordinates",
             available: true,
             color: "blue",
@@ -264,8 +340,8 @@ const MainMenu = ({ onViewChange }) => {
         {
             id: "system-travel",
             title: "WARP DRIVE",
-            code: "A2",
-            description: "Inter-system navigation",
+            code: "A3",
+            description: "Travel through different pages",
             available: true,
             color: "purple",
         },
@@ -291,12 +367,20 @@ const MainMenu = ({ onViewChange }) => {
                     onClick={() => option.available && onViewChange(option.id)}
                     disabled={!option.available}
                     className={styles.menuOption}
+                    data-tutorial={
+                        option.id === 'planet-list' ? 'local-sector' :
+                        option.id === 'system-map' ? 'tactical-map' :
+                        option.id === 'system-travel' ? 'warp-drive' :
+                        undefined
+                    }
                 >
                     {/* Angular Container */}
                     <div className={styles.menuOptionAngular}>
                         <div
                             className={`${styles.menuOptionContent} ${
-                                !option.available ? styles.menuOptionDisabled : ""
+                                !option.available
+                                    ? styles.menuOptionDisabled
+                                    : ""
                             }`}
                         >
                             {/* Tech Corner Accent */}
@@ -386,7 +470,6 @@ const MainMenu = ({ onViewChange }) => {
  * Each star system represents a different page of the portfolio
  */
 const SystemTravelList = ({ starSystems, currentSystemId, onSystemSelect }) => {
-
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -400,7 +483,7 @@ const SystemTravelList = ({ starSystems, currentSystemId, onSystemSelect }) => {
                     Available Star Systems
                 </h3>
                 <p className={styles.travelListSubtitle}>
-                    Select destination for wormhole jump
+                    Select any star system to travel to its corresponding page.
                 </p>
             </div>
 
@@ -408,108 +491,124 @@ const SystemTravelList = ({ starSystems, currentSystemId, onSystemSelect }) => {
             {starSystems.map((system, index) => {
                 const isCurrent = system.id === currentSystemId;
                 return (
-                <motion.div
-                    key={system.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                        delay: index * 0.1,
-                        type: "spring",
-                        stiffness: 100,
-                    }}
-                    onClick={() => {
-                        if (!isCurrent && onSystemSelect) {
-                            onSystemSelect(system.id);
-                        }
-                    }}
-                    className={`${styles.systemItem} ${
-                        isCurrent
-                            ? styles.systemItemCurrent
-                            : styles.systemItemClickable
-                    }`}
-                >
-                    {/* Angular Container */}
-                    <div className={styles.systemItemAngular}>
-                        <div
-                            className={`${styles.systemItemContent} ${
-                                isCurrent
-                                    ? styles.systemItemContentCurrent
-                                    : ""
-                            }`}
-                        >
-                            {/* Hover Scan Effect */}
-                            {!isCurrent && (
-                                <motion.div
-                                    className={styles.systemScanEffect}
-                                    initial={{ y: "-100%" }}
-                                    whileHover={{
-                                        y: "100%",
-                                        transition: {
-                                            duration: 0.5,
-                                            ease: "linear",
-                                        },
-                                    }}
-                                ></motion.div>
-                            )}
+                    <motion.div
+                        key={system.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                            delay: index * 0.1,
+                            type: "spring",
+                            stiffness: 100,
+                        }}
+                        onClick={() => {
+                            if (!isCurrent && onSystemSelect) {
+                                onSystemSelect(system.id);
+                            }
+                        }}
+                        className={`${styles.systemItem} ${
+                            isCurrent
+                                ? styles.systemItemCurrent
+                                : styles.systemItemClickable
+                        }`}
+                    >
+                        {/* Angular Container */}
+                        <div className={styles.systemItemAngular}>
+                            <div
+                                className={`${styles.systemItemContent} ${
+                                    isCurrent
+                                        ? styles.systemItemContentCurrent
+                                        : ""
+                                }`}
+                            >
+                                {/* Hover Scan Effect */}
+                                {!isCurrent && (
+                                    <motion.div
+                                        className={styles.systemScanEffect}
+                                        initial={{ y: "-100%" }}
+                                        whileHover={{
+                                            y: "100%",
+                                            transition: {
+                                                duration: 0.5,
+                                                ease: "linear",
+                                            },
+                                        }}
+                                    ></motion.div>
+                                )}
 
-                            <div className={styles.systemItemInner}>
-                                {/* System Code */}
-                                <div
-                                    className={`${styles.systemCode} ${
-                                        isCurrent
-                                            ? styles.systemCodeCurrent
-                                            : ""
-                                    }`}
-                                >
-                                    <span className={styles.systemCodeText}>
-                                        {system.code}
-                                    </span>
-                                </div>
-
-                                {/* System Info */}
-                                <div className={styles.systemInfo}>
-                                    <div className={styles.systemInfoHeader}>
-                                        <h4 className={styles.systemName}>
-                                            {system.name}
-                                        </h4>
-                                        <div className={styles.systemDot}>
-                                            •
-                                        </div>
-                                        <span className={styles.systemPage}>
-                                            {system.page}
+                                <div className={styles.systemItemInner}>
+                                    {/* System Code */}
+                                    <div
+                                        className={`${styles.systemCode} ${
+                                            isCurrent
+                                                ? styles.systemCodeCurrent
+                                                : ""
+                                        }`}
+                                    >
+                                        <span className={styles.systemCodeText}>
+                                            {system.code}
                                         </span>
                                     </div>
-                                    <p className={styles.systemDescription}>
-                                        {system.description}
-                                    </p>
+
+                                    {/* System Info */}
+                                    <div className={styles.systemInfo}>
+                                        <div
+                                            className={styles.systemInfoHeader}
+                                        >
+                                            <h4 className={styles.systemName}>
+                                                {system.name}
+                                            </h4>
+                                            <div className={styles.systemDot}>
+                                                •
+                                            </div>
+                                            <span className={styles.systemPage}>
+                                                {system.page}
+                                            </span>
+                                        </div>
+                                        <p className={styles.systemDescription}>
+                                            {system.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Status Badge */}
+                                    <div
+                                        className={styles.statusBadgeContainer}
+                                    >
+                                        {isCurrent ? (
+                                            <div
+                                                className={styles.currentBadge}
+                                            >
+                                                <span
+                                                    className={
+                                                        styles.currentBadgeText
+                                                    }
+                                                >
+                                                    CURRENT
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className={styles.arrowIcon}>
+                                                <span
+                                                    className={
+                                                        styles.arrowIconText
+                                                    }
+                                                >
+                                                    →
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
-                                {/* Status Badge */}
-                                <div className={styles.statusBadgeContainer}>
-                                    {isCurrent ? (
-                                        <div className={styles.currentBadge}>
-                                            <span className={styles.currentBadgeText}>
-                                                CURRENT
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <div className={styles.arrowIcon}>
-                                            <span className={styles.arrowIconText}>
-                                                →
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
+                                {/* Bottom Accent Line */}
+                                {!isCurrent && (
+                                    <div
+                                        className={styles.systemBottomAccent}
+                                    ></div>
+                                )}
                             </div>
-
-                            {/* Bottom Accent Line */}
-                            {!isCurrent && (
-                                <div className={styles.systemBottomAccent}></div>
-                            )}
                         </div>
-                    </div>
-                </motion.div>
-            );
+                    </motion.div>
+                );
             })}
         </motion.div>
     );

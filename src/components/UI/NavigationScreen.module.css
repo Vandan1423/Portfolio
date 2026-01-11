@@ -15,7 +15,7 @@
     left: 50%;
     top: 10%;
     transform: translate(-50%, -50%);
-    width: 600px;
+    width: 700px;
     max-height: 55vh;
     z-index: 50;
     pointer-events: auto;
@@ -29,7 +29,11 @@
     pointer-events: none;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(to right, rgba(0, 255, 255, 0.3) 1px, transparent 1px),
+    background-image: linear-gradient(
+            to right,
+            rgba(0, 255, 255, 0.3) 1px,
+            transparent 1px
+        ),
         linear-gradient(to bottom, rgba(0, 255, 255, 0.3) 1px, transparent 1px);
     background-size: 20px 20px;
 }
@@ -67,7 +71,8 @@
         calc(100% - 40px) 100%,
         0 100%
     );
-    box-shadow: 0 0 40px rgba(0, 255, 255, 0.3), inset 0 0 60px rgba(0, 100, 150, 0.1);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.3),
+        inset 0 0 60px rgba(0, 100, 150, 0.1);
 }
 
 /* Corner Accents */
@@ -143,8 +148,8 @@
     font-family: monospace;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4),
-        0 0 30px rgba(0, 255, 255, 0.2);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2);
 }
 
 .titleUnderline {
@@ -268,7 +273,11 @@
 .backButtonBg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, rgba(0, 60, 80, 0.3), rgba(0, 40, 80, 0.3));
+    background: linear-gradient(
+        to right,
+        rgba(0, 60, 80, 0.3),
+        rgba(0, 40, 80, 0.3)
+    );
     border: 2px solid rgba(6, 182, 212, 0.5);
     transition: all 0.3s;
 }
@@ -343,7 +352,11 @@
 .menuOptionContent {
     padding: 1.25rem;
     border: 2px solid rgba(6, 182, 212, 0.4);
-    background: linear-gradient(135deg, rgba(0, 50, 80, 0.3) 0%, rgba(0, 20, 40, 0.1) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(0, 50, 80, 0.3) 0%,
+        rgba(0, 20, 40, 0.1) 100%
+    );
     transition: all 0.3s;
 }
 
@@ -438,10 +451,49 @@
 }
 
 .menuDescription {
+    position: relative;
     font-family: monospace;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     margin-top: 0.25rem;
-    color: rgba(34, 211, 238, 0.6);
+    color: rgb(34, 211, 238);
+    letter-spacing: 0.5px;
+
+    text-shadow:
+        0 0 6px rgba(34, 211, 238, 0.6),
+        0 0 14px rgba(34, 211, 238, 0.35);
+}
+
+.menuDescription::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 35%,
+        rgba(34, 211, 238, 0.5),
+        transparent 65%
+    );
+    opacity: 0.35;
+    pointer-events: none;
+
+    animation: sweep 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes sweep {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    30% {
+        opacity: 0.35;
+    }
+    70% {
+        opacity: 0.35;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
 .menuDescriptionDisabled {
@@ -511,10 +563,26 @@
 }
 
 .travelListSubtitle {
-    color: rgba(34, 211, 238, 0.5);
+    color: rgba(34, 211, 238, 1);
+    font-weight: 800;
     font-family: monospace;
-    font-size: 0.75rem;
+    font-size: 1rem;
     margin-top: 0.25rem;
+    animation: pulseGlow 1.4s cubic-bezier(0.45, 0.49, 0.72, 0.71) infinite;
+}
+
+@keyframes pulseGlow {
+    0%,
+    100% {
+        text-shadow: 0 0 5px rgba(34, 211, 238, 0.8),
+            0 0 10px rgba(34, 211, 238, 0.7), 0 0 20px rgba(34, 211, 238, 0.6);
+        opacity: 0.62;
+    }
+    50% {
+        text-shadow: 0 0 5px rgba(34, 211, 238, 0.8),
+            0 0 10px rgba(34, 211, 238, 0.7), 0 0 20px rgba(34, 211, 238, 0.6);
+        opacity: 1;
+    }
 }
 
 .systemItem {
@@ -545,13 +613,21 @@
 .systemItemContent {
     padding: 1rem;
     border: 2px solid rgba(6, 182, 212, 0.3);
-    background: linear-gradient(135deg, rgba(0, 40, 70, 0.2) 0%, rgba(0, 20, 40, 0.1) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(0, 40, 70, 0.2) 0%,
+        rgba(0, 20, 40, 0.1) 100%
+    );
     transition: all 0.3s;
 }
 
 .systemItemContentCurrent {
     border-color: rgba(6, 182, 212, 0.6);
-    background: linear-gradient(135deg, rgba(0, 100, 150, 0.3) 0%, rgba(0, 50, 80, 0.2) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(0, 100, 150, 0.3) 0%,
+        rgba(0, 50, 80, 0.2) 100%
+    );
 }
 
 .systemItemClickable:hover .systemItemContent {

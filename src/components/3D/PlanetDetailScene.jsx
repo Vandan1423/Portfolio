@@ -3,6 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { useRef, useState, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { getSectionData } from "../../data/sectionData";
+import { useTutorial } from "../../context/TutorialContext";
 import PlanetInfoPanel from "../UI/PlanetInfoPanel";
 import useKeyboardShortcut from "../../hooks/useKeyboardShortcut";
 import DockingSpacecraft from "./DockingSpacecraft";
@@ -75,6 +76,9 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Get section data using both systemId and planet's sectionId
     const planetData = getSectionData(systemId, planet?.sectionId);
 
+    // Tutorial context
+    const { isActive: tutorialActive, currentStep: tutorialStep, completeStep: tutorialCompleteStep, nextStep: tutorialNextStep } = useTutorial();
+
     // Keyboard shortcut for docking sequence (D key)
     const { isActive: isDockTriggered, setIsActive: setDockTriggered } =
         useKeyboardShortcut("d");
@@ -111,6 +115,19 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Handle docking completion
     const handleDockComplete = () => {
         setIsDocking(false);
+
+        // Tutorial: Complete the tutorial when docking is done
+        if (tutorialActive && tutorialStep === 'PLANET_DOCKING') {
+            tutorialCompleteStep('PLANET_DOCKING', {
+                id: 'space-captain',
+                icon: '🎯',
+                name: "SPACE CAPTAIN",
+                description: "Successfully docked at your first planet"
+            });
+            tutorialNextStep('MISSION_COMPLETE');
+        }
+
+        // Trigger the docking complete callback (which handles navigation)
         if (onDockComplete) {
             onDockComplete(planet);
         }
@@ -205,7 +222,7 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
 
             {/* Docking Hint - Sleek & Eye-Catching */}
             {!isDocking && (
-                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40">
+                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40 docking-hint">
                     <div className="relative group">
                         {/* Animated gradient background */}
                         <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-xl opacity-75 blur group-hover:opacity-100 transition duration-1000 animate-pulse"></div>

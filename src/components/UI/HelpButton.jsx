@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
+import { useTutorial } from '../../context/TutorialContext';
 import UserGuide from './UserGuide';
 import styles from './HelpButton.module.css';
 
 /**
  * HelpButton Component
  *
- * Floating help button that triggers the UserGuide
+ * Floating help button that triggers the UserGuide or Tutorial replay
  * - Can be triggered by clicking the button or pressing '?' key
+ * - Shows menu with options: Replay Tutorial, View User Guide
  * - Uses localStorage to track if user has seen the guide
  * - Pulses to attract attention for new visitors who haven't opened it
  */
 const HelpButton = () => {
   const [isGuideVisible, setIsGuideVisible] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [hasSeenGuide, setHasSeenGuide] = useState(true);
+  const { completed: tutorialCompleted, replayTutorial } = useTutorial();
 
   // Check if the user has seen the guide before
   useEffect(() => {
@@ -54,6 +58,18 @@ const HelpButton = () => {
   // Handle opening the guide
   const handleOpenGuide = () => {
     setIsGuideVisible(true);
+    setIsMenuVisible(false);
+  };
+
+  // Handle replay tutorial
+  const handleReplayTutorial = () => {
+    setIsMenuVisible(false);
+    replayTutorial();
+  };
+
+  // Toggle menu
+  const toggleMenu = () => {
+    setIsMenuVisible(!isMenuVisible);
   };
 
   return (
@@ -61,13 +77,29 @@ const HelpButton = () => {
       {/* Help Button */}
       <button
         className={`${styles.helpButton} ${!hasSeenGuide ? styles.pulse : ''}`}
-        onClick={handleOpenGuide}
-        aria-label="Open user guide"
+        onClick={toggleMenu}
+        aria-label="Open help menu"
         title="Press ? for help"
       >
         <span className={styles.questionMark}>?</span>
         {!hasSeenGuide && <span className={styles.newBadge}>NEW</span>}
       </button>
+
+      {/* Help Menu */}
+      {isMenuVisible && (
+        <div className={styles.helpMenu}>
+          {tutorialCompleted && (
+            <button className={styles.menuItem} onClick={handleReplayTutorial}>
+              <span className={styles.menuIcon}>🔄</span>
+              Replay Tutorial
+            </button>
+          )}
+          <button className={styles.menuItem} onClick={handleOpenGuide}>
+            <span className={styles.menuIcon}>📖</span>
+            User Guide
+          </button>
+        </div>
+      )}
 
       {/* User Guide Modal */}
       <UserGuide

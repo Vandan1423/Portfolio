@@ -33,13 +33,13 @@ const FLASH_OVERLAY_DISTANCE = 1; // Distance in front of camera
 
 // Star streaks configuration
 const STAR_COUNT = 1000;
-const STAR_SPREAD_XY = 100;
+const STAR_SPREAD_XY = 200;
 const STAR_DEPTH_RANGE = 200;
 const STAR_MIN_DISTANCE = 10;
 const STAR_MOVEMENT_SPEED = 50;
 const STAR_RESET_DISTANCE = 10;
-const STAR_SIZE_MIN = 0.1;
-const STAR_SIZE_MAX_INCREASE = 0.4;
+const STAR_SIZE_MIN = 0.05;
+const STAR_SIZE_MAX_INCREASE = 0.3;
 const STAR_OPACITY = 0.8;
 const STAR_MIN_VELOCITY = 0.5;
 const STAR_MAX_VELOCITY_RANGE = 1.5;

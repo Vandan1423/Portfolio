@@ -22,10 +22,29 @@
 }
 
 .headerSubtitle {
-    color: rgba(34, 211, 238, 0.5);
+    color: rgba(34, 211, 238, 1);
+    font-weight: 800;
     font-family: monospace;
-    font-size: 0.75rem;
+    font-size: 1rem;
     margin-top: 0.25rem;
+    animation: pulseGlow 1.4s cubic-bezier(.45,.49,.72,.71) infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        text-shadow:
+            0 0 5px rgba(34, 211, 238, 0.8),
+            0 0 10px rgba(34, 211, 238, 0.7),
+            0 0 20px rgba(34, 211, 238, 0.6);
+        opacity: 0.62;
+    }
+    50% {
+        text-shadow:
+            0 0 5px rgba(34, 211, 238, 0.8),
+            0 0 10px rgba(34, 211, 238, 0.7),
+            0 0 20px rgba(34, 211, 238, 0.6);
+        opacity: 1;
+    }
 }
 
 /* Planet Item */
