@@ -208,11 +208,42 @@ export const sectionData = {
 
     /**
      * ===============================================
-     * SIRIUS - Projects Page (4 projects)
+     * SIRIUS - Projects Page (8 projects)
      * ===============================================
      */
     "sirius": {
         "project-1": {
+            title: "Immersive 3D Portfolio",
+            subtitle: "Space-Themed Interactive Experience",
+            description:
+                "Interactive space-themed portfolio featuring 3D spacecraft models, holographic UI panels, and explorable solar system navigation built with React Three Fiber and Three.js. Optimized for 60 FPS performance with custom GLSL shaders and progressive loading.",
+            details: [
+                { label: "Status", value: "Live" },
+                { label: "Type", value: "3D Portfolio" },
+                { label: "Role", value: "Solo Developer" },
+                { label: "Deployment", value: "Vercel" },
+            ],
+            stats: [
+                { label: "Performance", value: "60 FPS", icon: "⚡" },
+                { label: "Bundle Size", value: "-40%", icon: "📦" },
+                { label: "Status", value: "Live", icon: "🟢" },
+            ],
+            highlights: [
+                "3D Spacecraft Models with Launch Sequences",
+                "Holographic UI Panels & Explorable Solar System",
+                "Custom GLSL Shaders for Visual Effects",
+                "WebGL Performance Optimization (60 FPS)",
+                "Draco/GLTF Compression & Code-Splitting",
+                "Cross-Platform Compatibility & Touch Controls",
+            ],
+            links: [
+                { label: "Live Demo", url: "https://vandan-nagori.vercel.app/" },
+                { label: "GitHub", url: "https://github.com/Vandan1423/portfolio" },
+            ],
+            color: "#a855f7",
+        },
+
+        "project-2": {
             title: "Airbnb Replica",
             subtitle: "Full-Stack Rental Marketplace",
             description:
@@ -225,16 +256,16 @@ export const sectionData = {
             ],
             stats: [
                 { label: "Features", value: "5+", icon: "⚡" },
-                { label: "Tech Stack", value: "5", icon: "🔧" },
+                { label: "Tech Stack", value: "9", icon: "🔧" },
                 { label: "Status", value: "Live", icon: "🟢" },
             ],
             highlights: [
-                "User Authentication and Authorization",
-                "Property Listings and Booking System",
-                "Review System for Properties",
+                "User Authentication with Passport.js",
+                "Property Listings with CRUD Operations",
+                "Review & Rating System",
                 "MVC Architecture for RESTful APIs",
-                "Full Server/Client-Side Validations with CRUD Operations",
-                "Deployed on Render with MongoDB Atlas Cloud",
+                "Cloudinary Integration for Image Upload",
+                "Deployed on Render with MongoDB Atlas",
             ],
             links: [
                 { label: "Live Demo", url: "https://airbnb-replica-six.vercel.app/" },
@@ -243,11 +274,11 @@ export const sectionData = {
             color: "#3b82f6",
         },
 
-        "project-2": {
+        "project-3": {
             title: "Gaming Club Website",
             subtitle: "IIT Indore Official Club Platform",
             description:
-                "Led the development of the Gaming Club website using React.js, Node.js, Express.js, HTML, CSS, and JavaScript. Deployed and maintained using Git and Vercel, ensuring consistent uptime and performance with dynamic content updates.",
+                "Led the development of the Gaming Club website using React.js, Node.js, Express.js, HTML, CSS, and JavaScript. Features tournament management, event registration, and dynamic content updates with deployment on Vercel.",
             details: [
                 { label: "Status", value: "Live" },
                 { label: "Type", value: "Club Website" },
@@ -260,24 +291,24 @@ export const sectionData = {
                 { label: "Status", value: "Live", icon: "🟢" },
             ],
             highlights: [
-                "Built with React.js, Node.js, Express.js",
-                "Deployed and Maintained using Git and Vercel",
-                "Dynamic Content Updates",
-                "User-Friendly Interface Improvements",
-                "Consistent Uptime and Performance",
+                "Tournament Management System",
+                "Event Registration Portal",
+                "Dynamic Event Gallery",
+                "Responsive Modern UI",
+                "Built with React.js & Node.js",
             ],
             links: [
-                { label: "Live Website", url: "https://gaming-club-iiti.vercel.app/" },
-                { label: "GitHub", url: "https://github.com/Vandan1423/Gaming-Club-IITI" },
+                { label: "Live Website", url: "https://gamingclub.vercel.app/" },
+                { label: "GitHub", url: "https://github.com/DigitalDiplomacy/gamingclubiiti" },
             ],
             color: "#8b5cf6",
         },
 
-        "project-3": {
+        "project-4": {
             title: "Astronomy Club Website",
             subtitle: "IIT Indore Astronomy Platform",
             description:
-                "Built and deployed the official Astronomy Club website using React.js and Node.js, hosted on Vercel. Developed responsive UI components ensuring cross-device compatibility with regular content updates and new sections as per event needs.",
+                "Built and deployed the official Astronomy Club website using React.js and Node.js, hosted on Vercel. Features interactive 3D Earth loader, research showcase, astronomy news feed, and responsive UI components.",
             details: [
                 { label: "Status", value: "Live" },
                 { label: "Type", value: "Club Website" },
@@ -290,11 +321,11 @@ export const sectionData = {
                 { label: "Status", value: "Live", icon: "🟢" },
             ],
             highlights: [
-                "Built with React.js and Node.js",
-                "Hosted on Vercel",
-                "Responsive UI Components",
-                "Cross-Device Compatibility",
-                "Regular Content Updates and New Sections",
+                "Interactive 3D Earth Loading Animation",
+                "Research Projects Showcase",
+                "Live Astronomy News Feed",
+                "Activities & Events Timeline",
+                "Built with React.js & Tailwind CSS",
             ],
             links: [
                 { label: "Live Website", url: "https://astronomy-club-iit-indore.vercel.app/" },
@@ -303,11 +334,11 @@ export const sectionData = {
             color: "#06b6d4",
         },
 
-        "project-4": {
-            title: "Academic Portal",
+        "project-5": {
+            title: "EduConnect - Academic Portal",
             subtitle: "Full-Stack Student & Faculty Platform",
             description:
-                "Full-stack academic portal enabling faculty and student login/signup with separate dashboards. Students view timetables, quizzes, grades, and homework, while faculty upload materials and resources with real-time updates.",
+                "Comprehensive academic management system with dual role-based portals for students and faculty. Features dynamic timetable management, resource sharing, quiz system, and grade tracking with real-time MongoDB updates.",
             details: [
                 { label: "Status", value: "Completed" },
                 { label: "Type", value: "Full-Stack Web App" },
@@ -317,19 +348,101 @@ export const sectionData = {
             stats: [
                 { label: "Features", value: "8+", icon: "⚡" },
                 { label: "Portals", value: "2", icon: "👥" },
-                { label: "Tech Stack", value: "5", icon: "🔧" },
+                { label: "Tech Stack", value: "9", icon: "🔧" },
             ],
             highlights: [
-                "Dual Portal System (Student & Faculty)",
-                "Student Dashboard: Timetable, Quizzes, Grades, Homework",
-                "Faculty Dashboard: Upload Materials, Quizzes, Resources",
-                "Real-time Updates with MongoDB",
-                "Built with Node.js, Express.js, EJS, and MongoDB",
+                "Dual Role Authentication & Dashboards",
+                "Dynamic Timetable with Next-Class Indicators",
+                "Resource Management System",
+                "Student Analytics Dashboard",
+                "Built with Node.js, Express.js, MongoDB, EJS",
             ],
             links: [
                 { label: "GitHub", url: "https://github.com/Vandan1423/Academic-Portal" },
             ],
             color: "#10b981",
+        },
+
+        "project-6": {
+            title: "Simon Says Game",
+            subtitle: "Interactive Memory Challenge",
+            description:
+                "Interactive memory game built with vanilla JavaScript featuring dynamic pattern generation, progressive difficulty levels, and engaging visual & audio feedback. Demonstrates proficiency in DOM manipulation and game logic.",
+            details: [
+                { label: "Status", value: "Live" },
+                { label: "Type", value: "Browser Game" },
+                { label: "Role", value: "Solo Developer" },
+                { label: "Tech", value: "Vanilla JS" },
+            ],
+            stats: [
+                { label: "Features", value: "5", icon: "⚡" },
+                { label: "Controls", value: "2", icon: "🎮" },
+                { label: "Status", value: "Live", icon: "🟢" },
+            ],
+            highlights: [
+                "Pattern Recognition Gameplay",
+                "Progressive Difficulty Levels",
+                "Visual & Audio Feedback",
+                "Score Tracking System",
+                "Built with HTML5, CSS3, JavaScript",
+            ],
+            links: [
+                { label: "Live Demo", url: "https://simonsaysgame-omega.vercel.app" },
+                { label: "GitHub", url: "https://github.com/Vandan1423/SimonSaysGame" },
+            ],
+            color: "#f59e0b",
+        },
+
+        "project-7": {
+            title: "Spotify Clone",
+            subtitle: "Pixel-Perfect UI Recreation",
+            description:
+                "Pixel-perfect frontend clone of Spotify's web interface built with HTML and CSS. Faithful recreation of the music streaming platform's design including sidebar, player controls, grid layouts, and interactive elements.",
+            details: [
+                { label: "Status", value: "Completed" },
+                { label: "Type", value: "Frontend Clone" },
+                { label: "Role", value: "Solo Developer" },
+                { label: "Tech", value: "HTML & CSS" },
+            ],
+            stats: [
+                { label: "Accuracy", value: "95%", icon: "🎯" },
+                { label: "Components", value: "10+", icon: "📦" },
+                { label: "Tech", value: "5", icon: "🔧" },
+            ],
+            highlights: [
+                "Authentic UI Replication",
+                "Responsive Grid Layouts with Flexbox & CSS Grid",
+                "Custom Styling & Hover Effects",
+                "Media Player UI Components",
+                "Built with HTML5 & CSS3",
+            ],
+            color: "#22c55e",
+        },
+
+        "project-8": {
+            title: "Amazon Clone",
+            subtitle: "E-Commerce Interface Replica",
+            description:
+                "Frontend replica of Amazon's e-commerce interface showcasing product layouts, navigation systems, and responsive design principles. Complete homepage structure with header, product grids, and comprehensive footer.",
+            details: [
+                { label: "Status", value: "Completed" },
+                { label: "Type", value: "Frontend Clone" },
+                { label: "Role", value: "Solo Developer" },
+                { label: "Tech", value: "HTML & CSS" },
+            ],
+            stats: [
+                { label: "Sections", value: "8+", icon: "📦" },
+                { label: "Components", value: "15+", icon: "🔧" },
+                { label: "Layout", value: "Grid", icon: "📐" },
+            ],
+            highlights: [
+                "E-Commerce Layout Structure",
+                "Product Card Grid System",
+                "Multi-Level Navigation Bar",
+                "Styled Search Interface",
+                "Built with HTML5, CSS3, Flexbox, CSS Grid",
+            ],
+            color: "#fb923c",
         },
     },
 
