@@ -76,9 +76,43 @@ const STEP_PROGRESS = {
 };
 
 const LOCALSTORAGE_KEY = 'portfolio-tutorial-state';
-const TUTORIAL_VERSION = '1.0';
+const TUTORIAL_VERSION_KEY = 'portfolio-tutorial-version';
+// IMPORTANT: Bump this version number whenever you want ALL users (including old users) 
+// to see the tutorial again. This is separate from the tutorial state.
+// Version history:
+// 1.0 - Initial tutorial release
+// 2.0 - Force tutorial for all existing users who haven't seen the new tutorial
+const TUTORIAL_VERSION = '2.0';
 
 const TutorialContext = createContext();
+
+/**
+ * Check if the user should see the tutorial based on versioning.
+ * Returns true if:
+ * - User has never seen any tutorial version
+ * - User has seen an older version of the tutorial
+ */
+const shouldShowTutorial = () => {
+  try {
+    const seenVersion = localStorage.getItem(TUTORIAL_VERSION_KEY);
+    // If no version stored, or version is older than current, show tutorial
+    return !seenVersion || seenVersion !== TUTORIAL_VERSION;
+  } catch (error) {
+    console.warn('Could not check tutorial version:', error);
+    return true; // Default to showing tutorial if localStorage is unavailable
+  }
+};
+
+/**
+ * Mark the current tutorial version as seen
+ */
+const markTutorialVersionSeen = () => {
+  try {
+    localStorage.setItem(TUTORIAL_VERSION_KEY, TUTORIAL_VERSION);
+  } catch (error) {
+    console.warn('Could not save tutorial version:', error);
+  }
+};
 
 export const TutorialProvider = ({ children }) => {
   // Tutorial state
@@ -99,54 +133,9 @@ export const TutorialProvider = ({ children }) => {
   // Tutorial timing (for speed runner achievement)
   const [startTime, setStartTime] = useState(null);
   const [completed, setCompleted] = useState(false);
-
-  // Load tutorial state from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedState = localStorage.getItem(LOCALSTORAGE_KEY);
-
-      if (savedState) {
-        const parsed = JSON.parse(savedState);
-
-        // Version check - reset if version mismatch
-        if (parsed.version !== TUTORIAL_VERSION) {
-          console.log('Tutorial version mismatch, resetting...');
-          localStorage.removeItem(LOCALSTORAGE_KEY);
-          setCompleted(false);
-          return;
-        }
-
-        // Load saved state
-        setCompleted(parsed.completed || false);
-
-        if (parsed.completed) {
-          // Tutorial already completed
-          if (parsed.achievements) {
-            setAchievements(prev =>
-              prev.map(ach => {
-                const savedAch = parsed.achievements.find(s => s.id === ach.id);
-                return savedAch ? { ...ach, unlocked: true, timestamp: savedAch.unlockedAt } : ach;
-              })
-            );
-          }
-        } else if (parsed.currentStep) {
-          // Tutorial in progress - restore state
-          setIsActive(true);
-          setCurrentStep(parsed.currentStep);
-          setCompletedSteps(parsed.completedSteps || []);
-          setProgress(parsed.progress || 0);
-          setStartTime(parsed.startedAt);
-        }
-      } else {
-        // First visit - auto-start tutorial
-        setTimeout(() => {
-          startTutorial();
-        }, 1000); // Small delay to let page load
-      }
-    } catch (error) {
-      console.error('Error loading tutorial state:', error);
-    }
-  }, []);
+  
+  // Flag to trigger tutorial start (used to avoid circular dependency)
+  const [shouldStartTutorial, setShouldStartTutorial] = useState(false);
 
   // Save tutorial state to localStorage whenever it changes
   const saveTutorialState = useCallback((state) => {
@@ -186,6 +175,66 @@ export const TutorialProvider = ({ children }) => {
       easterEggs: []
     });
   }, [saveTutorialState]);
+
+  // Load tutorial state from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedState = localStorage.getItem(LOCALSTORAGE_KEY);
+      const needsTutorial = shouldShowTutorial();
+
+      // If user needs to see new tutorial version, reset and start fresh
+      if (needsTutorial) {
+        console.log('New tutorial version available, starting tutorial...');
+        // Clear old tutorial state if exists
+        localStorage.removeItem(LOCALSTORAGE_KEY);
+        setCompleted(false);
+        
+        // Trigger tutorial start via flag (to avoid circular dependency)
+        setShouldStartTutorial(true);
+        return;
+      }
+
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+
+        // Load saved state
+        setCompleted(parsed.completed || false);
+
+        if (parsed.completed) {
+          // Tutorial already completed
+          if (parsed.achievements) {
+            setAchievements(prev =>
+              prev.map(ach => {
+                const savedAch = parsed.achievements.find(s => s.id === ach.id);
+                return savedAch ? { ...ach, unlocked: true, timestamp: savedAch.unlockedAt } : ach;
+              })
+            );
+          }
+        } else if (parsed.currentStep) {
+          // Tutorial in progress - restore state
+          setIsActive(true);
+          setCurrentStep(parsed.currentStep);
+          setCompletedSteps(parsed.completedSteps || []);
+          setProgress(parsed.progress || 0);
+          setStartTime(parsed.startedAt);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading tutorial state:', error);
+    }
+  }, []);
+
+  // Effect to actually start the tutorial when triggered
+  useEffect(() => {
+    if (shouldStartTutorial) {
+      const timer = setTimeout(() => {
+        startTutorial();
+        setShouldStartTutorial(false);
+      }, 1000); // Small delay to let page load
+      
+      return () => clearTimeout(timer);
+    }
+  }, [shouldStartTutorial, startTutorial]);
 
   // Advance to next step
   const nextStep = useCallback((stepId) => {
@@ -278,6 +327,9 @@ export const TutorialProvider = ({ children }) => {
     setProgress(100);
     setCompleted(true);
 
+    // Mark this tutorial version as seen
+    markTutorialVersionSeen();
+
     saveTutorialState({
       completed: true,
       startedAt: startTime,
@@ -302,6 +354,9 @@ export const TutorialProvider = ({ children }) => {
     if (confirmSkip) {
       setIsActive(false);
       setCompleted(true);
+
+      // Mark this tutorial version as seen even when skipped
+      markTutorialVersionSeen();
 
       saveTutorialState({
         completed: true,
