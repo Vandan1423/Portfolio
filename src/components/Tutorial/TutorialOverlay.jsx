@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTutorial } from '../../context/TutorialContext';
 import MissionBriefing from './MissionBriefing';
 import TutorialSpotlight from './TutorialSpotlight';
@@ -149,24 +149,58 @@ const TUTORIAL_STEPS = {
     position: "top-right"
   },
   PLANET_SELECTION: {
-    message: "Now let's visit a planet. Go back to the main menu (click back or press ESC), then select any planet from LOCAL SECTOR. I recommend starting with the first one.",
+    message: "Now let's visit a planet. Press **N** to open navigation, go to Local Sector (A1), then select any planet. I recommend starting with the first one.",
     objective: "Select a planet to visit",
     action: "select-planet",
     progress: 82,
     spotlight: null,
-    position: "top-right"
+    position: "bottom-center"
   },
   PLANET_DOCKING: {
-    message: "You're approaching the planet! Notice the spacecraft on the left? Press **D** to initiate docking. Once docked, we'll complete your training.",
+    message: "You're approaching the planet! Notice the spacecraft on the left? Press **D** to initiate docking.",
     objective: "Press 'D' to dock",
     action: "press-d",
-    progress: 90,
+    progress: 85,
     spotlight: {
       target: ".docking-hint",
       arrow: "up",
       allowInteraction: false
     },
     position: "top-right"
+  },
+  DOCKING_IN_PROGRESS: null, // Hide tutorial UI during docking animation
+  EXPLORE_CONTENT: {
+    message: "Great! You've successfully docked. Take a moment to explore this content. When you're ready to learn about inter-system travel, you can use the **back button** at the top left or press **ESC** to return to space.",
+    objective: "Explore the content, then go back to space",
+    action: "wait-for-back",
+    progress: 88,
+    spotlight: null,
+    position: "bottom-center",
+    compact: true
+  },
+  RETURN_FOR_TRAVEL: {
+    message: "Perfect! Now for the final lesson: **Inter-System Travel**. Press **N** to open navigation, then select **WARP DRIVE (A3)** to see all available star systems.",
+    objective: "Open navigation and go to WARP DRIVE (A3)",
+    action: "open-warp-drive",
+    progress: 91,
+    spotlight: null,
+    position: "bottom-center"
+  },
+  SELECT_DESTINATION: {
+    message: "Excellent! Here are all the star systems. Each one is a different page of the portfolio. Click on **any system** to initiate a wormhole jump to that page.",
+    objective: "Select a star system to travel to",
+    action: "select-system",
+    progress: 94,
+    spotlight: null,
+    position: "top-right"
+  },
+  SYSTEM_ARRIVAL: {
+    message: "Outstanding! You've successfully traveled to a new star system. You now know everything you need to explore this portfolio!",
+    objective: "Complete your training",
+    action: "click-finish",
+    progress: 97,
+    spotlight: null,
+    position: "bottom-center"
   },
   MISSION_COMPLETE: {
     message: [
@@ -188,18 +222,44 @@ const TUTORIAL_STEPS = {
   }
 };
 
-const TutorialOverlay = () => {
+const TutorialOverlay = ({ currentPhase, currentPage, isNavigationVisible }) => {
   const { isActive, currentStep, newAchievement } = useTutorial();
   const [targetBounds, setTargetBounds] = useState(null);
+  const [shouldAutoMinimize, setShouldAutoMinimize] = useState(false);
+  const [isManuallyMinimized, setIsManuallyMinimized] = useState(false);
 
   // Get current step configuration
   const stepConfig = useMemo(() => {
     return TUTORIAL_STEPS[currentStep] || null;
   }, [currentStep]);
 
+  // Auto-minimize when navigation opens during specific steps
+  useEffect(() => {
+    const shouldMinimize = isNavigationVisible && (
+      currentStep === 'PLANET_SELECTION' ||
+      currentStep === 'RETURN_FOR_TRAVEL'
+    );
+
+    if (shouldMinimize) {
+      setShouldAutoMinimize(true);
+    }
+  }, [isNavigationVisible, currentStep]);
+
+  // Reset auto-minimize when navigation closes
+  useEffect(() => {
+    if (!isNavigationVisible) {
+      setShouldAutoMinimize(false);
+    }
+  }, [isNavigationVisible]);
+
   // Handle bounds calculation from spotlight
   const handleBoundsCalculated = (bounds) => {
     setTargetBounds(bounds);
+  };
+
+  // Handle manual minimize state change
+  const handleMinimizeChange = (minimized) => {
+    setIsManuallyMinimized(minimized);
   };
 
   // Don't render if tutorial is not active
@@ -207,10 +267,23 @@ const TutorialOverlay = () => {
     return null;
   }
 
+  // Hide tutorial during cockpit and launching phases (except WAITING_FOR_LAUNCH which is already null)
+  const isInCockpitOrLaunching = currentPhase === 'cockpit' || currentPhase === 'launching';
+  if (isInCockpitOrLaunching && currentPage === '3d-portfolio') {
+    // Still show achievement notifications
+    return (
+      <>
+        {newAchievement && (
+          <AchievementNotification achievement={newAchievement} />
+        )}
+      </>
+    );
+  }
+
   return (
     <>
-      {/* Spotlight overlay (if step requires it) */}
-      {stepConfig.spotlight && (
+      {/* Spotlight overlay (if step requires it and not minimized) */}
+      {stepConfig.spotlight && !shouldAutoMinimize && !isManuallyMinimized && (
         <TutorialSpotlight
           targetElement={stepConfig.spotlight.target}
           arrow={stepConfig.spotlight.arrow}
@@ -229,6 +302,8 @@ const TutorialOverlay = () => {
         compact={stepConfig.compact}
         celebration={stepConfig.celebration}
         targetBounds={stepConfig.spotlight ? targetBounds : null}
+        autoMinimize={shouldAutoMinimize}
+        onMinimizeChange={handleMinimizeChange}
       />
 
       {/* Achievement notification (if any) */}

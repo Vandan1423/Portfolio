@@ -8,6 +8,7 @@ import { useTutorial } from "./context/TutorialContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import HelpButton from "./components/UI/HelpButton";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
+import ExplorationControls from "./components/UI/ExplorationControls";
 import TutorialOverlay from "./components/Tutorial/TutorialOverlay";
 import "./App.css";
 
@@ -244,34 +245,30 @@ function App() {
 
         if (isReturningToExploration) {
             isCameraTransitioningRef.current = true;
+
+            // Tutorial: When returning from content page to 3D space
+            if (tutorialActive && tutorialStep === 'EXPLORE_CONTENT') {
+                setTimeout(() => {
+                    tutorialNextStep('RETURN_FOR_TRAVEL');
+                }, 1000);
+            }
         }
-    }, [currentPage, currentPhase]);
+    }, [currentPage, currentPhase, tutorialActive, tutorialStep, tutorialNextStep]);
 
     // Tutorial: Detect camera movement for EXPLORATION_ARRIVAL -> NAVIGATION_PROMPT
     useEffect(() => {
         if (!tutorialActive || tutorialStep !== 'EXPLORATION_ARRIVAL') return;
 
-        let hasMoved = false;
+        let hasInteracted = false;
+        let mouseDownPos = { x: 0, y: 0 };
+        let hasSignificantMovement = false;
+        let wheelCount = 0;
+        const MIN_DRAG_DISTANCE = 50; // pixels
+        const MIN_WHEEL_EVENTS = 3; // scroll events
 
-        const handleMouseDown = () => {
-            // User started dragging - wait a bit to ensure they actually moved
-            setTimeout(() => {
-                if (!hasMoved) {
-                    hasMoved = true;
-                    tutorialCompleteStep('EXPLORATION_ARRIVAL', {
-                        id: 'pilots-license',
-                        icon: '🚀',
-                        name: "PILOT'S LICENSE",
-                        description: "Successfully completed your first wormhole jump"
-                    });
-                    tutorialNextStep('NAVIGATION_PROMPT');
-                }
-            }, 500);
-        };
-
-        const handleWheel = () => {
-            if (!hasMoved) {
-                hasMoved = true;
+        const completeStep = () => {
+            if (!hasInteracted) {
+                hasInteracted = true;
                 tutorialCompleteStep('EXPLORATION_ARRIVAL', {
                     id: 'pilots-license',
                     icon: '🚀',
@@ -282,11 +279,45 @@ function App() {
             }
         };
 
+        const handleMouseDown = (e) => {
+            mouseDownPos = { x: e.clientX, y: e.clientY };
+            hasSignificantMovement = false;
+        };
+
+        const handleMouseMove = (e) => {
+            if (mouseDownPos.x === 0 && mouseDownPos.y === 0) return;
+
+            const distance = Math.sqrt(
+                Math.pow(e.clientX - mouseDownPos.x, 2) +
+                Math.pow(e.clientY - mouseDownPos.y, 2)
+            );
+
+            if (distance > MIN_DRAG_DISTANCE && !hasSignificantMovement) {
+                hasSignificantMovement = true;
+                completeStep();
+            }
+        };
+
+        const handleMouseUp = () => {
+            mouseDownPos = { x: 0, y: 0 };
+        };
+
+        const handleWheel = () => {
+            wheelCount++;
+            if (wheelCount >= MIN_WHEEL_EVENTS) {
+                completeStep();
+            }
+        };
+
         window.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
         window.addEventListener('wheel', handleWheel);
 
         return () => {
             window.removeEventListener('mousedown', handleMouseDown);
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
             window.removeEventListener('wheel', handleWheel);
         };
     }, [tutorialActive, tutorialStep, tutorialCompleteStep, tutorialNextStep]);
@@ -336,24 +367,20 @@ function App() {
 
         const pageSlug = currentSystem.page.toLowerCase().replace(/\s+/g, "-");
 
-        // If tutorial is active, add a small delay to let MISSION_COMPLETE show
-        if (tutorialActive) {
-            setTimeout(() => {
-                onNavigate(pageSlug, planet.sectionId);
-            }, 2000); // 2 second delay to show the completion message
-        } else {
-            // Navigate immediately when not in tutorial
-            onNavigate(pageSlug, planet.sectionId);
-        }
+        // Navigate to the content page
+        // During tutorial, user will see EXPLORE_CONTENT message on the page
+        onNavigate(pageSlug, planet.sectionId);
     };
 
     // Keyboard shortcuts
     const { isActive: isNavigationVisible, setIsActive: setNavigationVisible } =
         useKeyboardShortcut("n");
 
-    // Tutorial: Detect "N" key press for step 5 -> 6
+    // Tutorial: Detect "N" key press for various steps
     useEffect(() => {
-        if (tutorialActive && tutorialStep === 'NAVIGATION_PROMPT' && isNavigationVisible) {
+        if (!tutorialActive || !isNavigationVisible) return;
+
+        if (tutorialStep === 'NAVIGATION_PROMPT') {
             tutorialCompleteStep('NAVIGATION_PROMPT', {
                 id: 'navigator',
                 icon: '🧭',
@@ -362,6 +389,7 @@ function App() {
             });
             tutorialNextStep('NAV_LOCAL_SECTOR');
         }
+        // Note: Auto-minimize happens in TutorialOverlay for PLANET_SELECTION and RETURN_FOR_TRAVEL
     }, [isNavigationVisible, tutorialActive, tutorialStep, tutorialCompleteStep, tutorialNextStep]);
 
     useKeyboardShortcut("Escape", () => {
@@ -395,6 +423,13 @@ function App() {
 
     return (
         <div className="w-full h-screen bg-deep-space relative overflow-hidden">
+            {/* Tutorial Overlay - Rendered globally so it shows on all pages */}
+            <TutorialOverlay
+                currentPhase={currentPhase}
+                currentPage={currentPage}
+                isNavigationVisible={isNavigationVisible}
+            />
+
             {/* Fullscreen prompt - shows on initial load if not already in fullscreen */}
             {isFullscreenCheckComplete && showFullscreenPrompt && (
                 <FullscreenPrompt onDismiss={() => setShowFullscreenPrompt(false)} />
@@ -517,6 +552,13 @@ function App() {
                                                 `ARRIVED AT ${destinationSystem.name}`
                                             );
                                             setTravelDestination(null);
+
+                                            // Tutorial: Show arrival message after wormhole jump (user will click FINISH)
+                                            if (tutorialActive && tutorialStep === 'SELECT_DESTINATION') {
+                                                setTimeout(() => {
+                                                    tutorialNextStep('SYSTEM_ARRIVAL');
+                                                }, 1000);
+                                            }
                                         } else {
                                             setSystemStatus("EXPLORATION MODE");
                                         }
@@ -577,6 +619,12 @@ function App() {
                         </Suspense>
                     )}
 
+                    {/* Exploration controls hint panel - only in exploration phase */}
+                    <ExplorationControls
+                        isVisible={currentPhase === "exploration"}
+                        isNavigationOpen={isNavigationVisible}
+                    />
+
                     {/* Black transition screen when switching to cockpit */}
                     {isTransitioning && (
                         <div className="absolute inset-0 bg-black z-30 pointer-events-none" />
@@ -584,9 +632,6 @@ function App() {
 
                     {/* Help Button - Available on all pages */}
                     <HelpButton />
-
-                    {/* Tutorial Overlay - Guides first-time users */}
-                    <TutorialOverlay />
                 </>
             )}
             </>

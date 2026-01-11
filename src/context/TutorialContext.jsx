@@ -66,7 +66,12 @@ const STEP_PROGRESS = {
   'NAV_WARP_DRIVE': 72,
   'NAV_SYSTEM_LIST': 78,
   'PLANET_SELECTION': 82,
-  'PLANET_DOCKING': 90,
+  'PLANET_DOCKING': 85,
+  'DOCKING_IN_PROGRESS': 86,
+  'EXPLORE_CONTENT': 88,
+  'RETURN_FOR_TRAVEL': 91,
+  'SELECT_DESTINATION': 94,
+  'SYSTEM_ARRIVAL': 97,
   'MISSION_COMPLETE': 100
 };
 
@@ -248,35 +253,45 @@ export const TutorialProvider = ({ children }) => {
     const endTime = Date.now();
     const duration = endTime - startTime;
 
-    // Unlock final achievement
-    unlockAchievement('mission-complete');
+    // Mark achievements as unlocked without showing notification
+    setAchievements(prev =>
+      prev.map(ach =>
+        ach.id === 'mission-complete'
+          ? { ...ach, unlocked: true, timestamp: Date.now() }
+          : ach
+      )
+    );
 
     // Check for speed runner achievement (under 3 minutes = 180000ms)
     if (duration < 180000) {
-      unlockAchievement('speed-runner');
+      setAchievements(prev =>
+        prev.map(ach =>
+          ach.id === 'speed-runner'
+            ? { ...ach, unlocked: true, timestamp: Date.now() }
+            : ach
+        )
+      );
     }
 
-    // Small delay to let final achievement show, then complete
-    setTimeout(() => {
-      setIsActive(false);
-      setProgress(100);
-      setCompleted(true);
+    // Complete immediately without showing notification
+    setIsActive(false);
+    setProgress(100);
+    setCompleted(true);
 
-      saveTutorialState({
-        completed: true,
-        startedAt: startTime,
-        completedAt: endTime,
-        currentStep: 'MISSION_COMPLETE',
-        completedSteps,
-        progress: 100,
-        achievements: achievements.filter(a => a.unlocked).map(a => ({
-          id: a.id,
-          unlockedAt: a.timestamp
-        })),
-        easterEggs: discoveredEasterEggs
-      });
-    }, 500);
-  }, [startTime, completedSteps, achievements, discoveredEasterEggs, saveTutorialState, unlockAchievement]);
+    saveTutorialState({
+      completed: true,
+      startedAt: startTime,
+      completedAt: endTime,
+      currentStep: 'MISSION_COMPLETE',
+      completedSteps,
+      progress: 100,
+      achievements: achievements.filter(a => a.unlocked).map(a => ({
+        id: a.id,
+        unlockedAt: a.timestamp
+      })),
+      easterEggs: discoveredEasterEggs
+    });
+  }, [startTime, completedSteps, achievements, discoveredEasterEggs, saveTutorialState]);
 
   // Skip tutorial (with confirmation)
   const skipTutorial = useCallback(() => {

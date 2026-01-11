@@ -23,15 +23,46 @@ const MissionBriefing = ({
   position = 'bottom-center',
   compact = false,
   celebration = false,
-  targetBounds = null // Bounds of highlighted element for intelligent positioning
+  targetBounds = null, // Bounds of highlighted element for intelligent positioning
+  autoMinimize = false, // Auto-minimize trigger
+  onMinimizeChange = null // Callback when minimize state changes
 }) => {
   const { nextStep, skipTutorial, currentStep, completeTutorial, discoverEasterEgg } = useTutorial();
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [wasManuallyExpanded, setWasManuallyExpanded] = useState(false);
   const [computedPosition, setComputedPosition] = useState(null);
   const messageRef = useRef(message);
   const panelRef = useRef(null);
+
+  // Auto-minimize when triggered (only if not manually expanded)
+  useEffect(() => {
+    if (autoMinimize && !wasManuallyExpanded) {
+      setIsMinimized(true);
+      if (onMinimizeChange) {
+        onMinimizeChange(true);
+      }
+    }
+  }, [autoMinimize, wasManuallyExpanded, onMinimizeChange]);
+
+  // Reset states when autoMinimize becomes false (e.g., navigation closes)
+  useEffect(() => {
+    if (!autoMinimize) {
+      setWasManuallyExpanded(false);
+      setIsMinimized(false);
+      if (onMinimizeChange) {
+        onMinimizeChange(false);
+      }
+    }
+  }, [autoMinimize, onMinimizeChange]);
+
+  // Notify parent when minimize state changes
+  useEffect(() => {
+    if (onMinimizeChange) {
+      onMinimizeChange(isMinimized);
+    }
+  }, [isMinimized, onMinimizeChange]);
 
   // Intelligent positioning based on target bounds
   useEffect(() => {
@@ -155,6 +186,11 @@ const MissionBriefing = ({
     }
   };
 
+  // Handle FINISH button click (for SYSTEM_ARRIVAL step)
+  const handleFinish = () => {
+    nextStep('MISSION_COMPLETE');
+  };
+
   // Handle ARIA badge click (easter egg)
   const handleAriaBadgeClick = () => {
     discoverEasterEgg('aria-secret');
@@ -167,7 +203,12 @@ const MissionBriefing = ({
 
   // Toggle minimize
   const toggleMinimize = () => {
-    setIsMinimized(!isMinimized);
+    const newMinimized = !isMinimized;
+    setIsMinimized(newMinimized);
+    // If user is expanding (un-minimizing), mark as manually expanded
+    if (!newMinimized) {
+      setWasManuallyExpanded(true);
+    }
   };
 
   // If minimized, show compact version
@@ -258,6 +299,14 @@ const MissionBriefing = ({
             </button>
             <button className={styles.buttonSecondary} onClick={handleSkip}>
               SKIP ALL
+            </button>
+          </div>
+        )}
+
+        {action === 'click-finish' && !isTyping && (
+          <div className={styles.buttons}>
+            <button className={styles.buttonPrimary} onClick={handleFinish}>
+              FINISH TRAINING
             </button>
           </div>
         )}

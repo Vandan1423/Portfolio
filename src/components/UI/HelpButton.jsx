@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTutorial } from '../../context/TutorialContext';
+import { useNavigation } from '../../context/NavigationContext';
 import UserGuide from './UserGuide';
 import styles from './HelpButton.module.css';
 
@@ -17,6 +18,7 @@ const HelpButton = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [hasSeenGuide, setHasSeenGuide] = useState(true);
   const { completed: tutorialCompleted, replayTutorial } = useTutorial();
+  const { onNavigate } = useNavigation();
 
   // Check if the user has seen the guide before
   useEffect(() => {
@@ -64,7 +66,12 @@ const HelpButton = () => {
   // Handle replay tutorial
   const handleReplayTutorial = () => {
     setIsMenuVisible(false);
-    replayTutorial();
+    // Navigate to 3D portfolio first, then start tutorial
+    onNavigate('3d-portfolio');
+    // Small delay to ensure navigation completes
+    setTimeout(() => {
+      replayTutorial();
+    }, 100);
   };
 
   // Toggle menu

@@ -96,10 +96,15 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
             const timer = setTimeout(() => {
                 setIsDocking(true);
                 setDockTriggered(false);
+
+                // Tutorial: Clear UI when docking starts so user can watch animation
+                if (tutorialActive && tutorialStep === 'PLANET_DOCKING') {
+                    tutorialNextStep('DOCKING_IN_PROGRESS');
+                }
             }, 0);
             return () => clearTimeout(timer);
         }
-    }, [isDockTriggered, isDocking, setDockTriggered]);
+    }, [isDockTriggered, isDocking, setDockTriggered, tutorialActive, tutorialStep, tutorialNextStep]);
 
     // Handle docking cancellation
     useEffect(() => {
@@ -116,15 +121,15 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     const handleDockComplete = () => {
         setIsDocking(false);
 
-        // Tutorial: Complete the tutorial when docking is done
-        if (tutorialActive && tutorialStep === 'PLANET_DOCKING') {
-            tutorialCompleteStep('PLANET_DOCKING', {
+        // Tutorial: Complete docking and advance to explore content
+        if (tutorialActive && tutorialStep === 'DOCKING_IN_PROGRESS') {
+            tutorialCompleteStep('DOCKING_IN_PROGRESS', {
                 id: 'space-captain',
                 icon: '🎯',
                 name: "SPACE CAPTAIN",
                 description: "Successfully docked at your first planet"
             });
-            tutorialNextStep('MISSION_COMPLETE');
+            tutorialNextStep('EXPLORE_CONTENT');
         }
 
         // Trigger the docking complete callback (which handles navigation)

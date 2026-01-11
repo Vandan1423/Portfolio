@@ -58,6 +58,9 @@ const NavigationScreen = ({
                     description: "Mastered inter-system navigation"
                 });
                 tutorialNextStep('NAV_SYSTEM_LIST');
+            } else if (tutorialStep === 'RETURN_FOR_TRAVEL' && view === 'system-travel') {
+                // User opened WARP DRIVE for inter-system travel
+                tutorialNextStep('SELECT_DESTINATION');
             }
         }
     };
@@ -72,7 +75,14 @@ const NavigationScreen = ({
             } else if (tutorialStep === 'NAV_MAP_VIEW') {
                 tutorialNextStep('NAV_WARP_DRIVE');
             } else if (tutorialStep === 'NAV_SYSTEM_LIST') {
-                tutorialNextStep('PLANET_SELECTION');
+                // Close navigation first so user can see the tutorial panel with instructions
+                // Then advance the step - the panel will auto-minimize when user presses N to reopen navigation
+                onClose();
+                // Small delay to ensure navigation is closed before step changes
+                // This prevents the auto-minimize from triggering immediately
+                setTimeout(() => {
+                    tutorialNextStep('PLANET_SELECTION');
+                }, 100);
             }
         }
     };
@@ -94,9 +104,12 @@ const NavigationScreen = ({
 
     // Reset view when navigation closes
     const handleClose = () => {
-        // During tutorial, don't allow closing by clicking backdrop
+        // During tutorial, allow closing only for steps that require planet/system selection
         if (tutorialActive) {
-            return;
+            const allowCloseSteps = ['PLANET_SELECTION', 'RETURN_FOR_TRAVEL', 'SELECT_DESTINATION'];
+            if (!allowCloseSteps.includes(tutorialStep)) {
+                return;
+            }
         }
         setCurrentView("main-menu");
         onClose();
