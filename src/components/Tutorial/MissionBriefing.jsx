@@ -23,18 +23,45 @@ const MissionBriefing = ({
   position = 'bottom-center',
   compact = false,
   celebration = false,
-  targetBounds = null, // Bounds of highlighted element for intelligent positioning
+  targetBounds = null, // Deprecated - no longer used
   autoMinimize = false, // Auto-minimize trigger
-  onMinimizeChange = null // Callback when minimize state changes
+  onMinimizeChange = null, // Callback when minimize state changes
+  isNavigationVisible = false, // Is navigation panel open?
+  currentPhase = 'exploration' // Current phase: cockpit, exploration, planet-detail, launching
 }) => {
   const { nextStep, skipTutorial, currentStep, completeTutorial, discoverEasterEgg } = useTutorial();
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [wasManuallyExpanded, setWasManuallyExpanded] = useState(false);
-  const [computedPosition, setComputedPosition] = useState(null);
   const messageRef = useRef(message);
   const panelRef = useRef(null);
+
+  // Smart positioning based on context to avoid overlaps
+  const smartPosition = (() => {
+    // If position is explicitly 'center' (for celebration), use it
+    if (position === 'center') return 'center';
+
+    // Context-aware positioning to avoid overlaps
+    if (isNavigationVisible) {
+      // Navigation panel is center of screen, so use top-left (away from it)
+      return 'top-left';
+    }
+
+    if (currentPhase === 'planet-detail') {
+      // Info panel is on right side, planet on left, docking hint at bottom-center
+      // Use bottom-left to avoid all of them
+      return 'bottom-left';
+    }
+
+    if (currentPhase === 'cockpit' || currentPhase === 'launching') {
+      // Cockpit terminal at bottom-center, so use top-center
+      return 'top-center';
+    }
+
+    // Default: bottom-center (safe for exploration mode and content pages)
+    return 'bottom-center';
+  })();
 
   // Auto-minimize when triggered (only if not manually expanded)
   useEffect(() => {
@@ -64,76 +91,7 @@ const MissionBriefing = ({
     }
   }, [isMinimized, onMinimizeChange]);
 
-  // Intelligent positioning based on target bounds
-  useEffect(() => {
-    if (!targetBounds || !panelRef.current) {
-      setComputedPosition(null);
-      return;
-    }
-
-    const calculateBestPosition = () => {
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const panelWidth = 500; // From CSS
-      const panelHeight = panelRef.current.offsetHeight || 300;
-      const margin = 30;
-
-      // Calculate available space in each direction
-      const spaceAbove = targetBounds.y;
-      const spaceBelow = viewportHeight - (targetBounds.y + targetBounds.height);
-      const spaceLeft = targetBounds.x;
-      const spaceRight = viewportWidth - (targetBounds.x + targetBounds.width);
-
-      // Determine best vertical position
-      let top, bottom;
-      if (spaceBelow >= panelHeight + margin && spaceBelow > spaceAbove) {
-        // Position below target
-        top = targetBounds.y + targetBounds.height + margin;
-        bottom = 'auto';
-      } else if (spaceAbove >= panelHeight + margin) {
-        // Position above target
-        bottom = viewportHeight - targetBounds.y + margin;
-        top = 'auto';
-      } else if (spaceBelow > spaceAbove) {
-        // Not enough space, but below is better
-        top = targetBounds.y + targetBounds.height + margin;
-        bottom = 'auto';
-      } else {
-        // Not enough space, but above is better
-        top = margin;
-        bottom = 'auto';
-      }
-
-      // Determine best horizontal position
-      let left, right;
-      const targetCenter = targetBounds.x + targetBounds.width / 2;
-
-      // Try to center on target first
-      if (targetCenter - panelWidth / 2 >= margin &&
-          targetCenter + panelWidth / 2 <= viewportWidth - margin) {
-        // Can center on target
-        left = targetCenter - panelWidth / 2;
-        right = 'auto';
-      } else if (spaceRight >= panelWidth + margin) {
-        // Position to the right
-        left = targetBounds.x + targetBounds.width + margin;
-        right = 'auto';
-      } else if (spaceLeft >= panelWidth + margin) {
-        // Position to the left
-        right = viewportWidth - targetBounds.x + margin;
-        left = 'auto';
-      } else {
-        // Center in viewport
-        left = (viewportWidth - panelWidth) / 2;
-        right = 'auto';
-      }
-
-      return { top, bottom, left, right };
-    };
-
-    const newPosition = calculateBestPosition();
-    setComputedPosition(newPosition);
-  }, [targetBounds]);
+  // No more dynamic positioning - use fixed CSS positions only
 
   // Typewriter effect
   useEffect(() => {
@@ -214,7 +172,7 @@ const MissionBriefing = ({
   // If minimized, show compact version
   if (isMinimized) {
     return (
-      <div className={`${styles.minimized} ${styles[position]}`} onClick={toggleMinimize}>
+      <div className={`${styles.minimized} ${styles[smartPosition]}`} onClick={toggleMinimize}>
         <span className={styles.minimizedIcon}>📋</span>
         <span className={styles.minimizedText}>MISSION DIRECTIVE</span>
         <span className={styles.minimizedProgress}>{progress}%</span>
@@ -225,14 +183,7 @@ const MissionBriefing = ({
   return (
     <div
       ref={panelRef}
-      className={`${styles.briefing} ${computedPosition ? '' : styles[position]} ${compact ? styles.compact : ''} ${celebration ? styles.celebration : ''}`}
-      style={computedPosition ? {
-        top: computedPosition.top !== 'auto' ? `${computedPosition.top}px` : 'auto',
-        bottom: computedPosition.bottom !== 'auto' ? `${computedPosition.bottom}px` : 'auto',
-        left: computedPosition.left !== 'auto' ? `${computedPosition.left}px` : 'auto',
-        right: computedPosition.right !== 'auto' ? `${computedPosition.right}px` : 'auto',
-        transform: 'none' // Override CSS transform when using intelligent positioning
-      } : {}}
+      className={`${styles.briefing} ${styles[smartPosition]} ${compact ? styles.compact : ''} ${celebration ? styles.celebration : ''}`}
     >
       {/* Scan line effect */}
       <div className={styles.scanLine}></div>
@@ -298,7 +249,7 @@ const MissionBriefing = ({
               NEXT
             </button>
             <button className={styles.buttonSecondary} onClick={handleSkip}>
-              SKIP ALL
+              SKIP TUTORIAL
             </button>
           </div>
         )}
@@ -308,6 +259,9 @@ const MissionBriefing = ({
             <button className={styles.buttonPrimary} onClick={handleFinish}>
               FINISH TRAINING
             </button>
+            <button className={styles.buttonSecondary} onClick={handleSkip}>
+              SKIP TUTORIAL
+            </button>
           </div>
         )}
 
@@ -315,6 +269,15 @@ const MissionBriefing = ({
           <div className={styles.buttons}>
             <button className={styles.buttonPrimary} onClick={handleNext}>
               START EXPLORING
+            </button>
+          </div>
+        )}
+
+        {/* Skip button for all other steps */}
+        {!['click-next', 'click-finish', 'complete'].includes(action) && !celebration && (
+          <div className={styles.buttons}>
+            <button className={styles.buttonSecondary} onClick={handleSkip}>
+              SKIP TUTORIAL
             </button>
           </div>
         )}

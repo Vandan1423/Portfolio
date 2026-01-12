@@ -46,6 +46,7 @@ const PlanetList = ({ planets = [], onPlanetClick, selectedPlanet }) => {
                     transition={{ delay: index * 0.1 }}
                     onClick={() => handlePlanetClick(planet)}
                     className={styles.planetButton}
+                    data-tutorial={index === 0 ? "first-planet" : undefined}
                 >
                     {/* Angular Container */}
                     <div className={styles.planetAngular}>

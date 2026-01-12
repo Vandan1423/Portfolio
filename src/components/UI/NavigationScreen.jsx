@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTutorial } from "../../context/TutorialContext";
 import SystemMap from "./SystemMap";
 import PlanetList from "./PlanetList";
@@ -47,19 +47,19 @@ const NavigationScreen = ({
         // Tutorial: Track navigation menu clicks
         if (tutorialActive) {
             if (tutorialStep === 'NAV_LOCAL_SECTOR' && view === 'planet-list') {
-                tutorialNextStep('NAV_PLANET_LIST');
+                // Show planet list and go directly to planet selection
+                tutorialNextStep('PLANET_SELECTION');
             } else if (tutorialStep === 'NAV_TACTICAL_MAP' && view === 'system-map') {
+                // Show tactical map
                 tutorialNextStep('NAV_MAP_VIEW');
             } else if (tutorialStep === 'NAV_WARP_DRIVE' && view === 'system-travel') {
+                // Show system list and go directly to system selection
                 tutorialCompleteStep('NAV_WARP_DRIVE', {
                     id: 'warp-capable',
                     icon: '⚡',
                     name: "WARP CAPABLE",
                     description: "Mastered inter-system navigation"
                 });
-                tutorialNextStep('NAV_SYSTEM_LIST');
-            } else if (tutorialStep === 'RETURN_FOR_TRAVEL' && view === 'system-travel') {
-                // User opened WARP DRIVE for inter-system travel
                 tutorialNextStep('SELECT_DESTINATION');
             }
         }
@@ -68,22 +68,10 @@ const NavigationScreen = ({
     const handleBack = () => {
         setCurrentView("main-menu");
 
-        // Tutorial: Track back button clicks
-        if (tutorialActive) {
-            if (tutorialStep === 'NAV_PLANET_LIST') {
-                tutorialNextStep('NAV_TACTICAL_MAP');
-            } else if (tutorialStep === 'NAV_MAP_VIEW') {
-                tutorialNextStep('NAV_WARP_DRIVE');
-            } else if (tutorialStep === 'NAV_SYSTEM_LIST') {
-                // Close navigation first so user can see the tutorial panel with instructions
-                // Then advance the step - the panel will auto-minimize when user presses N to reopen navigation
-                onClose();
-                // Small delay to ensure navigation is closed before step changes
-                // This prevents the auto-minimize from triggering immediately
-                setTimeout(() => {
-                    tutorialNextStep('PLANET_SELECTION');
-                }, 100);
-            }
+        // Tutorial: Track back button from tactical map to auto-focus A3
+        if (tutorialActive && tutorialStep === 'NAV_MAP_VIEW') {
+            // Don't close navigation - just go back to main menu and advance tutorial
+            tutorialNextStep('NAV_WARP_DRIVE');
         }
     };
 
@@ -93,27 +81,36 @@ const NavigationScreen = ({
             onPlanetSelect(planet);
         }
 
-        // Tutorial: Step 9 -> Step 10 (planet selected)
+        // Tutorial: When planet is selected, advance to info panel step
         // Delay slightly to ensure planet detail scene is rendered
         if (tutorialActive && tutorialStep === 'PLANET_SELECTION') {
             setTimeout(() => {
-                tutorialNextStep('PLANET_DOCKING');
+                tutorialNextStep('PLANET_INFO_PANEL');
             }, 800); // Wait for navigation to close and planet scene to render
         }
     };
 
     // Reset view when navigation closes
     const handleClose = () => {
-        // During tutorial, allow closing only for steps that require planet/system selection
+        // During tutorial, prevent closing until user completes the required action
         if (tutorialActive) {
-            const allowCloseSteps = ['PLANET_SELECTION', 'RETURN_FOR_TRAVEL', 'SELECT_DESTINATION'];
-            if (!allowCloseSteps.includes(tutorialStep)) {
+            // Don't allow closing during most tutorial steps
+            // User should follow the tutorial flow
+            const preventCloseSteps = [
+                'NAV_LOCAL_SECTOR',
+                'NAV_TACTICAL_MAP',
+                'NAV_MAP_VIEW',
+                'NAV_WARP_DRIVE'
+            ];
+            if (preventCloseSteps.includes(tutorialStep)) {
                 return;
             }
         }
         setCurrentView("main-menu");
         onClose();
     };
+
+    // Tutorial: No longer auto-close - user will click back button instead
 
     return (
         <AnimatePresence>
@@ -243,81 +240,92 @@ const NavigationScreen = ({
                                     ></div>
                                 </div>
 
-                                {/* Content Area */}
-                                <div className={styles.contentArea}>
-                                    <AnimatePresence mode="wait">
-                                        {currentView === "main-menu" && (
-                                            <MainMenu
-                                                key="main-menu"
-                                                onViewChange={handleViewChange}
-                                            />
-                                        )}
-                                        {currentView === "planet-list" && (
-                                            <PlanetList
-                                                key="planet-list"
-                                                planets={planets}
-                                                selectedPlanet={selectedPlanet}
-                                                onPlanetClick={
-                                                    handlePlanetClick
-                                                }
-                                            />
-                                        )}
-                                        {currentView === "system-map" && (
-                                            <SystemMap
-                                                key="system-map"
-                                                planets={planets}
-                                                selectedPlanet={selectedPlanet}
-                                                onPlanetClick={
-                                                    handlePlanetClick
-                                                }
-                                            />
-                                        )}
-                                        {currentView === "system-travel" && (
-                                            <SystemTravelList
-                                                key="system-travel"
-                                                starSystems={starSystems}
-                                                currentSystemId={
-                                                    currentSystemId
-                                                }
-                                                onSystemSelect={
-                                                    onSystemTravelSelect
-                                                }
-                                            />
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-
-                                {/* Footer - Back Button */}
-                                {currentView !== "main-menu" && (
-                                    <div className={styles.footer}>
-                                        <div
-                                            className={styles.footerTopLine}
-                                        ></div>
-
-                                        <button
-                                            onClick={handleBack}
-                                            className={styles.backButton}
-                                            data-tutorial="back-button"
-                                        >
-                                            <div
-                                                className={styles.backButtonBg}
-                                            ></div>
-                                            <div
-                                                className={
-                                                    styles.backButtonHighlight
-                                                }
-                                            ></div>
-                                            <span
-                                                className={
-                                                    styles.backButtonText
-                                                }
-                                            >
-                                                <span>←</span>
-                                                <span>RETURN</span>
-                                            </span>
-                                        </button>
+                                {/* Content Area and Footer Wrapper (for tutorial spotlight) */}
+                                <div
+                                    data-tutorial={
+                                        currentView === "planet-list" ? "planet-list-view" :
+                                        currentView === "system-map" ? "tactical-map-view" :
+                                        currentView === "system-travel" ? "system-travel-view" :
+                                        undefined
+                                    }
+                                    style={{ flex: 1, display: "flex", flexDirection: "column" }}
+                                >
+                                    {/* Content Area */}
+                                    <div className={styles.contentArea}>
+                                        <AnimatePresence mode="wait">
+                                            {currentView === "main-menu" && (
+                                                <MainMenu
+                                                    key="main-menu"
+                                                    onViewChange={handleViewChange}
+                                                />
+                                            )}
+                                            {currentView === "planet-list" && (
+                                                <PlanetList
+                                                    key="planet-list"
+                                                    planets={planets}
+                                                    selectedPlanet={selectedPlanet}
+                                                    onPlanetClick={
+                                                        handlePlanetClick
+                                                    }
+                                                />
+                                            )}
+                                            {currentView === "system-map" && (
+                                                <SystemMap
+                                                    key="system-map"
+                                                    planets={planets}
+                                                    selectedPlanet={selectedPlanet}
+                                                    onPlanetClick={
+                                                        handlePlanetClick
+                                                    }
+                                                />
+                                            )}
+                                            {currentView === "system-travel" && (
+                                                <SystemTravelList
+                                                    key="system-travel"
+                                                    starSystems={starSystems}
+                                                    currentSystemId={
+                                                        currentSystemId
+                                                    }
+                                                    onSystemSelect={
+                                                        onSystemTravelSelect
+                                                    }
+                                                />
+                                            )}
+                                        </AnimatePresence>
                                     </div>
-                                )}
+
+                                    {/* Footer - Back Button */}
+                                    {currentView !== "main-menu" && (
+                                        <div className={styles.footer}>
+                                            <div
+                                                className={styles.footerTopLine}
+                                            ></div>
+
+                                            <button
+                                                onClick={handleBack}
+                                                className={styles.backButton}
+                                                data-tutorial="back-button"
+                                            >
+                                                <div
+                                                    className={styles.backButtonBg}
+                                                ></div>
+                                                <div
+                                                    className={
+                                                        styles.backButtonHighlight
+                                                    }
+                                                ></div>
+                                                <span
+                                                    className={
+                                                        styles.backButtonText
+                                                    }
+                                                >
+                                                    <span>←</span>
+                                                    <span>RETURN</span>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </motion.div>
@@ -503,6 +511,12 @@ const SystemTravelList = ({ starSystems, currentSystemId, onSystemSelect }) => {
             {/* Star Systems List */}
             {starSystems.map((system, index) => {
                 const isCurrent = system.id === currentSystemId;
+                // Find the second non-current system for tutorial
+                const nonCurrentSystems = starSystems.filter(s => s.id !== currentSystemId);
+                const isSecondNonCurrent = !isCurrent &&
+                    nonCurrentSystems.length > 1 &&
+                    system.id === nonCurrentSystems[1].id;
+
                 return (
                     <motion.div
                         key={system.id}
@@ -523,6 +537,7 @@ const SystemTravelList = ({ starSystems, currentSystemId, onSystemSelect }) => {
                                 ? styles.systemItemCurrent
                                 : styles.systemItemClickable
                         }`}
+                        data-tutorial={isSecondNonCurrent ? "second-system" : undefined}
                     >
                         {/* Angular Container */}
                         <div className={styles.systemItemAngular}>

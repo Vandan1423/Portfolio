@@ -22,6 +22,7 @@ const PlanetInfoPanel = ({ planetData, planetColor = "#00ffff", onBack }) => {
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className={styles.container}
+            data-tutorial="planet-info-panel"
         >
             {/* Main Panel Container */}
             <div

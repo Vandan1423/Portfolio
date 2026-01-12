@@ -1,0 +1,509 @@
+{
+  "personalInfo": {
+    "name": "Vandan Nagori",
+    "role": "Full Stack Developer",
+    "currentStatus": "Student at IIT Indore",
+    "bio": "Passionate full-stack developer specializing in modern web technologies and 3D graphics. Currently studying at IIT Indore with hands-on experience in MERN stack, Three.js, and building immersive web experiences.",
+    "email": "Available in Contact section",
+    "location": "IIT Indore, India"
+  },
+  "systems": [
+    {
+      "id": "alpha-centauri",
+      "name": "ALPHA CENTAURI",
+      "code": "SYS-01",
+      "page": "About Me",
+      "description": "Personal information & introduction",
+      "planetCount": 7,
+      "planets": [
+        {
+          "id": "personal-info",
+          "name": "Personal Info",
+          "sectionId": "personal-info"
+        },
+        {
+          "id": "education",
+          "name": "Education",
+          "sectionId": "education"
+        },
+        {
+          "id": "interests",
+          "name": "Interests & Hobbies",
+          "sectionId": "interests"
+        },
+        {
+          "id": "tech-stack",
+          "name": "Tech Stack",
+          "sectionId": "tech-stack"
+        },
+        {
+          "id": "achievements",
+          "name": "Achievements",
+          "sectionId": "achievements"
+        },
+        {
+          "id": "resume",
+          "name": "Resume",
+          "sectionId": "resume"
+        },
+        {
+          "id": "certifications",
+          "name": "Certifications",
+          "sectionId": "certifications"
+        }
+      ]
+    },
+    {
+      "id": "sirius",
+      "name": "SIRIUS",
+      "code": "SYS-02",
+      "page": "Projects",
+      "description": "Portfolio & project showcase",
+      "planetCount": 8,
+      "planets": [
+        {
+          "id": "project-1",
+          "name": "Immersive 3D Portfolio",
+          "sectionId": "project-1"
+        },
+        {
+          "id": "project-2",
+          "name": "Airbnb Replica",
+          "sectionId": "project-2"
+        },
+        {
+          "id": "project-3",
+          "name": "Gaming Club Website",
+          "sectionId": "project-3"
+        },
+        {
+          "id": "project-4",
+          "name": "Astronomy Club Website",
+          "sectionId": "project-4"
+        },
+        {
+          "id": "project-5",
+          "name": "EduConnect - Academic Portal",
+          "sectionId": "project-5"
+        },
+        {
+          "id": "project-6",
+          "name": "Simon Says Game",
+          "sectionId": "project-6"
+        },
+        {
+          "id": "project-7",
+          "name": "Spotify Clone",
+          "sectionId": "project-7"
+        },
+        {
+          "id": "project-8",
+          "name": "Amazon Clone",
+          "sectionId": "project-8"
+        }
+      ]
+    },
+    {
+      "id": "vega",
+      "name": "VEGA",
+      "code": "SYS-03",
+      "page": "Experience",
+      "description": "Professional journey & timeline",
+      "planetCount": 5,
+      "planets": [
+        {
+          "id": "exp-1",
+          "name": "Head of Web Dev - Astronomy Club",
+          "sectionId": "exp-01"
+        },
+        {
+          "id": "exp-2",
+          "name": "Head of Technicals - Gaming Club",
+          "sectionId": "exp-02"
+        },
+        {
+          "id": "exp-3",
+          "name": "PRIUS Fellowship",
+          "sectionId": "exp-03"
+        },
+        {
+          "id": "exp-4",
+          "name": "ISRO-NRSC Challenge",
+          "sectionId": "exp-04"
+        },
+        {
+          "id": "exp-5",
+          "name": "Web Dev Course - Apna College",
+          "sectionId": "exp-05"
+        }
+      ]
+    },
+    {
+      "id": "betelgeuse",
+      "name": "BETELGEUSE",
+      "code": "SYS-04",
+      "page": "Contact",
+      "description": "Communication & social links",
+      "planetCount": 2,
+      "planets": [
+        {
+          "id": "contact-form",
+          "name": "Send Message",
+          "sectionId": "contact-form"
+        },
+        {
+          "id": "contact-info",
+          "name": "Contact Information",
+          "sectionId": "contact-info"
+        }
+      ]
+    },
+    {
+      "id": "polaris",
+      "name": "POLARIS",
+      "code": "SYS-05",
+      "page": "Journey",
+      "description": "Career path & milestones",
+      "planetCount": 2,
+      "planets": [
+        {
+          "id": "journey-milestones",
+          "name": "Milestone Station",
+          "sectionId": "journey-milestones"
+        },
+        {
+          "id": "journey-achievements",
+          "name": "Achievement Cluster",
+          "sectionId": "journey-achievements"
+        }
+      ]
+    },
+    {
+      "id": "rigel",
+      "name": "RIGEL",
+      "code": "SYS-06",
+      "page": "Technologies",
+      "description": "Skills & technical expertise",
+      "planetCount": 3,
+      "planets": [
+        {
+          "id": "frontend-tech",
+          "name": "Frontend",
+          "sectionId": "frontend"
+        },
+        {
+          "id": "backend-tech",
+          "name": "Backend",
+          "sectionId": "backend"
+        },
+        {
+          "id": "tools-tech",
+          "name": "Tools & Dev Ops",
+          "sectionId": "tools"
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "name": "IMMERSIVE 3D PORTFOLIO",
+      "shortDescription": "Interactive space-themed portfolio featuring 3D spacecraft models, holographic UI panels, and explorable solar system navigation built with React Three Fiber and Three.js.",
+      "technologies": [
+        "React",
+        "Three.js",
+        "@react-three/fiber",
+        "@react-three/drei",
+        "GLSL Shaders",
+        "Vite",
+        "CSS Modules",
+        "Responsive Design"
+      ],
+      "status": "Live",
+      "github": "https://github.com/Vandan1423/portfolio",
+      "liveDemo": "https://vandan-nagori.vercel.app/",
+      "keyFeatures": [
+        "3D Spacecraft Models - Detailed GLTF models with realistic textures, animations including launch sequences and docking mechanics",
+        "Explorable Solar System - Interactive planet navigation system allowing users to explore different sections (About, Skills, Projects, Contact) through space travel",
+        "Holographic UI Panels - Futuristic interface with smooth transitions, animated content reveals, and gesture-safe touch controls"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "AIRBNB REPLICA",
+      "shortDescription": "Full-featured rental marketplace platform with complete booking management, user authentication, and interactive mapping functionality.",
+      "technologies": [
+        "MongoDB",
+        "Express.js",
+        "Node.js",
+        "EJS",
+        "Bootstrap",
+        "CSS",
+        "Passport.js",
+        "Cloudinary",
+        "JavaScript"
+      ],
+      "status": "Live",
+      "github": "https://github.com/Vandan1423/AirBnb_Replica",
+      "liveDemo": "https://airbnb-replica-six.vercel.app/",
+      "keyFeatures": [
+        "Secure Authentication System - Passport.js-based session authentication with user registration and login",
+        "Complete Listing Management - Users can create, edit, and delete property listings with image uploads via Cloudinary",
+        "Review & Rating System - Authenticated users can leave reviews and ratings on listings"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "GAMING CLUB WEBSITE - IIT INDORE",
+      "shortDescription": "Official Gaming Club website featuring tournament management, event registration, and member directory serving the IIT Indore gaming community.",
+      "technologies": [
+        "HTML5",
+        "CSS3",
+        "JavaScript",
+        "Node.js",
+        "Express.js",
+        "Responsive Design"
+      ],
+      "status": "Live",
+      "github": "https://github.com/DigitalDiplomacy/gamingclubiiti",
+      "liveDemo": "https://gamingclub.vercel.app/",
+      "keyFeatures": [
+        "Tournament Management System - Live tournament registration portal with active, upcoming, and past tournament tracking",
+        "Event Registration Portal - Integrated sign-up system allowing students to register for tournaments directly through the website",
+        "Dynamic Event Gallery - Photo gallery showcasing past gaming events and competitions with responsive image grids"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "ASTRONOMY CLUB WEBSITE - IIT INDORE",
+      "shortDescription": "Official Astronomy Club website showcasing research projects, astronomy news, and club activities with an immersive space-themed user experience.",
+      "technologies": [
+        "React.js",
+        "Tailwind CSS",
+        "JavaScript",
+        "Vercel",
+        "Responsive Design"
+      ],
+      "status": "Live",
+      "github": "https://github.com/AstronomyClubIITIndore/AstronomyClub_IITIndore",
+      "liveDemo": "https://astronomy-club-iit-indore.vercel.app/",
+      "keyFeatures": [
+        "Interactive Loading Experience - Custom 3D Earth rotation loader creating an engaging entry animation",
+        "Research Projects Showcase - Dedicated section highlighting ongoing astronomy and astrophysics research initiatives",
+        "Live Astronomy News Feed - Curated news section featuring latest updates in astronomy and astrophysics"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "EDUCONNECT - ACADEMIC PORTAL",
+      "shortDescription": "Comprehensive academic management system featuring dual role-based portals for students and faculty with real-time scheduling and resource management.",
+      "technologies": [
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Mongoose ODM",
+        "Express Session",
+        "Bcrypt.js",
+        "EJS",
+        "CSS",
+        "JavaScript",
+        "Express Validator",
+        "Joi"
+      ],
+      "status": "Completed",
+      "github": "https://github.com/Vandan1423/Academic-Portal",
+      "liveDemo": null,
+      "keyFeatures": [
+        "Dual Role Authentication - Separate login portals and dashboards for students and faculty with secure session management",
+        "Dynamic Timetable Management - Real-time class schedules with next-class indicators, weekly views, and automatic updates",
+        "Resource Management System - Faculty can upload and organize educational materials including documents, presentations, videos, and quizzes"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "SIMON SAYS GAME",
+      "shortDescription": "Interactive memory game built with vanilla JavaScript featuring dynamic pattern generation, progressive difficulty levels, and engaging visual feedback.",
+      "technologies": [
+        "HTML5",
+        "CSS3",
+        "JavaScript",
+        "DOM Manipulation"
+      ],
+      "status": "Live",
+      "github": "https://github.com/Vandan1423/SimonSaysGame",
+      "liveDemo": "https://simonsaysgame-omega.vercel.app",
+      "keyFeatures": [
+        "Pattern Recognition - Generates random color sequences that players must memorize and repeat",
+        "Progressive Difficulty - Each successful round adds a new color to the sequence, increasing challenge",
+        "Visual & Audio Feedback - Colorful animations and sound effects for enhanced user engagement"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "SPOTIFY CLONE",
+      "shortDescription": "Pixel-perfect frontend clone of Spotify's web interface built with HTML and CSS, replicating the music streaming platform's design and layout.",
+      "technologies": [
+        "HTML5",
+        "CSS3",
+        "Flexbox",
+        "CSS Grid",
+        "Responsive Design"
+      ],
+      "status": "Completed",
+      "github": null,
+      "liveDemo": null,
+      "keyFeatures": [
+        "Authentic UI Replication - Faithful recreation of Spotify's interface including sidebar, player controls, and content sections",
+        "Responsive Grid Layouts - CSS Grid and Flexbox implementation for playlist and album displays",
+        "Custom Styling - Hover effects, transitions, and interactive elements matching Spotify's design language"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "AMAZON CLONE",
+      "shortDescription": "Frontend replica of Amazon's e-commerce interface showcasing product layouts, navigation systems, and responsive design principles using pure HTML and CSS.",
+      "technologies": [
+        "HTML5",
+        "CSS3",
+        "Flexbox",
+        "CSS Grid",
+        "Responsive Design"
+      ],
+      "status": "Completed",
+      "github": null,
+      "liveDemo": null,
+      "keyFeatures": [
+        "E-commerce Layout - Complete homepage structure with header, navigation bar, product sections, and footer",
+        "Product Card System - Grid-based product displays with images, titles, prices, and call-to-action buttons",
+        "Navigation Bar - Multi-level navigation menu replicating Amazon's category system"
+      ]
+    }
+  ],
+  "technologies": {
+    "frontend": [
+      "React.js",
+      "Three.js",
+      "@react-three/fiber",
+      "@react-three/drei",
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "Tailwind CSS",
+      "Bootstrap",
+      "EJS",
+      "Responsive Design",
+      "CSS Modules"
+    ],
+    "backend": [
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Mongoose",
+      "RESTful APIs",
+      "Authentication",
+      "Session Management"
+    ],
+    "tools": [
+      "Git",
+      "GitHub",
+      "Vercel",
+      "Cloudinary",
+      "Vite",
+      "npm",
+      "Passport.js",
+      "Bcrypt",
+      "3D Modeling"
+    ],
+    "specializations": [
+      "3D Graphics Programming",
+      "WebGL",
+      "GLSL Shaders",
+      "Performance Optimization",
+      "Full-Stack Development"
+    ]
+  },
+  "experience": [
+    {
+      "title": "Head of Web Development",
+      "organization": "Astronomy Club - IIT Indore",
+      "description": "Led website redesign and maintenance, improved UI/UX, fixed critical bugs",
+      "skills": [
+        "React.js",
+        "Tailwind CSS",
+        "Team Leadership"
+      ]
+    },
+    {
+      "title": "Head of Technicals",
+      "organization": "Gaming Club - IIT Indore",
+      "description": "Coordinated technical development, built tournament management system",
+      "skills": [
+        "HTML5",
+        "CSS3",
+        "JavaScript",
+        "Node.js"
+      ]
+    },
+    {
+      "title": "PRIUS Fellowship",
+      "organization": "IIT Indore",
+      "description": "Research and development fellowship program",
+      "skills": [
+        "Research",
+        "Innovation",
+        "Technical Skills"
+      ]
+    }
+  ],
+  "contact": {
+    "available": true,
+    "methods": [
+      "Contact form on portfolio",
+      "LinkedIn",
+      "GitHub",
+      "Email"
+    ],
+    "location": "Contact section in Betelgeuse System"
+  },
+  "quickFacts": {
+    "totalProjects": 8,
+    "totalSystems": 6,
+    "primarySkills": [
+      "React.js",
+      "Three.js",
+      "Node.js",
+      "MongoDB",
+      "Express.js"
+    ],
+    "currentFocus": "3D Web Development, Full-Stack Applications",
+    "education": "IIT Indore"
+  },
+  "navigationHelp": {
+    "systems": [
+      {
+        "name": "Alpha Centauri (SYS-01)",
+        "contains": "Personal information, Education, Tech Stack, Achievements, Resume"
+      },
+      {
+        "name": "Sirius (SYS-02)",
+        "contains": "All 8 projects with live demos and GitHub links"
+      },
+      {
+        "name": "Vega (SYS-03)",
+        "contains": "Professional experience and roles"
+      },
+      {
+        "name": "Betelgeuse (SYS-04)",
+        "contains": "Contact form and contact information"
+      },
+      {
+        "name": "Polaris (SYS-05)",
+        "contains": "Career milestones and achievements"
+      },
+      {
+        "name": "Rigel (SYS-06)",
+        "contains": "Technologies: Frontend, Backend, Tools"
+      }
+    ]
+  }
+}

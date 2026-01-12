@@ -23,8 +23,29 @@
   transform: translateX(-50%);
 }
 
+.top-center {
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.top-left {
+  top: 30px;
+  left: 30px;
+}
+
 .top-right {
-  top: 100px;
+  top: 30px;
+  right: 30px;
+}
+
+.bottom-left {
+  bottom: 30px;
+  left: 30px;
+}
+
+.bottom-right {
+  bottom: 30px;
   right: 30px;
 }
 

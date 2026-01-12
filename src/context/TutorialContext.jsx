@@ -60,18 +60,18 @@ const STEP_PROGRESS = {
   'EXPLORATION_ARRIVAL': 20,
   'NAVIGATION_PROMPT': 35,
   'NAV_LOCAL_SECTOR': 45,
-  'NAV_PLANET_LIST': 52,
-  'NAV_TACTICAL_MAP': 60,
-  'NAV_MAP_VIEW': 65,
-  'NAV_WARP_DRIVE': 72,
-  'NAV_SYSTEM_LIST': 78,
-  'PLANET_SELECTION': 82,
-  'PLANET_DOCKING': 85,
-  'DOCKING_IN_PROGRESS': 86,
-  'EXPLORE_CONTENT': 88,
-  'RETURN_FOR_TRAVEL': 91,
-  'SELECT_DESTINATION': 94,
-  'SYSTEM_ARRIVAL': 97,
+  'PLANET_SELECTION': 50,
+  'PLANET_INFO_PANEL': 52,
+  'PLANET_DOCKING': 56,
+  'DOCKING_IN_PROGRESS': 58,
+  'EXPLORE_CONTENT': 60,
+  'REOPEN_NAV_FOR_A2': 70,
+  'NAV_TACTICAL_MAP': 75,
+  'NAV_MAP_VIEW': 78,
+  'REOPEN_NAV_FOR_A3': 85,
+  'NAV_WARP_DRIVE': 85,
+  'SELECT_DESTINATION': 91,
+  'SYSTEM_ARRIVAL': 95,
   'MISSION_COMPLETE': 100
 };
 
@@ -82,7 +82,11 @@ const TUTORIAL_VERSION_KEY = 'portfolio-tutorial-version';
 // Version history:
 // 1.0 - Initial tutorial release
 // 2.0 - Force tutorial for all existing users who haven't seen the new tutorial
-const TUTORIAL_VERSION = '2.0';
+// 3.0 - New tutorial flow: streamlined A1/A2/A3 sequence with auto-close for A2
+// 4.0 - Enhanced planet detail tutorial + A2 back button flow + A3 auto-focus + exploration encouragement
+// 5.0 - Text-only guidance (no spotlights) + Skip Tutorial button + improved positioning
+// 6.0 - Context-aware smart positioning - NEVER overlaps with UI elements
+const TUTORIAL_VERSION = '6.0';
 
 const TutorialContext = createContext();
 

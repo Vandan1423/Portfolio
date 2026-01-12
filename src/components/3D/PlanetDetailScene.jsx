@@ -166,6 +166,7 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                     far: CAMERA_FAR,
                 }}
                 gl={{ antialias: true, alpha: true }}
+                data-tutorial="planet-3d-view"
             >
                 {/* Scene Contents */}
                 <PlanetDetailContent

@@ -5,8 +5,10 @@ import * as THREE from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
 import { useTutorial } from "./context/TutorialContext";
+import { useAI } from "./context/AIContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import HelpButton from "./components/UI/HelpButton";
+import ARIAButton from "./components/UI/ARIAButton";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
 import TutorialOverlay from "./components/Tutorial/TutorialOverlay";
@@ -20,6 +22,8 @@ const StarSystem = lazy(() => import("./components/3D/StarSystem"));
 const SpaceCubeMap = lazy(() => import("./components/3D/SpaceCubeMap"));
 const PlanetDetailScene = lazy(() => import("./components/3D/PlanetDetailScene"));
 const NavigationScreen = lazy(() => import("./components/UI/NavigationScreen"));
+const NeuralLinkMap = lazy(() => import("./components/UI/NeuralLinkMap"));
+const ARIATerminal = lazy(() => import("./components/AI/ARIATerminal"));
 
 // Lazy load page components
 const AboutMe = lazy(() => import("./pages/AboutMe/AboutMe"));
@@ -165,6 +169,9 @@ function App() {
     // Tutorial context
     const { isActive: tutorialActive, currentStep: tutorialStep, nextStep: tutorialNextStep, completeStep: tutorialCompleteStep } = useTutorial();
 
+    // AI context
+    const { openTerminal, closeTerminal } = useAI();
+
     // Component state
     const [currentPhase, setCurrentPhase] = useState("cockpit");
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -172,6 +179,7 @@ function App() {
     const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
     const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(true);
     const [isFullscreenCheckComplete, setIsFullscreenCheckComplete] = useState(false);
+    const [useNeuralLinkMap, setUseNeuralLinkMap] = useState(true); // Use new Neural Link Map instead of old NavigationScreen
 
     // Refs for 3D scene management
     const cameraRef = useRef();
@@ -249,7 +257,7 @@ function App() {
             // Tutorial: When returning from content page to 3D space
             if (tutorialActive && tutorialStep === 'EXPLORE_CONTENT') {
                 setTimeout(() => {
-                    tutorialNextStep('RETURN_FOR_TRAVEL');
+                    tutorialNextStep('REOPEN_NAV_FOR_A2');
                 }, 1000);
             }
         }
@@ -376,6 +384,28 @@ function App() {
     const { isActive: isNavigationVisible, setIsActive: setNavigationVisible } =
         useKeyboardShortcut("n");
 
+    // Terminal keyboard shortcut (T key) - custom implementation
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            // Ignore if user is typing in an input field
+            if (
+                event.target.tagName === "INPUT" ||
+                event.target.tagName === "TEXTAREA"
+            ) {
+                return;
+            }
+
+            // 'T' key opens terminal
+            if (event.key.toLowerCase() === 't') {
+                event.preventDefault();
+                openTerminal();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyPress);
+        return () => window.removeEventListener("keydown", handleKeyPress);
+    }, [openTerminal]);
+
     // Tutorial: Detect "N" key press for various steps
     useEffect(() => {
         if (!tutorialActive || !isNavigationVisible) return;
@@ -388,8 +418,12 @@ function App() {
                 description: "Accessed tactical navigation"
             });
             tutorialNextStep('NAV_LOCAL_SECTOR');
+        } else if (tutorialStep === 'REOPEN_NAV_FOR_A2') {
+            tutorialNextStep('NAV_TACTICAL_MAP');
+        } else if (tutorialStep === 'REOPEN_NAV_FOR_A3') {
+            tutorialNextStep('NAV_WARP_DRIVE');
         }
-        // Note: Auto-minimize happens in TutorialOverlay for PLANET_SELECTION and RETURN_FOR_TRAVEL
+        // Note: Tutorial now shows spotlight on first planet/system instead of auto-minimizing
     }, [isNavigationVisible, tutorialActive, tutorialStep, tutorialCompleteStep, tutorialNextStep]);
 
     useKeyboardShortcut("Escape", () => {
@@ -597,25 +631,43 @@ function App() {
                     {/* Navigation screen for exploration phase */}
                     {currentPhase === "exploration" && (
                         <Suspense fallback={null}>
-                            <NavigationScreen
-                                isVisible={isNavigationVisible}
-                                onClose={() => setNavigationVisible(false)}
-                                onPlanetSelect={(planet) => {
-                                    setSelectedPlanet(planet);
-                                    setTimeout(() => {
-                                        setCurrentPhase("planet-detail");
+                            {useNeuralLinkMap ? (
+                                <NeuralLinkMap
+                                    isVisible={isNavigationVisible}
+                                    onClose={() => setNavigationVisible(false)}
+                                    onPlanetSelect={(planet) => {
+                                        setSelectedPlanet(planet);
+                                        setTimeout(() => {
+                                            setCurrentPhase("planet-detail");
+                                            setNavigationVisible(false);
+                                        }, TRANSITION_DELAYS.PLANET_SELECTION);
+                                    }}
+                                    onSystemTravel={(systemId) => {
+                                        handleSystemTravel(systemId);
                                         setNavigationVisible(false);
-                                    }, TRANSITION_DELAYS.PLANET_SELECTION);
-                                }}
-                                onSystemTravelSelect={(systemId) => {
-                                    handleSystemTravel(systemId);
-                                    setNavigationVisible(false);
-                                }}
-                                currentSystemId={currentSystem?.id}
-                                selectedPlanet={selectedPlanet}
-                                planets={currentSystem?.planets || []}
-                                starSystems={starSystems}
-                            />
+                                    }}
+                                />
+                            ) : (
+                                <NavigationScreen
+                                    isVisible={isNavigationVisible}
+                                    onClose={() => setNavigationVisible(false)}
+                                    onPlanetSelect={(planet) => {
+                                        setSelectedPlanet(planet);
+                                        setTimeout(() => {
+                                            setCurrentPhase("planet-detail");
+                                            setNavigationVisible(false);
+                                        }, TRANSITION_DELAYS.PLANET_SELECTION);
+                                    }}
+                                    onSystemTravelSelect={(systemId) => {
+                                        handleSystemTravel(systemId);
+                                        setNavigationVisible(false);
+                                    }}
+                                    currentSystemId={currentSystem?.id}
+                                    selectedPlanet={selectedPlanet}
+                                    planets={currentSystem?.planets || []}
+                                    starSystems={starSystems}
+                                />
+                            )}
                         </Suspense>
                     )}
 
@@ -632,6 +684,14 @@ function App() {
 
                     {/* Help Button - Available on all pages */}
                     <HelpButton />
+
+                    {/* ARIA Button - Floating button to open terminal (hidden in cockpit/launching phase) */}
+                    <ARIAButton hide={currentPhase === "cockpit" || currentPhase === "launching"} />
+
+                    {/* ARIA Terminal - Opens with T key */}
+                    <Suspense fallback={null}>
+                        <ARIATerminal />
+                    </Suspense>
                 </>
             )}
             </>

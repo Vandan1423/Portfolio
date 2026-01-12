@@ -81,124 +81,96 @@ const TUTORIAL_STEPS = {
     objective: "Click LOCAL SECTOR (A1)",
     action: "click-menu",
     progress: 45,
-    spotlight: {
-      target: "[data-tutorial='local-sector']",
-      arrow: "left",
-      allowInteraction: true
-    },
-    position: "top-right"
-  },
-  NAV_PLANET_LIST: {
-    message: "Great! Here are all the planets. Each represents a different section. Now click the **back button** at the bottom to return to the main menu.",
-    objective: "Click the back button",
-    action: "click-back",
-    progress: 52,
-    spotlight: {
-      target: "[data-tutorial='back-button']",
-      arrow: "down",
-      allowInteraction: true
-    },
-    position: "top-right"
-  },
-  NAV_TACTICAL_MAP: {
-    message: "Now try **TACTICAL MAP (A2)**. It's the same planets, but visualized as a map. Click A2.",
-    objective: "View Tactical Map (A2)",
-    action: "click-menu",
-    progress: 60,
-    spotlight: {
-      target: "[data-tutorial='tactical-map']",
-      arrow: "left",
-      allowInteraction: true
-    },
-    position: "top-right"
-  },
-  NAV_MAP_VIEW: {
-    message: "Nice! This is the tactical view. Now go back again to see the final option.",
-    objective: "Click back button",
-    action: "click-back",
-    progress: 65,
-    spotlight: {
-      target: "[data-tutorial='back-button']",
-      arrow: "down",
-      allowInteraction: true
-    },
-    position: "top-right"
-  },
-  NAV_WARP_DRIVE: {
-    message: "Excellent! One more: **WARP DRIVE (A3)**. This lets you jump between different star systems. Each system is a different page - Projects, Experience, Contact, etc. Click A3.",
-    objective: "View Warp Drive (A3)",
-    action: "click-menu",
-    progress: 72,
-    spotlight: {
-      target: "[data-tutorial='warp-drive']",
-      arrow: "left",
-      allowInteraction: true
-    },
-    position: "top-right"
-  },
-  NAV_SYSTEM_LIST: {
-    message: "Perfect! These are all the star systems. **ALPHA CENTAURI** is About Me, **SIRIUS** is Projects, **VEGA** is Experience, and so on. You can click any system to travel there. For now, go back to continue the tutorial.",
-    objective: "Click back to main menu",
-    action: "click-back",
-    progress: 78,
-    spotlight: {
-      target: "[data-tutorial='back-button']",
-      arrow: "down",
-      allowInteraction: true
-    },
+    spotlight: null,
     position: "top-right"
   },
   PLANET_SELECTION: {
-    message: "Now let's visit a planet. Press **N** to open navigation, go to Local Sector (A1), then select any planet. I recommend starting with the first one.",
-    objective: "Select a planet to visit",
+    message: "Great! Here are all the planets. Each represents a different section of the portfolio. Let's explore the **first planet** - click on it to visit.",
+    objective: "Click on the first planet",
     action: "select-planet",
-    progress: 82,
+    progress: 50,
+    spotlight: null,
+    position: "top-right"
+  },
+  PLANET_INFO_PANEL: {
+    message: "Perfect! You're now approaching the planet. See the panel on the right? It displays all the **information embedded in the planet** - the content of this section. And on the left is the **planet itself** in 3D with a spacecraft ready to dock.",
+    objective: "View the planet detail scene",
+    action: "automatic",
+    progress: 52,
     spotlight: null,
     position: "bottom-center"
   },
   PLANET_DOCKING: {
-    message: "You're approaching the planet! Notice the spacecraft on the left? Press **D** to initiate docking.",
+    message: "Now, to access the full content of this section, you need to **dock** with the planet. Press **D** to initiate docking sequence.",
     objective: "Press 'D' to dock",
     action: "press-d",
-    progress: 85,
-    spotlight: {
-      target: ".docking-hint",
-      arrow: "up",
-      allowInteraction: false
-    },
-    position: "top-right"
+    progress: 56,
+    spotlight: null,
+    position: "bottom-center"
   },
   DOCKING_IN_PROGRESS: null, // Hide tutorial UI during docking animation
   EXPLORE_CONTENT: {
-    message: "Great! You've successfully docked. Take a moment to explore this content. When you're ready to learn about inter-system travel, you can use the **back button** at the top left or press **ESC** to return to space.",
+    message: "Great! You've successfully docked. Take a moment to explore this content. When you're ready to continue, use the **back button** at the top left or press **ESC** to return to space.",
     objective: "Explore the content, then go back to space",
     action: "wait-for-back",
-    progress: 88,
+    progress: 60,
     spotlight: null,
     position: "bottom-center",
     compact: true
   },
-  RETURN_FOR_TRAVEL: {
-    message: "Perfect! Now for the final lesson: **Inter-System Travel**. Press **N** to open navigation, then select **WARP DRIVE (A3)** to see all available star systems.",
-    objective: "Open navigation and go to WARP DRIVE (A3)",
-    action: "open-warp-drive",
-    progress: 91,
+  REOPEN_NAV_FOR_A2: {
+    message: "Excellent! Now let's explore the other navigation options. Press **N** to open the navigation dashboard again.",
+    objective: "Press 'N' to open navigation",
+    action: "press-n",
+    progress: 70,
     spotlight: null,
     position: "bottom-center"
   },
+  NAV_TACTICAL_MAP: {
+    message: "Now try **TACTICAL MAP (A2)**. It shows the same planets, but visualized as a 3D tactical map with their positions in the star system. Click A2.",
+    objective: "View Tactical Map (A2)",
+    action: "click-menu",
+    progress: 75,
+    spotlight: null,
+    position: "top-right"
+  },
+  NAV_MAP_VIEW: {
+    message: "Nice! This is the tactical overview. You can see the spatial layout of all planets. Now click the **back button** at the bottom to return to the main menu.",
+    objective: "Click the back button",
+    action: "click-back",
+    progress: 78,
+    spotlight: null,
+    position: "top-right"
+  },
+  REOPEN_NAV_FOR_A3: {
+    message: "Perfect! Now for the final feature: **Inter-System Travel**. Press **N** to open navigation one more time.",
+    objective: "Press 'N' to open navigation",
+    action: "press-n",
+    progress: 85,
+    spotlight: null,
+    position: "bottom-center"
+  },
+  NAV_WARP_DRIVE: {
+    message: "Perfect! Now for **Inter-System Travel**. Click **WARP DRIVE (A3)** to see all available star systems. Each system represents a different page of the portfolio - Projects, Experience, Contact, etc. This is how you navigate between pages!",
+    objective: "Click WARP DRIVE (A3)",
+    action: "click-menu",
+    progress: 85,
+    spotlight: null,
+    position: "top-right"
+  },
   SELECT_DESTINATION: {
-    message: "Excellent! Here are all the star systems. Each one is a different page of the portfolio. Click on **any system** to initiate a wormhole jump to that page.",
-    objective: "Select a star system to travel to",
+    message: "Perfect! Here are all the star systems. Each system represents a different page. You are currently on the **first star system**. Let's try the **second one** to see inter-system travel in action. Click on it to initiate a wormhole jump.",
+    objective: "Click on the second system",
     action: "select-system",
-    progress: 94,
+    progress: 91,
     spotlight: null,
     position: "top-right"
   },
   SYSTEM_ARRIVAL: {
-    message: "Outstanding! You've successfully traveled to a new star system. You now know everything you need to explore this portfolio!",
+    message: "Outstanding! You've successfully traveled to a new star system. **Now it's your turn!** Go ahead and explore any planet you'd like, then dock with it to see the content of this page. Use navigation (Press **N**) whenever you want to explore planets, view the tactical map, or travel to other star systems. You've got this!",
     objective: "Complete your training",
     action: "click-finish",
-    progress: 97,
+    progress: 95,
     spotlight: null,
     position: "bottom-center"
   },
@@ -223,7 +195,7 @@ const TUTORIAL_STEPS = {
 };
 
 const TutorialOverlay = ({ currentPhase, currentPage, isNavigationVisible }) => {
-  const { isActive, currentStep, newAchievement } = useTutorial();
+  const { isActive, currentStep, newAchievement, nextStep: tutorialNextStep } = useTutorial();
   const [targetBounds, setTargetBounds] = useState(null);
   const [shouldAutoMinimize, setShouldAutoMinimize] = useState(false);
   const [isManuallyMinimized, setIsManuallyMinimized] = useState(false);
@@ -233,12 +205,40 @@ const TutorialOverlay = ({ currentPhase, currentPage, isNavigationVisible }) => 
     return TUTORIAL_STEPS[currentStep] || null;
   }, [currentStep]);
 
-  // Auto-minimize when navigation opens during specific steps
+  // Auto-advance steps with action: "automatic"
   useEffect(() => {
-    const shouldMinimize = isNavigationVisible && (
-      currentStep === 'PLANET_SELECTION' ||
-      currentStep === 'RETURN_FOR_TRAVEL'
-    );
+    if (!isActive || !stepConfig) return;
+
+    if (stepConfig.action === 'automatic') {
+      // Different delays based on step
+      let delay = 3000; // Default 3 seconds
+
+      if (currentStep === 'LAUNCH_BRIEFING') {
+        delay = 2000; // Shorter for launch briefing
+      } else if (currentStep === 'PLANET_INFO_PANEL') {
+        delay = 5000; // Give user 5 seconds to look at planet detail scene
+      }
+
+      const timer = setTimeout(() => {
+        const nextSteps = {
+          'LAUNCH_BRIEFING': 'EXPLORATION_ARRIVAL',
+          'PLANET_INFO_PANEL': 'PLANET_DOCKING'
+        };
+
+        const nextStep = nextSteps[currentStep];
+        if (nextStep) {
+          tutorialNextStep(nextStep);
+        }
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isActive, currentStep, stepConfig, tutorialNextStep]);
+
+  // Auto-minimize when navigation opens during specific steps
+  // (Currently disabled - tutorial shows spotlight for specific items instead)
+  useEffect(() => {
+    const shouldMinimize = false; // Disabled to show spotlight on first planet/system
 
     if (shouldMinimize) {
       setShouldAutoMinimize(true);
@@ -282,15 +282,8 @@ const TutorialOverlay = ({ currentPhase, currentPage, isNavigationVisible }) => 
 
   return (
     <>
-      {/* Spotlight overlay (if step requires it and not minimized) */}
-      {stepConfig.spotlight && !shouldAutoMinimize && !isManuallyMinimized && (
-        <TutorialSpotlight
-          targetElement={stepConfig.spotlight.target}
-          arrow={stepConfig.spotlight.arrow}
-          allowInteraction={stepConfig.spotlight.allowInteraction}
-          onBoundsCalculated={handleBoundsCalculated}
-        />
-      )}
+      {/* Spotlight overlay - DISABLED (text-only guidance) */}
+      {/* Spotlights removed to allow free interaction - tutorial now guides via text only */}
 
       {/* Mission briefing panel */}
       <MissionBriefing
@@ -301,9 +294,11 @@ const TutorialOverlay = ({ currentPhase, currentPage, isNavigationVisible }) => 
         position={stepConfig.position}
         compact={stepConfig.compact}
         celebration={stepConfig.celebration}
-        targetBounds={stepConfig.spotlight ? targetBounds : null}
+        targetBounds={null}
         autoMinimize={shouldAutoMinimize}
         onMinimizeChange={handleMinimizeChange}
+        isNavigationVisible={isNavigationVisible}
+        currentPhase={currentPhase}
       />
 
       {/* Achievement notification (if any) */}
