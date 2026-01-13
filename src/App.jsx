@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
 import { useAI } from "./context/AIContext";
+import { useTutorial } from "./context/TutorialContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
@@ -163,6 +164,9 @@ function App() {
 
     // AI context
     const { openTerminal } = useAI();
+    
+    // Tutorial context
+    const { setTutorialStep, tutorialStep, notifyUserInteraction, notifyExplorationEntered, dismissCurrentTutorial, showTutorial } = useTutorial();
 
     // Component state
     const [currentPhase, setCurrentPhase] = useState("cockpit");
@@ -232,8 +236,10 @@ function App() {
         } else if (currentPhase === "exploration" && phaseChanged) {
             // Trigger smooth transition to exploration view
             isCameraTransitioningRef.current = true;
+            // Notify tutorial that we've entered exploration phase
+            notifyExplorationEntered();
         }
-    }, [currentPhase]);
+    }, [currentPhase, notifyExplorationEntered]);
 
     // Handle camera transition when returning from a page
     useEffect(() => {
@@ -301,6 +307,33 @@ function App() {
     const { isActive: isNavigationVisible, setIsActive: setNavigationVisible } =
         useKeyboardShortcut("n");
 
+    // Auto-dismiss navigation tutorial when navigation panel is opened
+    useEffect(() => {
+        if (isNavigationVisible && showTutorial && tutorialStep === 0) {
+            dismissCurrentTutorial();
+        }
+    }, [isNavigationVisible, showTutorial, tutorialStep, dismissCurrentTutorial]);
+
+    // Detect user interaction for tutorial (mouse or keyboard)
+    useEffect(() => {
+        if (!showTutorial || currentPhase !== 'exploration') return;
+
+        const handleInteraction = () => {
+            notifyUserInteraction();
+        };
+
+        // Listen for mouse movement, clicks, or keyboard
+        window.addEventListener('mousemove', handleInteraction, { once: true });
+        window.addEventListener('click', handleInteraction, { once: true });
+        window.addEventListener('keydown', handleInteraction, { once: true });
+
+        return () => {
+            window.removeEventListener('mousemove', handleInteraction);
+            window.removeEventListener('click', handleInteraction);
+            window.removeEventListener('keydown', handleInteraction);
+        };
+    }, [showTutorial, currentPhase, notifyUserInteraction]);
+
     // Terminal keyboard shortcut (T key) - custom implementation
     useEffect(() => {
         const handleKeyPress = (event) => {
@@ -346,9 +379,21 @@ function App() {
     // Render non-3D pages (including mobile)
     if (currentPage !== "3d-portfolio" || isMobile) {
         return (
-            <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
-                {pageComponents[currentPage] || pageComponents["about-me"]}
-            </Suspense>
+            <div className="w-full h-screen bg-deep-space relative overflow-y-auto">
+                <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
+                    {pageComponents[currentPage] || pageComponents["about-me"]}
+                </Suspense>
+                
+                {/* Sagittarius Avatar - Also available on static pages */}
+                <Suspense fallback={null}>
+                    <SagittariusAvatar />
+                </Suspense>
+                
+                {/* Sagittarius Terminal */}
+                <Suspense fallback={null}>
+                    <SagittariusTerminal />
+                </Suspense>
+            </div>
         );
     }
 
@@ -516,6 +561,11 @@ function App() {
                                     setTimeout(() => {
                                         setCurrentPhase("planet-detail");
                                         setNavigationVisible(false);
+                                        
+                                        // Trigger tutorial step for docking if on step 0 (navigation hint already shown)
+                                        if (showTutorial && tutorialStep === 0) {
+                                            setTutorialStep(1);
+                                        }
                                     }, TRANSITION_DELAYS.PLANET_SELECTION);
                                 }}
                                 onSystemTravel={(systemId) => {
@@ -536,23 +586,23 @@ function App() {
                     {isTransitioning && (
                         <div className="absolute inset-0 bg-black z-30 pointer-events-none" />
                     )}
-
-                    {/* Sagittarius Avatar - Floating button to access AI */}
-                    {/* Hidden during cockpit, launching, and travel phases */}
-                    {currentPhase !== 'cockpit' && currentPhase !== 'launching' && !travelPhase && (
-                        <Suspense fallback={null}>
-                            <SagittariusAvatar
-                                positionVariant={currentPhase === 'planet-detail' ? 'planetDetail' : null}
-                            />
-                        </Suspense>
-                    )}
-
-                    {/* Sagittarius Terminal - Opens with T key or Avatar click */}
-                    <Suspense fallback={null}>
-                        <SagittariusTerminal />
-                    </Suspense>
                 </>
             )}
+
+            {/* Sagittarius Avatar - Floating button to access AI */}
+            {/* Hidden during cockpit, launching, and travel phases */}
+            {currentPhase !== 'cockpit' && currentPhase !== 'launching' && !travelPhase && (
+                <Suspense fallback={null}>
+                    <SagittariusAvatar
+                        positionVariant={currentPhase === 'planet-detail' ? 'planetDetail' : null}
+                    />
+                </Suspense>
+            )}
+
+            {/* Sagittarius Terminal - Opens with T key or Avatar click */}
+            <Suspense fallback={null}>
+                <SagittariusTerminal />
+            </Suspense>
             </>
         )}
         </div>

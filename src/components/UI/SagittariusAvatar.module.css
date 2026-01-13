@@ -378,6 +378,7 @@
 /* Message Cloud */
 .messageCloud {
   position: absolute;
+  top: auto;
   bottom: 120%;
   right: 0;
   min-width: 300px;
@@ -389,16 +390,15 @@
   padding: 1rem 1.25rem;
   box-shadow: 0 8px 32px rgba(0, 217, 255, 0.3);
   pointer-events: all;
-  cursor: pointer;
   transition: all 0.3s ease;
   animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   margin-bottom: 1rem;
 }
 
-.messageCloud:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 12px 40px rgba(0, 217, 255, 0.5);
-  border-color: rgba(0, 217, 255, 0.8);
+/* Message cloud positioning when avatar is on the left (planet detail) */
+.sagittariusAvatarContainer.planetDetail .messageCloud {
+  right: auto;
+  left: 0;
 }
 
 /* Bounce in animation for message cloud */
@@ -432,6 +432,12 @@
   border-top: 12px solid rgba(0, 217, 255, 0.5);
 }
 
+/* Adjust tail position when avatar is on the left */
+.sagittariusAvatarContainer.planetDetail .messageCloud::after {
+  right: auto;
+  left: 30px;
+}
+
 .messageCloud::before {
   content: '';
   position: absolute;
@@ -442,6 +448,12 @@
   border-left: 9px solid transparent;
   border-right: 9px solid transparent;
   border-top: 9px solid rgba(0, 100, 255, 0.15);
+}
+
+/* Adjust inner tail position when avatar is on the left */
+.sagittariusAvatarContainer.planetDetail .messageCloud::before {
+  right: auto;
+  left: 33px;
 }
 
 @keyframes fadeInUp {
@@ -500,29 +512,92 @@
   box-shadow: 0 4px 20px rgba(0, 217, 255, 0.5);
 }
 
+/* Welcome Cloud - friendly and inviting */
+.welcomeCloud {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(100, 200, 255, 0.2));
+  border: 2px solid rgba(0, 217, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.4);
+  animation: gentlePulse 3s ease-in-out infinite, bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    box-shadow: 0 8px 32px rgba(0, 217, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 36px rgba(0, 217, 255, 0.6);
+  }
+}
+
+/* Tutorial Cloud - brighter and more attention-grabbing */
+.tutorialCloud {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.25), rgba(100, 200, 255, 0.25));
+  border: 2px solid rgba(0, 217, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.5);
+  animation: tutorialPulse 2s ease-in-out infinite, bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes tutorialPulse {
+  0%, 100% {
+    box-shadow: 0 8px 32px rgba(0, 217, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 8px 40px rgba(0, 217, 255, 0.8);
+  }
+}
+
+/* Skip Tutorial Button - positioned at bottom */
+.skipButton {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(255, 100, 100, 0.3), rgba(200, 50, 50, 0.3));
+  border: 1px solid rgba(255, 100, 100, 0.6);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  color: rgba(255, 150, 150, 0.9);
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.skipButton:hover {
+  background: linear-gradient(135deg, rgba(255, 100, 100, 0.5), rgba(200, 50, 50, 0.5));
+  border-color: rgba(255, 100, 100, 0.9);
+  color: rgba(255, 200, 200, 1);
+  transform: translateX(-50%) translateY(-2px);
+}
+
 .startTutorialButton:active {
   transform: translateY(0);
   box-shadow: 0 2px 10px rgba(0, 217, 255, 0.3);
 }
 
-/* Close Message Button */
+/* Close Message Button - positioned at top right */
 .closeMessage {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 24px;
-  height: 24px;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 28px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   color: #ffffff;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .closeMessage:hover {

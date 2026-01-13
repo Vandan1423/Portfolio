@@ -9,19 +9,26 @@
  * - Floating idle animation
  * - Pulse ring effects
  * - Optional message cloud for hints
+ * - Tutorial messages integration
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAI } from '../../context/AIContext';
+import { useTutorial } from '../../context/TutorialContext';
 import styles from './SagittariusAvatar.module.css';
 
 const SagittariusAvatar = ({
     positionVariant = null, // 'planetDetail' or 'navOpen' or null for default
     showMessageCloud = false,
     messageText = "Hey! I'm Sagittarius, your AI assistant. Click me to chat!",
-    onMessageClose = null,
 }) => {
     const { openTerminal, isTerminalOpen } = useAI();
+    const { 
+        showTutorial, 
+        showWelcomeMessage,
+        welcomeMessage,
+        currentTutorialMessage
+    } = useTutorial();
 
     // State for animations and interactions
     const [isJumping, setIsJumping] = useState(false);
@@ -92,12 +99,27 @@ const SagittariusAvatar = ({
         }, 600);
     }, [isJumping, isTerminalOpen, openTerminal]);
 
-    // Close message handler
-    const handleCloseMessage = useCallback((e) => {
-        e.stopPropagation();
-        setShowMessage(false);
-        onMessageClose?.();
-    }, [onMessageClose]);
+    // Determine which message to show - priority: welcome > tutorial > custom
+    let displayMessage = messageText;
+    let shouldShowMessage = showMessage;
+    let isTutorialMessage = false;
+    let isWelcomeMessage = false;
+    
+    if (showWelcomeMessage) {
+        displayMessage = welcomeMessage;
+        shouldShowMessage = true;
+        isWelcomeMessage = true;
+    } else if (showTutorial && currentTutorialMessage) {
+        // For docking hint (step 1), only show when on planet detail scene
+        const isDockingHint = currentTutorialMessage.id === 'dock-hint';
+        const isOnPlanetDetail = positionVariant === 'planetDetail';
+        
+        if (!isDockingHint || (isDockingHint && isOnPlanetDetail)) {
+            displayMessage = currentTutorialMessage.message;
+            shouldShowMessage = true;
+            isTutorialMessage = true;
+        }
+    }
 
     // Build container class names
     const containerClasses = [
@@ -119,18 +141,11 @@ const SagittariusAvatar = ({
 
     return (
         <div className={containerClasses}>
-            {/* Message Cloud */}
-            {showMessage && (
-                <div className={styles.messageCloud} onClick={handleClick}>
-                    <button
-                        className={styles.closeMessage}
-                        onClick={handleCloseMessage}
-                        aria-label="Close message"
-                    >
-                        ×
-                    </button>
-                    <p className={styles.messageText}>{messageText}</p>
-                    <p className={styles.messageHint}>Click to chat →</p>
+            {/* Message Cloud - shows welcome, tutorial, or custom messages */}
+            {shouldShowMessage && (
+                <div className={`${styles.messageCloud} ${isTutorialMessage ? styles.tutorialCloud : ''} ${isWelcomeMessage ? styles.welcomeCloud : ''}`}>
+                    <p className={styles.messageText}>{displayMessage}</p>
+                    {!isTutorialMessage && !isWelcomeMessage && <p className={styles.messageHint}>Click to chat →</p>}
                 </div>
             )}
 
