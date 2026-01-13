@@ -1,11 +1,84 @@
 {
   "personalInfo": {
     "name": "Vandan Nagori",
-    "role": "Full Stack Developer",
-    "currentStatus": "Student at IIT Indore",
-    "bio": "Passionate full-stack developer specializing in modern web technologies and 3D graphics. Currently studying at IIT Indore with hands-on experience in MERN stack, Three.js, and building immersive web experiences.",
-    "email": "Available in Contact section",
-    "location": "IIT Indore, India"
+    "role": "Full Stack Developer & 3D Web Specialist",
+    "currentStatus": "Student at IIT Indore (CGPA: 8.58)",
+    "bio": "Passionate full-stack developer specializing in modern web technologies and 3D graphics. Currently studying at IIT Indore with hands-on experience in MERN stack, Three.js, and building immersive web experiences. Combines technical expertise with creative vision to build unique, performant applications that push the boundaries of web development.",
+    "email": "Available in Contact section (Betelgeuse System)",
+    "location": "IIT Indore, India",
+    "academicPerformance": {
+      "cgpa": "8.58",
+      "secondarySchool": "86.2% (CBSE)",
+      "seniorSecondary": "93.2% (CBSE)",
+      "entrance": "JEE Advanced qualified"
+    },
+    "interests": [
+      "3D Web Development with Three.js and WebGL",
+      "Space Technology and Astronomy",
+      "Gaming and Interactive Experiences",
+      "Full-Stack Development",
+      "Creative Coding and Visual Effects",
+      "Performance Optimization",
+      "UI/UX Design",
+      "Open Source Contribution"
+    ],
+    "education": {
+      "institution": "Indian Institute of Technology (IIT) Indore",
+      "degree": "Bachelor of Technology in Space Science & Engineering",
+      "status": "Currently pursuing",
+      "duration": "2023 - Present",
+      "cgpa": "8.58",
+      "highlights": [
+        "Specialized in Space Science & Engineering domain",
+        "Active participation in technical clubs and societies",
+        "Leadership roles in Astronomy and Gaming clubs",
+        "Research experience through PRIUS Fellowship (Galaxy Classification)",
+        "Participated in ISRO-NRSC National Challenge (Cloud Detection ML)",
+        "Strong foundation in DSA and competitive programming",
+        "Maintained excellent academic performance"
+      ]
+    },
+    "achievements": [
+      "Head of Web Development for IIT Indore Astronomy Club (2023-2025)",
+      "Head of Technicals for Gaming Club IIT Indore (2024-2025)",
+      "Built 8+ production-ready full-stack projects",
+      "PRIUS Fellowship recipient - Galaxy classification research",
+      "ISRO-NRSC National Challenge participant - ML for satellite imagery",
+      "Created immersive 3D portfolio with Three.js",
+      "Delta Batch Web Development certification (Apna College)",
+      "Maintained 8.58 CGPA at premier IIT institution",
+      "Successfully deployed multiple live websites",
+      "Strong proficiency in MERN stack and modern frameworks"
+    ]
+  },
+  "whoIsVandan": {
+    "summary": "Vandan Nagori is a talented full-stack developer and current student at IIT Indore pursuing B.Tech in Space Science & Engineering with an impressive 8.58 CGPA. He combines technical expertise in modern web technologies with creative vision to build unique, performant applications. His work spans from complex 3D web experiences using Three.js to full-stack MERN applications, demonstrating proficiency across the entire development spectrum.",
+    "detailedProfile": "Vandan stands out as a developer who doesn't just code - he creates experiences. His immersive 3D portfolio showcases advanced skills in WebGL, GLSL shaders, and 3D graphics programming, while his full-stack projects like Airbnb Replica and EduConnect demonstrate solid backend architecture and database design. He's not afraid to take on leadership roles, currently heading web development for IIT Indore's Astronomy Club and technical operations for the Gaming Club.",
+    "strengths": [
+      "3D Graphics Programming - Expert in Three.js, React Three Fiber, and GLSL shader development",
+      "Full-Stack MERN Development - Proficient in MongoDB, Express.js, React.js, and Node.js",
+      "Frontend Excellence - Advanced skills in React, modern CSS (Tailwind, Bootstrap), and responsive design",
+      "Backend Architecture - RESTful API design, authentication systems, session management",
+      "Leadership and Team Management - Successfully leads technical teams and coordinates projects",
+      "Performance Optimization - Expertise in code splitting, lazy loading, asset optimization",
+      "Problem-Solving - Strong foundation in Data Structures and Algorithms using C++/Python",
+      "UI/UX Design - Creates intuitive, visually appealing user interfaces",
+      "Creative Coding - Builds unique, engaging experiences that stand out",
+      "Research Skills - Experience in galaxy classification and machine learning for satellite imagery",
+      "Database Design - Proficient in both SQL and NoSQL database architectures",
+      "Version Control - Expert Git/GitHub user with collaborative development experience"
+    ],
+    "technicalExpertise": {
+      "frontend": "React.js ecosystem expert with deep knowledge of hooks, context API, and state management. Advanced CSS skills including Flexbox, Grid, animations. Three.js specialist for 3D web graphics.",
+      "backend": "Node.js and Express.js for scalable server applications. RESTful API design, middleware architecture, authentication with Passport.js, session management.",
+      "databases": "MongoDB with Mongoose ODM for NoSQL solutions. SQL for relational data. Experience with data modeling and optimization.",
+      "tools": "Git/GitHub for version control, VS Code, npm, Postman for API testing, Vercel for deployment, Cloudinary for asset management.",
+      "specializations": "3D web development, WebGL, GLSL shaders, performance optimization, responsive design, full-stack architecture"
+    },
+    "workStyle": "Vandan approaches development with attention to detail and commitment to quality. He builds production-ready applications with clean code, proper documentation, and user-centric design. His projects demonstrate understanding of both technical implementation and user experience.",
+    "currentFocus": "Building immersive 3D web experiences while leading technical initiatives at IIT Indore clubs. Exploring the intersection of space technology, web development, and interactive experiences.",
+    "personality": "Creative, detail-oriented, passionate about technology and space, dedicated to continuous learning. Takes initiative in leadership roles and enjoys mentoring others. Combines analytical thinking with creative problem-solving.",
+    "careerGoals": "Aspiring to build impactful products at the intersection of web development and emerging technologies. Interested in contributing to open source, exploring space tech applications, and creating innovative web experiences."
   },
   "systems": [
     {
@@ -426,32 +499,78 @@
     {
       "title": "Head of Web Development",
       "organization": "Astronomy Club - IIT Indore",
-      "description": "Led website redesign and maintenance, improved UI/UX, fixed critical bugs",
+      "duration": "July 2023 - July 2025",
+      "description": "Led website redesign and maintenance using React.js and Tailwind CSS. Improved UI/UX, fixed critical bugs, implemented responsive design, and maintained 99%+ uptime. Coordinated with team members for feature implementation and mentored junior developers.",
       "skills": [
         "React.js",
         "Tailwind CSS",
-        "Team Leadership"
+        "Team Leadership",
+        "UI/UX Design",
+        "Project Management"
+      ],
+      "achievements": [
+        "Successfully redesigned website improving user engagement",
+        "Maintained consistent uptime for club's digital presence",
+        "Implemented fully responsive design for all devices",
+        "Streamlined event information dissemination"
       ]
     },
     {
       "title": "Head of Technicals",
       "organization": "Gaming Club - IIT Indore",
-      "description": "Coordinated technical development, built tournament management system",
+      "duration": "December 2024 - April 2025",
+      "description": "Coordinated technical development and built tournament management system. Led development team in building registration portal with real-time updates. Managed technical infrastructure for gaming events ensuring zero downtime during critical periods.",
       "skills": [
         "HTML5",
         "CSS3",
         "JavaScript",
-        "Node.js"
+        "Node.js",
+        "Team Leadership",
+        "Event Management"
+      ],
+      "achievements": [
+        "Developed tournament registration system",
+        "Managed technical operations for multiple gaming tournaments",
+        "Ensured zero downtime during registration periods",
+        "Led team in website maintenance and feature development"
       ]
     },
     {
       "title": "PRIUS Fellowship",
       "organization": "IIT Indore",
-      "description": "Research and development fellowship program",
+      "duration": "2024",
+      "description": "Research fellowship focused on galaxy classification using COSMOS survey data. Utilized EAZY-py Python library for photometric redshift estimation and generated UVJ diagrams for systematic galaxy classification into passive and star-forming populations.",
       "skills": [
-        "Research",
-        "Innovation",
-        "Technical Skills"
+        "Python",
+        "EAZY-py Library",
+        "Data Analysis",
+        "Scientific Computing",
+        "Research Methodology"
+      ],
+      "achievements": [
+        "Successfully classified galaxies using computational techniques",
+        "Developed proficiency in astronomical data analysis",
+        "Applied statistical methods for galaxy population studies",
+        "Contributed to understanding galaxy evolution"
+      ]
+    },
+    {
+      "title": "ISRO-NRSC National Challenge",
+      "organization": "Indian Space Research Organisation",
+      "duration": "2024",
+      "description": "Participated in national challenge focused on developing machine learning solutions for automated cloud and shadow detection using satellite TOA reflectance data. Implemented UNet-based deep learning architecture for semantic segmentation.",
+      "skills": [
+        "Machine Learning",
+        "Python",
+        "UNet Architecture",
+        "Image Processing",
+        "Deep Learning"
+      ],
+      "achievements": [
+        "Developed automated detection system for satellite imagery",
+        "Gained hands-on experience with deep learning for remote sensing",
+        "Optimized model performance using hyperparameter tuning",
+        "Applied computer vision techniques to satellite data"
       ]
     }
   ],
@@ -468,6 +587,7 @@
   "quickFacts": {
     "totalProjects": 8,
     "totalSystems": 6,
+    "totalPlanets": 27,
     "primarySkills": [
       "React.js",
       "Three.js",
@@ -477,6 +597,76 @@
     ],
     "currentFocus": "3D Web Development, Full-Stack Applications",
     "education": "IIT Indore"
+  },
+  "portfolioStructure": {
+    "totalStarSystems": 6,
+    "totalPlanets": 27,
+    "starSystems": [
+      {
+        "name": "Alpha Centauri",
+        "code": "SYS-01",
+        "planetCount": 7,
+        "planets": ["Personal Info", "Education", "Interests & Hobbies", "Tech Stack", "Achievements", "Resume", "Certifications"]
+      },
+      {
+        "name": "Sirius",
+        "code": "SYS-02",
+        "planetCount": 8,
+        "planets": ["Immersive 3D Portfolio", "Airbnb Replica", "Gaming Club Website", "Astronomy Club Website", "EduConnect - Academic Portal", "Simon Says Game", "Spotify Clone", "Amazon Clone"]
+      },
+      {
+        "name": "Vega",
+        "code": "SYS-03",
+        "planetCount": 5,
+        "planets": ["Head of Web Dev - Astronomy Club", "Head of Technicals - Gaming Club", "PRIUS Fellowship", "ISRO-NRSC Challenge", "Web Dev Course - Apna College"]
+      },
+      {
+        "name": "Betelgeuse",
+        "code": "SYS-04",
+        "planetCount": 2,
+        "planets": ["Send Message", "Contact Information"]
+      },
+      {
+        "name": "Polaris",
+        "code": "SYS-05",
+        "planetCount": 2,
+        "planets": ["Milestone Station", "Achievement Cluster"]
+      },
+      {
+        "name": "Rigel",
+        "code": "SYS-06",
+        "planetCount": 3,
+        "planets": ["Frontend", "Backend", "Tools & Dev Ops"]
+      }
+    ]
+  },
+  "navigationMechanics": {
+    "howToNavigate": "The portfolio uses an interactive 3D star system navigation. Users explore space by visiting different star systems and their orbiting planets.",
+    "controls": {
+      "pan": "Click and drag the screen to pan/look around",
+      "zoom": "Use mouse scroll wheel or pinch gesture to zoom in and out",
+      "select": "Click on nodes to select them"
+    },
+    "nodeTypes": {
+      "starSystems": {
+        "appearance": "Larger glowing nodes at the center",
+        "color": "Bright, distinct colors for each system",
+        "function": "Represent main sections/pages",
+        "count": 6
+      },
+      "planets": {
+        "appearance": "Smaller nodes orbiting around star systems",
+        "function": "Represent subsections or individual content items",
+        "count": 27,
+        "note": "Planets orbit their parent star systems"
+      }
+    },
+    "accessRules": {
+      "starSystems": "Can be accessed anytime from anywhere",
+      "planets": "Can ONLY be visited when you are IN their parent star system",
+      "restriction": "You must first navigate to a star system before accessing its planets"
+    },
+    "example": "To visit the 'Education' planet, you must first go to the Alpha Centauri star system, then select the Education planet."
   },
   "navigationHelp": {
     "systems": [
@@ -505,5 +695,119 @@
         "contains": "Technologies: Frontend, Backend, Tools"
       }
     ]
+  },
+  "conversationalContext": {
+    "commonQuestions": {
+      "aboutVandan": {
+        "whoIsVandan": "Vandan is a talented full-stack developer at IIT Indore with 8.58 CGPA, specializing in 3D web development and MERN stack. He's built 8+ projects, leads technical teams, and creates immersive web experiences.",
+        "whatDoesHeDo": "Vandan builds full-stack web applications with a special focus on 3D graphics using Three.js. He creates everything from interactive portfolios to complete rental marketplaces, academic portals, and club websites.",
+        "whereStudies": "Vandan studies at Indian Institute of Technology (IIT) Indore, pursuing B.Tech in Space Science & Engineering with an excellent 8.58 CGPA.",
+        "howToContact": "You can contact Vandan through the contact form in Betelgeuse System (SYS-04). He's also available on LinkedIn and GitHub.",
+        "whatMakesHimUnique": "Vandan combines technical expertise with creative vision - he doesn't just code, he creates experiences. His 3D portfolio showcases advanced WebGL and shader programming while his full-stack projects demonstrate solid architecture."
+      },
+      "technicalSkills": {
+        "primaryTech": "Vandan's primary stack is MERN (MongoDB, Express.js, React.js, Node.js) with expertise in Three.js for 3D graphics. He's also proficient in Python, C++, and modern CSS frameworks.",
+        "threejsExperience": "Vandan has built an immersive 3D portfolio featuring spacecraft models, holographic UI, GLSL shaders, particle systems, and optimized rendering. He demonstrates advanced understanding of WebGL and 3D graphics programming.",
+        "backendSkills": "Vandan builds scalable backends with Node.js and Express.js. He implements RESTful APIs, authentication systems (Passport.js), session management, and works with both SQL and NoSQL databases.",
+        "frontendExpertise": "Expert in React.js with hooks, context API, state management. Advanced CSS skills with Flexbox, Grid, animations. Proficient in Tailwind CSS and Bootstrap for rapid development.",
+        "bestProject": "The immersive 3D portfolio is his most impressive - featuring 3D spacecraft, interactive solar system navigation, GLSL shaders, and performance optimization maintaining 60 FPS. It showcases his full range of skills."
+      },
+      "projects": {
+        "howManyProjects": "Vandan has built 8 major projects: Immersive 3D Portfolio, Airbnb Replica, Gaming Club Website, Astronomy Club Website, EduConnect Academic Portal, Simon Says Game, Spotify Clone, and Amazon Clone.",
+        "liveProjects": "Several projects are live: 3D Portfolio (vandan-nagori.vercel.app), Airbnb Replica, Gaming Club Website, Astronomy Club Website, and Simon Says Game.",
+        "mostComplex": "The 3D Portfolio and EduConnect are most complex. Portfolio features advanced 3D graphics with Three.js, shaders, and optimizations. EduConnect has dual-role authentication, dynamic timetables, and resource management.",
+        "fullStackProjects": "Airbnb Replica and EduConnect are comprehensive full-stack applications with complete CRUD operations, authentication, database design, and deployed backends.",
+        "githubLinks": "Most projects are on GitHub at github.com/Vandan1423. Check out the portfolio, Airbnb Replica, and Academic Portal repositories!"
+      },
+      "experience": {
+        "currentRole": "Vandan currently serves as Head of Web Development for Astronomy Club (2023-2025) and Head of Technicals for Gaming Club (2024-2025) at IIT Indore.",
+        "leadership": "He leads technical teams, manages website development, coordinates with stakeholders, mentors junior developers, and ensures smooth technical operations for club events.",
+        "research": "Vandan worked on galaxy classification through PRIUS Fellowship using Python and EAZY-py library. He also participated in ISRO challenge developing ML models for satellite imagery analysis.",
+        "workExperience": "While primarily a student, Vandan has significant practical experience through leadership roles, research fellowships, and building production-ready applications deployed to thousands of users."
+      },
+      "portfolio": {
+        "howToNavigate": "Drag to pan around, scroll to zoom in/out. Bigger glowing nodes are star systems (6 total), smaller orbiting nodes are planets (27 total). Click to select and visit.",
+        "whySpaceTheme": "The space theme reflects Vandan's studies in Space Science & Engineering at IIT Indore and his passion for astronomy. It creates an immersive, memorable experience.",
+        "systemsPlanets": "6 star systems representing main sections: Alpha Centauri (About), Sirius (Projects), Vega (Experience), Betelgeuse (Contact), Polaris (Journey), Rigel (Technologies). Total 27 planets for subsections.",
+        "accessRules": "You can visit any star system anytime, but you must be IN a star system to access its planets. This mimics realistic space travel!",
+        "cantAccessPlanet": "You must first navigate to the parent star system before accessing its planets. For example, to see Education planet, go to Alpha Centauri system first."
+      },
+      "learning": {
+        "howLearnedWeb": "Vandan completed comprehensive web development training through Apna College's Delta Batch, covering HTML, CSS, JavaScript, React, Node.js, databases, and full-stack development.",
+        "selfTaught": "He's largely self-taught with strong self-learning capabilities, completing online courses and building projects to master technologies like Three.js and advanced React patterns.",
+        "learningPath": "Started with C/C++ and Python for DSA in 2023, moved to web development in 2024 with MERN stack, then advanced to 3D graphics with Three.js in 2025.",
+        "advice": "Based on his journey: start with fundamentals (HTML/CSS/JS), build projects constantly, don't fear complex technologies, learn by doing, and create unique projects that showcase your personality."
+      }
+    },
+    "contextualResponses": {
+      "projectInquiry": "When asked about a specific project, provide comprehensive details including technologies, features, challenges, impact, and link to live demo or GitHub.",
+      "technicalComparison": "Can compare technologies Vandan uses, explain why he chose certain tech stacks, and discuss trade-offs (e.g., MongoDB vs SQL, Tailwind vs Bootstrap).",
+      "careerAdvice": "Based on Vandan's experience, can provide insights on learning web development, building portfolios, getting leadership roles, and balancing academics with projects.",
+      "navigationHelp": "Always ready to guide users through the portfolio, explain navigation mechanics, suggest relevant sections based on their interests."
+    },
+    "conversationFlow": {
+      "greetings": "Respond enthusiastically as Sagittarius, ready to help explore Vandan's portfolio and answer any questions.",
+      "followUpQuestions": "Encourage exploration by suggesting related topics or sections. Example: 'Want to see his projects? Type: goto sirius'",
+      "technicalDiscussions": "Can engage in detailed technical discussions about implementations, architectures, best practices based on Vandan's projects.",
+      "encouragement": "Show enthusiasm for Vandan's work, highlight impressive achievements, and make users excited to explore more."
+    }
+  },
+  "enhancedKnowledge": {
+    "projectDetails": {
+      "portfolio3D": {
+        "technologies": ["React", "Three.js", "@react-three/fiber", "@react-three/drei", "GLSL Shaders", "Vite"],
+        "features": ["3D spacecraft models with animations", "Interactive solar system navigation", "GLSL shaders for visual effects", "Performance optimization (60 FPS)", "Responsive touch controls"],
+        "technicalHighlights": ["Draco/GLTF compression", "Code splitting and lazy loading", "Custom shader development", "HDR environment lighting", "Particle systems"],
+        "challenges": "Optimizing complex 3D scenes for web while maintaining visual fidelity and 60 FPS performance across devices.",
+        "impact": "Created a unique, memorable portfolio experience showcasing advanced web development skills and setting him apart from traditional portfolios."
+      },
+      "airbnbReplica": {
+        "technologies": ["MongoDB", "Express.js", "Node.js", "EJS", "Passport.js", "Cloudinary"],
+        "features": ["User authentication", "CRUD operations for listings", "Image upload with Cloudinary", "Review and rating system", "Role-based authorization"],
+        "architecture": "MVC architecture with RESTful API design, session-based authentication, and cloud-based asset management.",
+        "challenges": "Implementing secure role-based authorization and integrating Cloudinary for efficient image management.",
+        "learnings": "Mastered full-stack development patterns, RESTful API design, authentication flows, and deployment strategies."
+      },
+      "eduConnect": {
+        "technologies": ["Node.js", "Express.js", "MongoDB", "Mongoose", "Bcrypt.js", "EJS"],
+        "features": ["Dual-role authentication (students/faculty)", "Dynamic timetable with real-time updates", "Resource management system", "Grade-based content filtering", "Student analytics dashboard"],
+        "architecture": "Scalable MongoDB schema with 4 interconnected models, middleware-based authorization, session management.",
+        "complexity": "One of his most complex projects with dual portals, 11 EJS views, comprehensive CRUD operations, and sophisticated data relationships.",
+        "impact": "Built comprehensive academic management system supporting multiple grade levels with distinct user experiences."
+      },
+      "clubWebsites": {
+        "astronomyClub": "React.js with Tailwind CSS, features 3D Earth loader, research showcase, news feed, responsive design. Led UI/UX redesign as Head of Web Dev.",
+        "gamingClub": "HTML/CSS/JavaScript/Node.js, tournament management system, event registration, photo gallery. Led as Head of Technicals, currently developing React upgrade.",
+        "impact": "Both websites serve active IIT Indore communities with thousands of students, requiring high availability and intuitive UX."
+      }
+    },
+    "technicalDepth": {
+      "reactExpertise": "Advanced hooks usage (useState, useEffect, useContext, useRef, useCallback, useMemo), Context API for state management, custom hooks, React Three Fiber for 3D, component composition patterns.",
+      "threejsSkills": "Mesh creation, material systems, lighting, cameras, animations, GLSL shaders (vertex and fragment), particle systems, raycasting, performance optimization, model loading (GLTF/GLB).",
+      "backendArchitecture": "RESTful API design, middleware patterns, error handling, validation (Joi, Express Validator), authentication strategies (Passport.js), session management, database modeling.",
+      "performanceOptimization": "Code splitting, lazy loading, asset compression (Draco for 3D models), responsive image loading, bundle optimization with Vite, 60 FPS maintenance techniques.",
+      "responsiveDesign": "Mobile-first approach, Flexbox and Grid mastery, media queries, touch-safe controls, cross-browser compatibility, accessibility considerations."
+    },
+    "futurePlans": {
+      "shortTerm": "Continuing to enhance 3D portfolio, upgrade Gaming Club website to React, explore advanced Three.js techniques, contribute to open source.",
+      "learning": "Interested in advanced shader programming, TypeScript, Next.js, testing frameworks, CI/CD pipelines, and exploring intersection of space tech with web dev.",
+      "career": "Aspiring to work on innovative web products, potentially in space tech, gaming, or immersive experiences. Open to full-stack or frontend specialist roles.",
+      "goals": "Build impactful products used by many people, contribute to open source community, mentor others in web development, keep pushing boundaries of web experiences."
+    }
+  },
+  "quickAnswers": {
+    "cgpa": "Vandan maintains an excellent 8.58 CGPA at IIT Indore.",
+    "college": "Indian Institute of Technology (IIT) Indore",
+    "degree": "B.Tech in Space Science & Engineering",
+    "location": "IIT Indore, India",
+    "github": "github.com/Vandan1423",
+    "email": "Available in Contact section (Betelgeuse System)",
+    "projectCount": "8 major projects",
+    "systemCount": "6 star systems",
+    "planetCount": "27 planets",
+    "primaryStack": "MERN (MongoDB, Express.js, React.js, Node.js) + Three.js",
+    "currentRoles": "Head of Web Dev (Astronomy Club) and Head of Technicals (Gaming Club)",
+    "yearsOfExperience": "2-3 years of web development experience",
+    "bestSkill": "3D Web Development with Three.js and React, Full-Stack MERN Development"
   }
 }

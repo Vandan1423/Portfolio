@@ -1,7 +1,7 @@
 /**
  * AI Context
  *
- * Global state management for ARIA terminal and Neural Link map.
+ * Global state management for Sagittarius terminal and Neural Link map.
  * Handles terminal visibility, message history, navigation history,
  * and current location tracking.
  */
@@ -24,31 +24,7 @@ export function AIProvider({ children }) {
   const { currentPage } = useNavigation();
   const { currentSystemId, selectedPlanet } = useStarSystem();
 
-  // Terminal controls
-  const openTerminal = useCallback(() => {
-    setIsMapOpen(false); // Close map when terminal opens
-    setIsTerminalOpen(true);
-    // Add welcome message if first time opening
-    if (messageHistory.length === 0) {
-      addSystemMessage("ARIA NAVIGATION TERMINAL v2.5\nCommander, I'm here to help you navigate.\n\nType 'help' for available commands or ask me\nanything about this portfolio!");
-    }
-  }, [messageHistory.length]);
-
-  const closeTerminal = useCallback(() => {
-    setIsTerminalOpen(false);
-  }, []);
-
-  // Map controls
-  const openMap = useCallback(() => {
-    setIsMapOpen(true);
-    closeTerminal(); // Close terminal when map opens
-  }, []);
-
-  const closeMap = useCallback(() => {
-    setIsMapOpen(false);
-  }, []);
-
-  // Message management
+  // Message management (defined first so it can be used by openTerminal)
   const addMessage = useCallback((message) => {
     setMessageHistory(prev => [...prev, message]);
   }, []);
@@ -60,6 +36,34 @@ export function AIProvider({ children }) {
       timestamp: Date.now()
     });
   }, [addMessage]);
+
+  // Terminal controls
+  const openTerminal = useCallback((customMessage = null) => {
+    setIsMapOpen(false); // Close map when terminal opens
+    setIsTerminalOpen(true);
+
+    // If custom message provided, show that instead of default welcome
+    if (customMessage) {
+      addSystemMessage(customMessage);
+    } else if (messageHistory.length === 0) {
+      // Add welcome message if first time opening and no custom message
+      addSystemMessage("SAGITTARIUS NAVIGATION TERMINAL v1.0\nCommander, I'm here to help you navigate.\n\nType 'help' for available commands or ask me\nanything about this portfolio!");
+    }
+  }, [messageHistory.length, addSystemMessage]);
+
+  const closeTerminal = useCallback(() => {
+    setIsTerminalOpen(false);
+  }, []);
+
+  // Map controls
+  const openMap = useCallback(() => {
+    setIsMapOpen(true);
+    closeTerminal(); // Close terminal when map opens
+  }, [closeTerminal]);
+
+  const closeMap = useCallback(() => {
+    setIsMapOpen(false);
+  }, []);
 
   const addCommandMessage = useCallback((text) => {
     addMessage({

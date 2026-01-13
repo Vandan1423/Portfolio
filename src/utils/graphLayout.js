@@ -1,92 +1,33 @@
 /**
  * Graph Layout Utilities
  *
- * Hierarchical tree layout algorithm for positioning star systems and planets
+ * Radial layout algorithm for positioning star systems and planets
  * in the Neural Link Map. Implements:
- * - Tree layout (current system at top, others below)
- * - Clean vertical/horizontal spacing
- * - No overlaps guaranteed
- * - All nodes visible
+ * - Current system at center
+ * - Other systems in circle around it
+ * - Planets branch out from their parent systems
+ * - Clean spacing, no overlaps
  */
 
 const SIZES = {
-  SYSTEM_RADIUS: 50,
-  PLANET_RADIUS: 25,
-  HORIZONTAL_SPACING: 250, // Space between systems horizontally
-  VERTICAL_SPACING: 150,   // Space between levels vertically
-  PLANET_SPACING: 120,     // Space between planets of same system
+  SYSTEM_RADIUS: 60,
+  PLANET_RADIUS: 30,
+  SYSTEM_ORBIT_RADIUS: 500, // Distance of other systems from center
+  PLANET_DISTANCE: 220,     // Distance of planets from their system (increased for less overlap)
+  PLANET_SPACING: 120,      // Angular spacing between planets
 };
 
 const VIEWPORT = {
-  WIDTH: 2400,
-  HEIGHT: 1800,
-  PADDING: 100,
+  WIDTH: 2600,  // Larger viewport for bigger layout
+  HEIGHT: 2600,
+  PADDING: 150,
 };
 
 /**
- * Calculate repulsion force between two nodes (prevent overlap)
- */
-function calculateRepulsion(node1, node2) {
-  const dx = node2.x - node1.x;
-  const dy = node2.y - node1.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-
-  if (distance === 0) return { fx: 0, fy: 0 };
-
-  const minDist = SIZES.MIN_DISTANCE;
-  if (distance < minDist) {
-    const force = FORCES.REPULSION * (minDist - distance) / distance;
-    return {
-      fx: -(dx / distance) * force,
-      fy: -(dy / distance) * force,
-    };
-  }
-
-  return { fx: 0, fy: 0 };
-}
-
-/**
- * Calculate attraction force toward parent (for planets)
- */
-function calculateAttraction(planet, parentSystem) {
-  const dx = parentSystem.x - planet.x;
-  const dy = parentSystem.y - planet.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-
-  if (distance === 0) return { fx: 0, fy: 0 };
-
-  const targetDistance = SIZES.PLANET_ORBIT;
-  const force = FORCES.ATTRACTION * (distance - targetDistance);
-
-  return {
-    fx: (dx / distance) * force,
-    fy: (dy / distance) * force,
-  };
-}
-
-/**
- * Calculate boundary force to keep nodes within viewport
- */
-function calculateBoundaryForce(node) {
-  const maxX = VIEWPORT.WIDTH / 2 - VIEWPORT.PADDING;
-  const maxY = VIEWPORT.HEIGHT / 2 - VIEWPORT.PADDING;
-
-  let fx = 0;
-  let fy = 0;
-
-  if (node.x > maxX) fx = -(node.x - maxX) * FORCES.BOUNDARY;
-  if (node.x < -maxX) fx = -(node.x + maxX) * FORCES.BOUNDARY;
-  if (node.y > maxY) fy = -(node.y - maxY) * FORCES.BOUNDARY;
-  if (node.y < -maxY) fy = -(node.y + maxY) * FORCES.BOUNDARY;
-
-  return { fx, fy };
-}
-
-/**
- * Initialize node positions
+ * Initialize node positions using radial layout
  * - Current system at center (0, 0)
  * - Other systems in circle around center
- * - Planets in arc around their parent system
+ * - Planets radiate out from their parent systems
  */
 export function initializePositions(systems, currentSystemId) {
   const nodes = [];
@@ -113,15 +54,16 @@ export function initializePositions(systems, currentSystemId) {
     nodes.push(systemNode);
     systemNodes.push(systemNode);
 
-    // Add planets for current system in circle
+    // Add planets for current system radiating outward
+    const planetCount = currentSystem.planets.length;
     currentSystem.planets.forEach((planet, i) => {
-      const angle = (i / currentSystem.planets.length) * Math.PI * 2;
+      const angle = (i / planetCount) * Math.PI * 2; // Full circle
       nodes.push({
         id: planet.id,
         type: 'planet',
         label: planet.name,
-        x: Math.cos(angle) * SIZES.PLANET_ORBIT,
-        y: Math.sin(angle) * SIZES.PLANET_ORBIT,
+        x: Math.cos(angle) * SIZES.PLANET_DISTANCE,
+        y: Math.sin(angle) * SIZES.PLANET_DISTANCE,
         vx: 0,
         vy: 0,
         parentId: currentSystem.id,
@@ -132,15 +74,19 @@ export function initializePositions(systems, currentSystemId) {
   }
 
   // Place other systems in circle around center
+  const systemCount = otherSystems.length;
   otherSystems.forEach((system, i) => {
-    const angle = (i / otherSystems.length) * Math.PI * 2;
+    const angle = (i / systemCount) * Math.PI * 2; // Evenly distributed
+    const systemX = Math.cos(angle) * SIZES.SYSTEM_ORBIT_RADIUS;
+    const systemY = Math.sin(angle) * SIZES.SYSTEM_ORBIT_RADIUS;
+
     const systemNode = {
       id: system.id,
       type: 'system',
       label: system.name,
       code: system.code,
-      x: Math.cos(angle) * SIZES.ORBIT_RADIUS,
-      y: Math.sin(angle) * SIZES.ORBIT_RADIUS,
+      x: systemX,
+      y: systemY,
       vx: 0,
       vy: 0,
       isCurrent: false,
@@ -149,19 +95,25 @@ export function initializePositions(systems, currentSystemId) {
     nodes.push(systemNode);
     systemNodes.push(systemNode);
 
-    // Add planets for this system (locked) in wider arc for better spacing
+    // Add planets for this system radiating outward from system position
+    const planetCount = system.planets.length;
     system.planets.forEach((planet, j) => {
-      // Spread planets in wider arc (120 degrees instead of 90)
-      const arcSpread = Math.PI * 0.67; // 120 degrees (was 0.5 = 90 degrees)
-      const planetAngle = angle + (j / system.planets.length - 0.5) * arcSpread;
-      // Vary distance slightly to prevent overlaps
-      const distanceVariation = 1 + (j % 2) * 0.2; // Alternate between 1.0 and 1.2
+      // Planets radiate outward from their parent system
+      // Use smaller arc (120 degrees) on the outer side
+      const baseAngle = angle; // System's angle from center
+      const arcStart = baseAngle - Math.PI / 3; // -60 degrees
+      const arcEnd = baseAngle + Math.PI / 3;   // +60 degrees
+      const planetAngle = arcStart + (j / (planetCount - 1 || 1)) * (arcEnd - arcStart);
+
+      const planetX = systemX + Math.cos(planetAngle) * SIZES.PLANET_DISTANCE;
+      const planetY = systemY + Math.sin(planetAngle) * SIZES.PLANET_DISTANCE;
+
       nodes.push({
         id: planet.id,
         type: 'planet',
         label: planet.name,
-        x: Math.cos(planetAngle) * (SIZES.ORBIT_RADIUS + SIZES.PLANET_ORBIT * distanceVariation),
-        y: Math.sin(planetAngle) * (SIZES.ORBIT_RADIUS + SIZES.PLANET_ORBIT * distanceVariation),
+        x: planetX,
+        y: planetY,
         vx: 0,
         vy: 0,
         parentId: system.id,
@@ -175,77 +127,22 @@ export function initializePositions(systems, currentSystemId) {
 }
 
 /**
- * Run one iteration of force simulation
+ * No simulation needed for radial layout
+ * Positions are fixed and calculated deterministically
  */
-export function simulateStep(nodes, systemNodes) {
-  const updatedNodes = nodes.map(node => ({ ...node }));
-
-  // Apply forces to each node
-  updatedNodes.forEach((node, i) => {
-    let fx = 0;
-    let fy = 0;
-
-    // 1. Repulsion from all other nodes (collision avoidance)
-    updatedNodes.forEach((other, j) => {
-      if (i !== j) {
-        const repulsion = calculateRepulsion(node, other);
-        fx += repulsion.fx;
-        fy += repulsion.fy;
-      }
-    });
-
-    // 2. Attraction to parent system (for planets only)
-    if (node.type === 'planet') {
-      const parentSystem = systemNodes.find(s => s.id === node.parentId);
-      if (parentSystem) {
-        const attraction = calculateAttraction(node, parentSystem);
-        fx += attraction.fx;
-        fy += attraction.fy;
-      }
-    }
-
-    // 3. Boundary force (keep within viewport)
-    const boundary = calculateBoundaryForce(node);
-    fx += boundary.fx;
-    fy += boundary.fy;
-
-    // 4. Update velocity and position
-    node.vx = (node.vx + fx) * FORCES.DAMPING;
-    node.vy = (node.vy + fy) * FORCES.DAMPING;
-
-    // Don't move current system (stays at center)
-    if (!(node.type === 'system' && node.isCurrent)) {
-      node.x += node.vx;
-      node.y += node.vy;
-    }
-  });
-
-  return updatedNodes;
+export function simulateStep(nodes) {
+  // Return nodes as-is (no physics simulation)
+  return nodes;
 }
 
 /**
- * Run full simulation until stable
+ * Run layout (no simulation needed)
  */
-export function runSimulation(systems, currentSystemId, maxIterations = 200) {
+export function runSimulation(systems, currentSystemId) {
   try {
-    const { nodes, systemNodes } = initializePositions(systems, currentSystemId);
-
-    let currentNodes = nodes;
-    let stable = false;
-    let iterations = 0;
-
-    while (!stable && iterations < maxIterations) {
-      currentNodes = simulateStep(currentNodes, systemNodes);
-      iterations++;
-
-      // Check if simulation has stabilized
-      const maxVelocity = Math.max(
-        ...currentNodes.map(n => Math.sqrt(n.vx * n.vx + n.vy * n.vy))
-      );
-      stable = maxVelocity < 0.1;
-    }
-
-    return currentNodes;
+    const { nodes } = initializePositions(systems, currentSystemId);
+    // No simulation needed - positions are already final
+    return nodes;
   } catch (error) {
     console.error('runSimulation: Error occurred', error);
     throw error;

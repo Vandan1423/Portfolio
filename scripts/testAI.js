@@ -1,6 +1,6 @@
 /**
  * AI Service Test
- * Tests the Gemini API connection and ARIA responses
+ * Tests the Gemini API connection and Sagittarius responses
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, '../.env.local') });
 
 async function testAI() {
-  console.log('\n🤖 Testing ARIA AI Service...\n');
+  console.log('\n🤖 Testing Sagittarius AI Service...\n');
 
   // Check API key
   const apiKey = process.env.VITE_GEMINI_API_KEY;
@@ -46,7 +46,7 @@ async function testAI() {
     console.log('🎉 All tests passed!\n');
     console.log('✨ Session 1 complete: Foundation & Data setup finished!');
     console.log('\nNext steps:');
-    console.log('  - Session 2: Build ARIA Terminal component');
+    console.log('  - Session 2: Build Sagittarius Terminal component');
     console.log('  - Session 3: Build Neural Link Map visualization');
     console.log('  - Session 4: Integration');
     console.log('  - Session 5: Polish & Testing\n');

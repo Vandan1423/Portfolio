@@ -25,7 +25,7 @@ export const preloadAllComponents = () => {
     import("../components/3D/Wormhole");
     import("../components/3D/LaunchSequence");
     import("../components/3D/PlanetDetailScene");
-    import("../components/UI/NavigationScreen");
+    import("../components/UI/NeuralLinkMap");
 
     // Preload page components (lower priority but still important)
     import("../pages/AboutMe/AboutMe");

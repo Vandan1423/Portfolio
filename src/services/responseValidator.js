@@ -11,21 +11,45 @@
 
 // Blocked patterns that should trigger filtering
 const BLOCKED_PATTERNS = {
-  // Code-related patterns
-  code: /```|function|const\s+|let\s+|var\s+|class\s+|import\s+|export\s+|=>|\.map\(|\.filter\(/gi,
+  // Code-related patterns (enhanced)
+  code: /```|function\s*\(|const\s+|let\s+|var\s+|class\s+|import\s+|export\s+|=>|\.map\(|\.filter\(|\.jsx|\.tsx|<[\w]+>|<\/[\w]+>/gi,
 
   // System implementation queries
-  systemQueries: /how (did|do) (you|i|we) (build|make|code|implement|create|develop)/gi,
+  systemQueries: /how (did|do|does|is) (you|i|we|he|this|the portfolio|it) (build|built|made|make|code|coded|implement|implemented|create|created|develop|developed|work|works)/gi,
 
-  // Common inappropriate keywords (basic list)
-  inappropriate: /\b(hack|crack|exploit|steal|pirate|illegal)\b/gi,
+  // Source code requests
+  sourceRequests: /show (me )?(the )?(source|code|implementation|how you|how it)/gi,
+
+  // Technical implementation
+  technicalImpl: /(show|tell|explain) (me )?(the )?(code|implementation|source|how (you|it) (work|built))/gi,
+
+  // Common inappropriate keywords (expanded list)
+  inappropriate: /\b(hack|hacking|crack|cracking|exploit|exploiting|steal|stealing|pirate|piracy|illegal|porn|nsfw|xxx|sex|nude)\b/gi,
+
+  // Offensive content
+  offensive: /\b(fuck|shit|damn|hell|bitch|asshole|bastard|crap)\b/gi,
 };
 
 // Keywords that suggest code sharing
 const CODE_KEYWORDS = [
-  'function', 'const ', 'let ', 'var ', 'class ', 'import ', 'export ',
+  'function(', 'function ', 'const ', 'let ', 'var ', 'class ', 'import ', 'export ',
   'async ', 'await ', 'return ', '=>', '.map(', '.filter(', '.reduce(',
-  'useState', 'useEffect', 'component', 'props', 'jsx'
+  'useState', 'useEffect', 'component', 'props', 'jsx', 'tsx',
+  'npm install', 'package.json', 'vite.config', 'eslint', 'webpack',
+  'API_KEY', 'secret', 'token', '.env'
+];
+
+// Phrases that indicate source code discussion
+const SOURCE_PHRASES = [
+  'here is the code',
+  'here\'s the code',
+  'the code is',
+  'this is how i',
+  'i was built',
+  'my source code',
+  'the implementation',
+  'the function',
+  'the component'
 ];
 
 /**
@@ -42,42 +66,75 @@ export function validateResponse(response) {
     };
   }
 
-  // Check for code patterns
+  const lowerResponse = response.toLowerCase();
+
+  // Check for inappropriate content (highest priority)
+  if (BLOCKED_PATTERNS.inappropriate.test(response)) {
+    return {
+      isValid: false,
+      filtered: "I cannot assist with that request, Commander. Try 'help' for available commands.",
+      reason: 'Inappropriate content'
+    };
+  }
+
+  // Check for offensive language
+  if (BLOCKED_PATTERNS.offensive.test(response)) {
+    return {
+      isValid: false,
+      filtered: "Let's keep communication professional, Commander. How can I help you navigate?",
+      reason: 'Offensive language'
+    };
+  }
+
+  // Check for source code patterns
   if (BLOCKED_PATTERNS.code.test(response)) {
     return {
       isValid: false,
-      filtered: "That's classified, Commander. I'm here to help navigate the portfolio, not discuss technical implementation.",
+      filtered: "That's classified, Commander. I'm here to help navigate the portfolio and answer questions about Vandan's work, not discuss technical implementation.",
       reason: 'Code pattern detected'
     };
   }
 
-  // Check for system implementation queries
-  if (BLOCKED_PATTERNS.systemQueries.test(response)) {
+  // Check for source code requests in response
+  if (BLOCKED_PATTERNS.sourceRequests.test(response)) {
     return {
       isValid: false,
-      filtered: "I can't discuss how this portfolio was built, Commander. Let me help you explore what it showcases instead!",
+      filtered: "I can't share source code or implementation details, Commander. But I can tell you all about Vandan's projects and skills!",
+      reason: 'Source code request'
+    };
+  }
+
+  // Check for system implementation queries
+  if (BLOCKED_PATTERNS.systemQueries.test(response) || BLOCKED_PATTERNS.technicalImpl.test(response)) {
+    return {
+      isValid: false,
+      filtered: "I can't discuss how this portfolio was built, Commander. Let me help you explore what Vandan has created instead! What would you like to know?",
       reason: 'System implementation query'
     };
   }
 
-  // Check for inappropriate content
-  if (BLOCKED_PATTERNS.inappropriate.test(response)) {
+  // Check for source phrases
+  const containsSourcePhrases = SOURCE_PHRASES.some(phrase =>
+    lowerResponse.includes(phrase)
+  );
+
+  if (containsSourcePhrases) {
     return {
       isValid: false,
-      filtered: "I cannot assist with that request, Commander. Type 'help' for available commands.",
-      reason: 'Inappropriate content'
+      filtered: "Commander, I'm focused on showcasing Vandan's work and helping you navigate, not sharing implementation details.",
+      reason: 'Source discussion detected'
     };
   }
 
   // Check for code keywords in response
   const containsCodeKeywords = CODE_KEYWORDS.some(keyword =>
-    response.toLowerCase().includes(keyword)
+    lowerResponse.includes(keyword.toLowerCase())
   );
 
   if (containsCodeKeywords) {
     return {
       isValid: false,
-      filtered: "Commander, I'm focused on navigation and information about the portfolio, not code implementation.",
+      filtered: "I don't discuss code implementation, Commander. Ask me about Vandan's projects, skills, or experience instead!",
       reason: 'Code keywords detected'
     };
   }

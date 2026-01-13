@@ -1,0 +1,551 @@
+/* Sagittarius Avatar Container */
+.sagittariusAvatarContainer {
+  position: fixed;
+  bottom: 2rem;
+  right: 3%;
+  z-index: 10001; /* Higher than navigation (9998), vignette (9999), and modal (10000) */
+  pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Position variant for planet-detail phase - move to bottom-left to avoid Planet Info Panel */
+.sagittariusAvatarContainer.planetDetail {
+  left: 2rem;
+  right: auto;
+}
+
+/* Position variant when navigation is open - move to top-left */
+.sagittariusAvatarContainer.navOpen {
+  top: 6rem;
+  bottom: auto;
+  left: 2rem;
+  right: auto;
+}
+
+/* Astronaut Avatar - smaller size */
+.astronaut {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  pointer-events: all;
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+
+.astronaut:hover {
+  transform: scale(1.1);
+}
+
+.astronautSvg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5));
+  transition: filter 0.3s ease;
+}
+
+.astronaut:hover .astronautSvg {
+  filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.8));
+}
+
+/* Gentle Floating Animation */
+.floating {
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Waving Animation - Raise hand then wave */
+.waving .rightArm {
+  animation: raiseAndWave 1.6s ease-in-out forwards;
+  transform-origin: 60px 40px;
+}
+
+@keyframes raiseAndWave {
+  /* Raise hand up */
+  0% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(-135deg);
+  }
+  25% {
+    transform: rotate(-135deg);
+  }
+  /* Start waving */
+  35% {
+    transform: rotate(-155deg);
+  }
+  45% {
+    transform: rotate(-115deg);
+  }
+  55% {
+    transform: rotate(-155deg);
+  }
+  65% {
+    transform: rotate(-115deg);
+  }
+  75% {
+    transform: rotate(-155deg);
+  }
+  85% {
+    transform: rotate(-115deg);
+  }
+  /* Lower hand back */
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Jump Animation */
+.jumping {
+  animation: jump 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  20% {
+    transform: translateY(5px) scale(1.05, 0.9);
+  }
+  40% {
+    transform: translateY(-40px) scale(0.95, 1.1);
+  }
+  50% {
+    transform: translateY(-45px) scale(1);
+  }
+  70% {
+    transform: translateY(-20px) scale(1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Thinking Animation */
+.thinking {
+  animation: thinking 2s ease-in-out infinite;
+}
+
+@keyframes thinking {
+  0%, 100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+/* Excited Animation */
+.excited {
+  animation: excited 0.3s ease-in-out infinite;
+}
+
+@keyframes excited {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.05) rotate(-3deg);
+  }
+  75% {
+    transform: scale(1.05) rotate(3deg);
+  }
+}
+
+/* Visor Reflection Animation */
+.visorReflection {
+  transition: cx 0.1s ease, cy 0.1s ease;
+}
+
+/* Antenna Light */
+.antennaLight {
+  filter: drop-shadow(0 0 4px currentColor);
+  transition: fill 0.3s ease;
+}
+
+.blinking {
+  animation: blink 0.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px #ffcc00);
+  }
+  50% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 2px #ffcc00);
+  }
+}
+
+/* Status Light */
+.statusLight {
+  filter: drop-shadow(0 0 3px #00ff88);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.pulsingFast {
+  animation: statusPulseFast 0.3s ease-in-out infinite !important;
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 3px #00ff88);
+  }
+  50% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 6px #00ff88);
+  }
+}
+
+@keyframes statusPulseFast {
+  0%, 100% {
+    opacity: 1;
+    fill: #00ff88;
+    filter: drop-shadow(0 0 6px #00ff88);
+  }
+  50% {
+    opacity: 1;
+    fill: #ff6b6b;
+    filter: drop-shadow(0 0 6px #ff6b6b);
+  }
+}
+
+/* Ambient Glow Effect */
+.ambientGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 217, 255, 0.15) 0%, transparent 70%);
+  animation: ambientPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ambientPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+/* Sparkle Stars */
+.sparkleContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140%;
+  height: 140%;
+  pointer-events: none;
+}
+
+.sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ffffff;
+  border-radius: 50%;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.sparkle::before,
+.sparkle::after {
+  content: '';
+  position: absolute;
+  background: #ffffff;
+}
+
+.sparkle::before {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  left: -50%;
+  transform: translateY(-50%);
+}
+
+.sparkle::after {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  top: -50%;
+  transform: translateX(-50%);
+}
+
+.sparkle:nth-child(1) {
+  top: 5%;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.sparkle:nth-child(2) {
+  top: 15%;
+  right: 10%;
+  animation-delay: 0.7s;
+}
+
+.sparkle:nth-child(3) {
+  bottom: 20%;
+  left: 5%;
+  animation-delay: 1.4s;
+}
+
+.sparkle:nth-child(4) {
+  bottom: 10%;
+  right: 15%;
+  animation-delay: 0.3s;
+}
+
+.sparkle:nth-child(5) {
+  top: 40%;
+  left: 0%;
+  animation-delay: 1s;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: linear-gradient(135deg, rgba(10, 30, 50, 0.95), rgba(0, 50, 80, 0.95));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 217, 255, 0.5);
+  border-radius: 8px;
+  padding: 8px 5px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 217, 255, 0.5);
+}
+
+.tooltipText {
+  color: #00d4ff;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.astronaut:hover + .tooltip,
+.tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Message Cloud */
+.messageCloud {
+  position: absolute;
+  bottom: 120%;
+  right: 0;
+  min-width: 300px;
+  max-width: 400px;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(0, 100, 255, 0.15));
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(0, 217, 255, 0.5);
+  border-radius: 20px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.3);
+  pointer-events: all;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  margin-bottom: 1rem;
+}
+
+.messageCloud:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 217, 255, 0.5);
+  border-color: rgba(0, 217, 255, 0.8);
+}
+
+/* Bounce in animation for message cloud */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(30px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-5px);
+  }
+  70% {
+    transform: scale(0.95) translateY(2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Message cloud tail (speech bubble pointer) */
+.messageCloud::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  right: 30px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid rgba(0, 217, 255, 0.5);
+}
+
+.messageCloud::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 33px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid rgba(0, 100, 255, 0.15);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Message Text */
+.messageText {
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+/* Message Hint */
+.messageHint {
+  color: rgba(0, 217, 255, 0.8);
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-style: italic;
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+/* Start Tutorial Button */
+.startTutorialButton {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(0, 150, 255, 0.3));
+  border: 2px solid rgba(0, 217, 255, 0.8);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.startTutorialButton:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.5), rgba(0, 150, 255, 0.5));
+  border-color: rgba(0, 217, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 217, 255, 0.5);
+}
+
+.startTutorialButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 217, 255, 0.3);
+}
+
+/* Close Message Button */
+.closeMessage {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeMessage:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .sagittariusAvatarContainer {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .astronaut {
+    width: 70px;
+    height: 70px;
+  }
+
+  .messageCloud {
+    min-width: 250px;
+    max-width: 300px;
+    font-size: 0.85rem;
+  }
+}

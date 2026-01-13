@@ -12,8 +12,17 @@
 import { useState } from 'react';
 import styles from './NeuralLinkMap.module.css';
 
-export default function GraphNode({ node, onClick, isHovered, onHover, onLeave }) {
+export default function GraphNode({ node, nodes, onClick, isHovered, onHover, onLeave }) {
   const [showTooltip, setShowTooltip] = useState(false);
+
+  // Find parent system for locked planets to show specific system name
+  const getParentSystemPage = () => {
+    if (node.type === 'planet' && node.isLocked && node.parentId) {
+      const parentSystem = nodes?.find(n => n.id === node.parentId && n.type === 'system');
+      return parentSystem?.data?.page || 'system';
+    }
+    return null;
+  };
 
   const handleMouseEnter = () => {
     setShowTooltip(true);
@@ -74,7 +83,7 @@ export default function GraphNode({ node, onClick, isHovered, onHover, onLeave }
       {/* Node circle - larger for better visibility */}
       <circle
         className={getNodeClass()}
-        r={node.type === 'system' ? 50 : 25}
+        r={node.type === 'system' ? 60 : 30}
       />
 
       {/* Current system glow effect */}
@@ -82,11 +91,11 @@ export default function GraphNode({ node, onClick, isHovered, onHover, onLeave }
         <>
           <circle
             className={styles.currentSystemGlow}
-            r={65}
+            r={80}
           />
           <circle
             className={styles.currentSystemPulse}
-            r={80}
+            r={100}
           />
         </>
       )}
@@ -97,13 +106,13 @@ export default function GraphNode({ node, onClick, isHovered, onHover, onLeave }
           className={styles.lockIcon}
           textAnchor="middle"
           dy="0.35em"
-          fontSize="18"
+          fontSize="22"
         >
           🔒
         </text>
       )}
 
-      {/* System code label */}
+      {/* System page name label - inside the circle */}
       {node.type === 'system' && (
         <text
           className={styles.systemCode}
@@ -112,36 +121,70 @@ export default function GraphNode({ node, onClick, isHovered, onHover, onLeave }
           fontSize="16"
           fontWeight="bold"
         >
-          {node.code}
+          {node.data?.page || node.code}
         </text>
       )}
 
-      {/* Node label below - larger font */}
-      <text
-        className={styles.nodeLabel}
-        textAnchor="middle"
-        dy={node.type === 'system' ? 75 : 45}
-        fontSize={node.type === 'system' ? 16 : 13}
-      >
-        {node.label}
-      </text>
+      {/* Node label below - OUTSIDE the circle, larger font */}
+      {/* Show label only for systems and unlocked planets (hides locked planet labels to prevent overlap) */}
+      {(node.type === 'system' || !node.isLocked) && (
+        <>
+          <text
+            className={styles.nodeLabel}
+            textAnchor="middle"
+            dy={node.type === 'system' ? 90 : 55}
+            fontSize={node.type === 'system' ? 18 : 15}
+            fontWeight="500"
+          >
+            {node.label}
+          </text>
 
-      {/* Tooltip on hover */}
+          {/* "Click to visit" hint text below planet name */}
+          {node.type === 'planet' && !node.isLocked && (
+            <text
+              className={styles.clickHint}
+              textAnchor="middle"
+              dy={70}
+              fontSize="11"
+              fontWeight="400"
+              opacity="0.7"
+            >
+              Click to visit
+            </text>
+          )}
+
+          {/* "Click to warp" hint text below system name */}
+          {node.type === 'system' && !node.isCurrent && (
+            <text
+              className={styles.clickHint}
+              textAnchor="middle"
+              dy={108}
+              fontSize="11"
+              fontWeight="400"
+              opacity="0.7"
+            >
+              Click to warp
+            </text>
+          )}
+        </>
+      )}
+
+      {/* Tooltip on hover - wider for long text */}
       {showTooltip && (
         <g className={styles.tooltip}>
           <rect
-            x={-80}
-            y={-90}
-            width={160}
-            height={60}
+            x={-140}
+            y={-100}
+            width={280}
+            height={70}
             rx={8}
             className={styles.tooltipBg}
           />
           <text
             className={styles.tooltipTitle}
             textAnchor="middle"
-            y={-70}
-            fontSize="12"
+            y={-75}
+            fontSize="13"
             fontWeight="bold"
           >
             {node.label}
@@ -149,12 +192,12 @@ export default function GraphNode({ node, onClick, isHovered, onHover, onLeave }
           <text
             className={styles.tooltipText}
             textAnchor="middle"
-            y={-50}
-            fontSize="10"
+            y={-52}
+            fontSize="13"
           >
             {node.type === 'system' ?
-              (node.isCurrent ? 'Current System' : 'Click to warp') :
-              (node.isLocked ? `Locked - Warp to ${node.data.system || 'system'} first` : 'Click to visit')
+              (node.isCurrent ? `Current: ${node.data?.page || 'System'}` : `${node.data?.page || 'System'} - Click to warp`) :
+              (node.isLocked ? `Locked - Go to ${getParentSystemPage()} first` : 'Click to visit')
             }
           </text>
         </g>

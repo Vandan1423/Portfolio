@@ -1,12 +1,15 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, Suspense, lazy } from "react";
 import * as THREE from "three";
 import { getSectionData } from "../../data/sectionData";
-import { useTutorial } from "../../context/TutorialContext";
+import { useAI } from "../../context/AIContext";
 import PlanetInfoPanel from "../UI/PlanetInfoPanel";
 import useKeyboardShortcut from "../../hooks/useKeyboardShortcut";
 import DockingSpacecraft from "./DockingSpacecraft";
+
+// Lazy load Sagittarius Terminal
+const SagittariusTerminal = lazy(() => import("../AI/SagittariusTerminal"));
 
 // Camera configuration
 const CAMERA_POSITION = [0, 0, 15];
@@ -76,8 +79,8 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Get section data using both systemId and planet's sectionId
     const planetData = getSectionData(systemId, planet?.sectionId);
 
-    // Tutorial context
-    const { isActive: tutorialActive, currentStep: tutorialStep, completeStep: tutorialCompleteStep, nextStep: tutorialNextStep } = useTutorial();
+    // AI context for terminal
+    const { openTerminal } = useAI();
 
     // Keyboard shortcut for docking sequence (D key)
     const { isActive: isDockTriggered, setIsActive: setDockTriggered } =
@@ -90,21 +93,32 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Docking state
     const [isDocking, setIsDocking] = useState(false);
 
+    // Keyboard shortcut for opening Sagittarius Terminal (T key)
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            if (e.key === 't' || e.key === 'T') {
+                // Ignore if user is typing in an input field
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                openTerminal();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyPress);
+        return () => window.removeEventListener("keydown", handleKeyPress);
+    }, [openTerminal]);
+
     // Handle docking trigger
     useEffect(() => {
         if (isDockTriggered && !isDocking) {
             const timer = setTimeout(() => {
                 setIsDocking(true);
                 setDockTriggered(false);
-
-                // Tutorial: Clear UI when docking starts so user can watch animation
-                if (tutorialActive && tutorialStep === 'PLANET_DOCKING') {
-                    tutorialNextStep('DOCKING_IN_PROGRESS');
-                }
             }, 0);
             return () => clearTimeout(timer);
         }
-    }, [isDockTriggered, isDocking, setDockTriggered, tutorialActive, tutorialStep, tutorialNextStep]);
+    }, [isDockTriggered, isDocking, setDockTriggered]);
 
     // Handle docking cancellation
     useEffect(() => {
@@ -120,17 +134,6 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Handle docking completion
     const handleDockComplete = () => {
         setIsDocking(false);
-
-        // Tutorial: Complete docking and advance to explore content
-        if (tutorialActive && tutorialStep === 'DOCKING_IN_PROGRESS') {
-            tutorialCompleteStep('DOCKING_IN_PROGRESS', {
-                id: 'space-captain',
-                icon: '🎯',
-                name: "SPACE CAPTAIN",
-                description: "Successfully docked at your first planet"
-            });
-            tutorialNextStep('EXPLORE_CONTENT');
-        }
 
         // Trigger the docking complete callback (which handles navigation)
         if (onDockComplete) {
@@ -314,6 +317,11 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                     </div>
                 </div>
             )}
+
+            {/* Sagittarius Terminal - Opens with T key */}
+            <Suspense fallback={null}>
+                <SagittariusTerminal />
+            </Suspense>
         </div>
     );
 };

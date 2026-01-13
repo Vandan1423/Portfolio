@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { NavigationProvider } from './context/NavigationContext';
 import { StarSystemProvider } from './context/StarSystemContext';
-import { TutorialProvider } from './context/TutorialContext';
 import { AIProvider } from './context/AIContext';
 import RocketLoader from './components/Loader/RocketLoader';
 import App from './App.jsx';
@@ -13,11 +12,9 @@ createRoot(document.getElementById('root')).render(
     <RocketLoader>
       <NavigationProvider>
         <StarSystemProvider>
-          <TutorialProvider>
-            <AIProvider>
-              <App />
-            </AIProvider>
-          </TutorialProvider>
+          <AIProvider>
+            <App />
+          </AIProvider>
         </StarSystemProvider>
       </NavigationProvider>
     </RocketLoader>

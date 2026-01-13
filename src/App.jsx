@@ -4,14 +4,10 @@ import { useState, useRef, useEffect, useMemo, lazy, Suspense } from "react";
 import * as THREE from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
-import { useTutorial } from "./context/TutorialContext";
 import { useAI } from "./context/AIContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
-import HelpButton from "./components/UI/HelpButton";
-import ARIAButton from "./components/UI/ARIAButton";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
-import TutorialOverlay from "./components/Tutorial/TutorialOverlay";
 import "./App.css";
 
 // Lazy load heavy 3D components
@@ -21,9 +17,9 @@ const LaunchSequence = lazy(() => import("./components/3D/LaunchSequence"));
 const StarSystem = lazy(() => import("./components/3D/StarSystem"));
 const SpaceCubeMap = lazy(() => import("./components/3D/SpaceCubeMap"));
 const PlanetDetailScene = lazy(() => import("./components/3D/PlanetDetailScene"));
-const NavigationScreen = lazy(() => import("./components/UI/NavigationScreen"));
 const NeuralLinkMap = lazy(() => import("./components/UI/NeuralLinkMap"));
-const ARIATerminal = lazy(() => import("./components/AI/ARIATerminal"));
+const SagittariusTerminal = lazy(() => import("./components/AI/SagittariusTerminal"));
+const SagittariusAvatar = lazy(() => import("./components/UI/SagittariusAvatar"));
 
 // Lazy load page components
 const AboutMe = lazy(() => import("./pages/AboutMe/AboutMe"));
@@ -163,14 +159,10 @@ function App() {
         setSelectedPlanet,
         setTravelDestination,
         setCurrentSystemId,
-        starSystems,
     } = useStarSystem();
 
-    // Tutorial context
-    const { isActive: tutorialActive, currentStep: tutorialStep, nextStep: tutorialNextStep, completeStep: tutorialCompleteStep } = useTutorial();
-
     // AI context
-    const { openTerminal, closeTerminal } = useAI();
+    const { openTerminal } = useAI();
 
     // Component state
     const [currentPhase, setCurrentPhase] = useState("cockpit");
@@ -179,7 +171,6 @@ function App() {
     const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
     const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(true);
     const [isFullscreenCheckComplete, setIsFullscreenCheckComplete] = useState(false);
-    const [useNeuralLinkMap, setUseNeuralLinkMap] = useState(true); // Use new Neural Link Map instead of old NavigationScreen
 
     // Refs for 3D scene management
     const cameraRef = useRef();
@@ -253,82 +244,8 @@ function App() {
 
         if (isReturningToExploration) {
             isCameraTransitioningRef.current = true;
-
-            // Tutorial: When returning from content page to 3D space
-            if (tutorialActive && tutorialStep === 'EXPLORE_CONTENT') {
-                setTimeout(() => {
-                    tutorialNextStep('REOPEN_NAV_FOR_A2');
-                }, 1000);
-            }
         }
-    }, [currentPage, currentPhase, tutorialActive, tutorialStep, tutorialNextStep]);
-
-    // Tutorial: Detect camera movement for EXPLORATION_ARRIVAL -> NAVIGATION_PROMPT
-    useEffect(() => {
-        if (!tutorialActive || tutorialStep !== 'EXPLORATION_ARRIVAL') return;
-
-        let hasInteracted = false;
-        let mouseDownPos = { x: 0, y: 0 };
-        let hasSignificantMovement = false;
-        let wheelCount = 0;
-        const MIN_DRAG_DISTANCE = 50; // pixels
-        const MIN_WHEEL_EVENTS = 3; // scroll events
-
-        const completeStep = () => {
-            if (!hasInteracted) {
-                hasInteracted = true;
-                tutorialCompleteStep('EXPLORATION_ARRIVAL', {
-                    id: 'pilots-license',
-                    icon: '🚀',
-                    name: "PILOT'S LICENSE",
-                    description: "Successfully completed your first wormhole jump"
-                });
-                tutorialNextStep('NAVIGATION_PROMPT');
-            }
-        };
-
-        const handleMouseDown = (e) => {
-            mouseDownPos = { x: e.clientX, y: e.clientY };
-            hasSignificantMovement = false;
-        };
-
-        const handleMouseMove = (e) => {
-            if (mouseDownPos.x === 0 && mouseDownPos.y === 0) return;
-
-            const distance = Math.sqrt(
-                Math.pow(e.clientX - mouseDownPos.x, 2) +
-                Math.pow(e.clientY - mouseDownPos.y, 2)
-            );
-
-            if (distance > MIN_DRAG_DISTANCE && !hasSignificantMovement) {
-                hasSignificantMovement = true;
-                completeStep();
-            }
-        };
-
-        const handleMouseUp = () => {
-            mouseDownPos = { x: 0, y: 0 };
-        };
-
-        const handleWheel = () => {
-            wheelCount++;
-            if (wheelCount >= MIN_WHEEL_EVENTS) {
-                completeStep();
-            }
-        };
-
-        window.addEventListener('mousedown', handleMouseDown);
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('mouseup', handleMouseUp);
-        window.addEventListener('wheel', handleWheel);
-
-        return () => {
-            window.removeEventListener('mousedown', handleMouseDown);
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('mouseup', handleMouseUp);
-            window.removeEventListener('wheel', handleWheel);
-        };
-    }, [tutorialActive, tutorialStep, tutorialCompleteStep, tutorialNextStep]);
+    }, [currentPage, currentPhase]);
 
     // Handler for launch command from cockpit terminal
     const handleLaunchCommand = (command) => {
@@ -406,26 +323,6 @@ function App() {
         return () => window.removeEventListener("keydown", handleKeyPress);
     }, [openTerminal]);
 
-    // Tutorial: Detect "N" key press for various steps
-    useEffect(() => {
-        if (!tutorialActive || !isNavigationVisible) return;
-
-        if (tutorialStep === 'NAVIGATION_PROMPT') {
-            tutorialCompleteStep('NAVIGATION_PROMPT', {
-                id: 'navigator',
-                icon: '🧭',
-                name: "NAVIGATOR",
-                description: "Accessed tactical navigation"
-            });
-            tutorialNextStep('NAV_LOCAL_SECTOR');
-        } else if (tutorialStep === 'REOPEN_NAV_FOR_A2') {
-            tutorialNextStep('NAV_TACTICAL_MAP');
-        } else if (tutorialStep === 'REOPEN_NAV_FOR_A3') {
-            tutorialNextStep('NAV_WARP_DRIVE');
-        }
-        // Note: Tutorial now shows spotlight on first planet/system instead of auto-minimizing
-    }, [isNavigationVisible, tutorialActive, tutorialStep, tutorialCompleteStep, tutorialNextStep]);
-
     useKeyboardShortcut("Escape", () => {
         if (currentPhase === "planet-detail") {
             setSelectedPlanet(null);
@@ -457,13 +354,6 @@ function App() {
 
     return (
         <div className="w-full h-screen bg-deep-space relative overflow-hidden">
-            {/* Tutorial Overlay - Rendered globally so it shows on all pages */}
-            <TutorialOverlay
-                currentPhase={currentPhase}
-                currentPage={currentPage}
-                isNavigationVisible={isNavigationVisible}
-            />
-
             {/* Fullscreen prompt - shows on initial load if not already in fullscreen */}
             {isFullscreenCheckComplete && showFullscreenPrompt && (
                 <FullscreenPrompt onDismiss={() => setShowFullscreenPrompt(false)} />
@@ -586,24 +476,11 @@ function App() {
                                                 `ARRIVED AT ${destinationSystem.name}`
                                             );
                                             setTravelDestination(null);
-
-                                            // Tutorial: Show arrival message after wormhole jump (user will click FINISH)
-                                            if (tutorialActive && tutorialStep === 'SELECT_DESTINATION') {
-                                                setTimeout(() => {
-                                                    tutorialNextStep('SYSTEM_ARRIVAL');
-                                                }, 1000);
-                                            }
                                         } else {
                                             setSystemStatus("EXPLORATION MODE");
                                         }
 
                                         setTravelPhase(null);
-
-                                        // Tutorial: Activate tutorial after launch sequence
-                                        if (!tutorialActive && tutorialStep === 'WAITING_FOR_LAUNCH') {
-                                            // Activate tutorial and start from exploration
-                                            tutorialNextStep('EXPLORATION_ARRIVAL');
-                                        }
                                     }}
                                 />
                             </Suspense>
@@ -631,43 +508,21 @@ function App() {
                     {/* Navigation screen for exploration phase */}
                     {currentPhase === "exploration" && (
                         <Suspense fallback={null}>
-                            {useNeuralLinkMap ? (
-                                <NeuralLinkMap
-                                    isVisible={isNavigationVisible}
-                                    onClose={() => setNavigationVisible(false)}
-                                    onPlanetSelect={(planet) => {
-                                        setSelectedPlanet(planet);
-                                        setTimeout(() => {
-                                            setCurrentPhase("planet-detail");
-                                            setNavigationVisible(false);
-                                        }, TRANSITION_DELAYS.PLANET_SELECTION);
-                                    }}
-                                    onSystemTravel={(systemId) => {
-                                        handleSystemTravel(systemId);
+                            <NeuralLinkMap
+                                isVisible={isNavigationVisible}
+                                onClose={() => setNavigationVisible(false)}
+                                onPlanetSelect={(planet) => {
+                                    setSelectedPlanet(planet);
+                                    setTimeout(() => {
+                                        setCurrentPhase("planet-detail");
                                         setNavigationVisible(false);
-                                    }}
-                                />
-                            ) : (
-                                <NavigationScreen
-                                    isVisible={isNavigationVisible}
-                                    onClose={() => setNavigationVisible(false)}
-                                    onPlanetSelect={(planet) => {
-                                        setSelectedPlanet(planet);
-                                        setTimeout(() => {
-                                            setCurrentPhase("planet-detail");
-                                            setNavigationVisible(false);
-                                        }, TRANSITION_DELAYS.PLANET_SELECTION);
-                                    }}
-                                    onSystemTravelSelect={(systemId) => {
-                                        handleSystemTravel(systemId);
-                                        setNavigationVisible(false);
-                                    }}
-                                    currentSystemId={currentSystem?.id}
-                                    selectedPlanet={selectedPlanet}
-                                    planets={currentSystem?.planets || []}
-                                    starSystems={starSystems}
-                                />
-                            )}
+                                    }, TRANSITION_DELAYS.PLANET_SELECTION);
+                                }}
+                                onSystemTravel={(systemId) => {
+                                    handleSystemTravel(systemId);
+                                    setNavigationVisible(false);
+                                }}
+                            />
                         </Suspense>
                     )}
 
@@ -682,15 +537,19 @@ function App() {
                         <div className="absolute inset-0 bg-black z-30 pointer-events-none" />
                     )}
 
-                    {/* Help Button - Available on all pages */}
-                    <HelpButton />
+                    {/* Sagittarius Avatar - Floating button to access AI */}
+                    {/* Hidden during cockpit, launching, and travel phases */}
+                    {currentPhase !== 'cockpit' && currentPhase !== 'launching' && !travelPhase && (
+                        <Suspense fallback={null}>
+                            <SagittariusAvatar
+                                positionVariant={currentPhase === 'planet-detail' ? 'planetDetail' : null}
+                            />
+                        </Suspense>
+                    )}
 
-                    {/* ARIA Button - Floating button to open terminal (hidden in cockpit/launching phase) */}
-                    <ARIAButton hide={currentPhase === "cockpit" || currentPhase === "launching"} />
-
-                    {/* ARIA Terminal - Opens with T key */}
+                    {/* Sagittarius Terminal - Opens with T key or Avatar click */}
                     <Suspense fallback={null}>
-                        <ARIATerminal />
+                        <SagittariusTerminal />
                     </Suspense>
                 </>
             )}

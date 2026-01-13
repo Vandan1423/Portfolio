@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import styles from './ARIATerminal.module.css';
+import styles from './SagittariusTerminal.module.css';
 
 export default function TerminalMessage({ message, withTypewriter = false }) {
   const [displayedText, setDisplayedText] = useState('');

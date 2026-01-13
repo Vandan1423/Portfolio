@@ -1,11 +1,11 @@
 /**
- * ARIA Button Styles
+ * Sagittarius Button Styles
  *
  * Floating animated button with pulsing effects
  */
 
 /* ===== Container ===== */
-.ariaButtonContainer {
+.sagittariusButtonContainer {
   position: fixed;
   bottom: 30px;
   right: 30px;
@@ -51,7 +51,7 @@
 }
 
 /* ===== Button ===== */
-.ariaButton {
+.sagittariusButton {
   position: relative;
   width: 70px;
   height: 70px;
@@ -79,7 +79,7 @@
   }
 }
 
-.ariaButton:hover {
+.sagittariusButton:hover {
   transform: scale(1.1) translateY(-5px);
   box-shadow:
     0 0 30px rgba(0, 255, 65, 0.8),
@@ -88,12 +88,12 @@
   border-color: #00ffff;
 }
 
-.ariaButton:active {
+.sagittariusButton:active {
   transform: scale(0.95) translateY(-2px);
 }
 
 /* ===== Badge Content ===== */
-.ariaBadge {
+.sagittariusBadge {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -102,7 +102,7 @@
   z-index: 2;
 }
 
-.ariaText {
+.sagittariusText {
   font-family: 'Courier New', Courier, monospace;
   font-size: 18px;
   font-weight: bold;
@@ -111,7 +111,7 @@
   letter-spacing: 2px;
 }
 
-.ariaSubtext {
+.sagittariusSubtext {
   font-family: 'Courier New', Courier, monospace;
   font-size: 10px;
   font-weight: bold;
@@ -156,21 +156,21 @@
 
 /* ===== Mobile Responsive ===== */
 @media (max-width: 768px) {
-  .ariaButtonContainer {
+  .sagittariusButtonContainer {
     bottom: 20px;
     right: 20px;
   }
 
-  .ariaButton {
+  .sagittariusButton {
     width: 60px;
     height: 60px;
   }
 
-  .ariaText {
+  .sagittariusText {
     font-size: 16px;
   }
 
-  .ariaSubtext {
+  .sagittariusSubtext {
     font-size: 9px;
   }
 
@@ -186,14 +186,14 @@
 
 /* ===== Accessibility ===== */
 @media (prefers-reduced-motion: reduce) {
-  .ariaButton,
+  .sagittariusButton,
   .pulseRing,
   .pulseRing2,
   .tooltip {
     animation: none;
   }
 
-  .ariaButton:hover {
+  .sagittariusButton:hover {
     transform: scale(1.05);
   }
 }

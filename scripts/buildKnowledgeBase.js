@@ -2,7 +2,7 @@
  * Knowledge Base Builder Script
  *
  * Extracts portfolio data from all data files and builds a structured JSON
- * knowledge base for the AI assistant (ARIA) to use for answering questions.
+ * knowledge base for the AI assistant (Sagittarius) to use for answering questions.
  *
  * Run this script with: node scripts/buildKnowledgeBase.js
  */

@@ -1,5 +1,5 @@
 /**
- * ARIA Terminal Component
+ * Sagittarius Terminal Component
  *
  * Main terminal interface for navigation and AI assistance.
  * Features:
@@ -16,9 +16,9 @@ import { useNavigation } from '../../context/NavigationContext';
 import TerminalMessage from './TerminalMessage';
 import { processInput } from '../../services/AIService';
 import { STAR_SYSTEMS } from '../../data/starSystemsData';
-import styles from './ARIATerminal.module.css';
+import styles from './SagittariusTerminal.module.css';
 
-export default function ARIATerminal() {
+export default function SagittariusTerminal() {
   const {
     isTerminalOpen,
     closeTerminal,
@@ -257,13 +257,57 @@ Examples: "what projects has vandan built?"
       const context = {
         currentSystem: STAR_SYSTEMS[currentSystemId]?.name || 'Unknown',
         currentPlanet: null,
-        lastVisited: commandHistory[commandHistory.length - 1] || 'None'
+        lastVisited: commandHistory[commandHistory.length - 1] || 'None',
+        visitHistory: commandHistory.slice(-5)
       };
 
       const result = await processInput(query, context);
 
       if (result.success) {
-        addResponseMessage(result.response);
+        const response = result.response;
+        
+        // Check if AI response contains navigation command
+        const navMatch = response.match(/\[NAVIGATE:([\w-]+)(?::([\w-]+))?\]/);
+        
+        if (navMatch) {
+          const [fullMatch, systemId, planetId] = navMatch;
+          // Remove the navigation command from display text
+          const displayText = response.replace(fullMatch, '').trim();
+          
+          addResponseMessage(displayText);
+          
+          // Execute navigation after brief delay
+          setTimeout(() => {
+            if (planetId) {
+              // Navigate to specific planet
+              const system = STAR_SYSTEMS[systemId];
+              if (system) {
+                const planet = system.planets.find(p => p.id === planetId || p.sectionId === planetId);
+                if (planet) {
+                  closeTerminal();
+                  setTimeout(() => {
+                    onNavigate(system.page.toLowerCase().replace(' ', '-'), planet.sectionId);
+                  }, 300);
+                }
+              }
+            } else {
+              // Navigate to system
+              const system = STAR_SYSTEMS[systemId];
+              if (system && system.id !== currentSystemId) {
+                closeTerminal();
+                setTimeout(() => {
+                  if (window.location.pathname !== '/') {
+                    onNavigate('3d-portfolio');
+                  }
+                  setTravelDestination(system.id);
+                  setTravelPhase('preparing');
+                }, 300);
+              }
+            }
+          }, 1500);
+        } else {
+          addResponseMessage(response);
+        }
       } else {
         addResponseMessage(result.response, true);
       }
@@ -301,7 +345,7 @@ Examples: "what projects has vandan built?"
         {/* Header */}
         <div className={styles.terminalHeader}>
           <div className={styles.headerTitle}>
-            ARIA NAVIGATION TERMINAL v2.5
+            SAGITTARIUS NAVIGATION TERMINAL v1.0
           </div>
           <button
             className={styles.closeButton}
@@ -323,7 +367,7 @@ Examples: "what projects has vandan built?"
           ))}
           {isTyping && (
             <div className={styles.typingIndicator}>
-              ARIA is processing...
+              Sagittarius is processing...
             </div>
           )}
           <div ref={messagesEndRef} />

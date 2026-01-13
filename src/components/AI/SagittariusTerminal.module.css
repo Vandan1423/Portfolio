@@ -1,8 +1,8 @@
 /**
- * ARIA Terminal Styles
+ * Sagittarius Terminal Styles
  *
  * CRT terminal aesthetic with:
- * - Classic green monospace text
+ * - Classic cyan/blue monospace text
  * - Scanline overlay effect
  * - Cyan command highlights
  * - Blinking cursor animation
@@ -40,12 +40,12 @@
   max-width: 900px;
   height: 600px;
   background: rgba(0, 0, 0, 0.95);
-  border: 2px solid #00ff41;
+  border: 2px solid #00d4ff;
   border-radius: 8px;
   box-shadow:
-    0 0 20px rgba(0, 255, 65, 0.3),
-    0 0 40px rgba(0, 255, 65, 0.1),
-    inset 0 0 60px rgba(0, 255, 65, 0.05);
+    0 0 20px rgba(0, 212, 255, 0.3),
+    0 0 40px rgba(0, 212, 255, 0.1),
+    inset 0 0 60px rgba(0, 212, 255, 0.05);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -71,8 +71,8 @@
 
 /* ===== Terminal Header ===== */
 .terminalHeader {
-  background: rgba(0, 255, 65, 0.1);
-  border-bottom: 1px solid #00ff41;
+  background: rgba(0, 212, 255, 0.1);
+  border-bottom: 1px solid #00d4ff;
   padding: 12px 20px;
   display: flex;
   align-items: center;
@@ -84,16 +84,16 @@
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
   font-weight: bold;
-  color: #00ff41;
+  color: #00d4ff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
 .closeButton {
   background: transparent;
-  border: 1px solid #00ff41;
-  color: #00ff41;
+  border: 1px solid #00d4ff;
+  color: #00d4ff;
   font-family: 'Courier New', Courier, monospace;
   font-size: 18px;
   width: 32px;
@@ -107,8 +107,8 @@
 }
 
 .closeButton:hover {
-  background: rgba(0, 255, 65, 0.2);
-  box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+  background: rgba(0, 212, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
   transform: scale(1.05);
 }
 
@@ -124,12 +124,12 @@
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
   line-height: 1.6;
-  color: #00ff41;
+  color: #00d4ff;
   position: relative;
 
   /* Custom scrollbar */
   scrollbar-width: thin;
-  scrollbar-color: #00ff41 rgba(0, 255, 65, 0.1);
+  scrollbar-color: #00d4ff rgba(0, 212, 255, 0.1);
 }
 
 .terminalMessages::-webkit-scrollbar {
@@ -137,16 +137,16 @@
 }
 
 .terminalMessages::-webkit-scrollbar-track {
-  background: rgba(0, 255, 65, 0.05);
+  background: rgba(0, 212, 255, 0.05);
 }
 
 .terminalMessages::-webkit-scrollbar-thumb {
-  background: #00ff41;
+  background: #00d4ff;
   border-radius: 4px;
 }
 
 .terminalMessages::-webkit-scrollbar-thumb:hover {
-  background: #00dd37;
+  background: #00b8e6;
 }
 
 /* ===== Message Types ===== */
@@ -157,19 +157,19 @@
 }
 
 .systemMessage {
-  color: #00ff41;
+  color: #00d4ff;
   opacity: 0.9;
   font-weight: normal;
 }
 
 .commandMessage {
-  color: #00d4ff; /* Cyan for user commands */
+  color: #00ffff; /* Bright cyan for user commands */
   font-weight: bold;
-  text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 .responseMessage {
-  color: #00ff41;
+  color: #00d4ff;
   opacity: 0.95;
 }
 
@@ -181,17 +181,17 @@
 
 /* ===== Highlighted Commands ===== */
 .highlightedCommand {
-  color: #00d4ff;
+  color: #00ffff;
   font-weight: bold;
-  background: rgba(0, 212, 255, 0.1);
+  background: rgba(0, 255, 255, 0.1);
   padding: 2px 6px;
   border-radius: 3px;
-  text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 /* ===== Typing Indicator ===== */
 .typingIndicator {
-  color: #00ff41;
+  color: #00d4ff;
   opacity: 0.7;
   font-style: italic;
   animation: pulse 1.5s ease-in-out infinite;
@@ -211,7 +211,7 @@
   display: inline-block;
   margin-left: 2px;
   animation: blink 1s step-end infinite;
-  color: #00ff41;
+  color: #00d4ff;
 }
 
 @keyframes blink {
@@ -225,8 +225,8 @@
 
 /* ===== Input Area ===== */
 .terminalInput {
-  background: rgba(0, 255, 65, 0.05);
-  border-top: 1px solid #00ff41;
+  background: rgba(0, 212, 255, 0.05);
+  border-top: 1px solid #00d4ff;
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -235,11 +235,11 @@
 }
 
 .inputPrompt {
-  color: #00d4ff;
+  color: #00ffff;
   font-family: 'Courier New', Courier, monospace;
   font-size: 16px;
   font-weight: bold;
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
   flex-shrink: 0;
 }
 
@@ -248,15 +248,15 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #00ff41;
+  color: #00d4ff;
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
-  caret-color: #00ff41;
+  caret-color: #00d4ff;
   padding: 0;
 }
 
 .input::placeholder {
-  color: rgba(0, 255, 65, 0.4);
+  color: rgba(0, 212, 255, 0.4);
   font-style: italic;
 }
 
@@ -267,13 +267,13 @@
 
 /* ===== Footer ===== */
 .terminalFooter {
-  background: rgba(0, 255, 65, 0.05);
-  border-top: 1px solid rgba(0, 255, 65, 0.3);
+  background: rgba(0, 212, 255, 0.05);
+  border-top: 1px solid rgba(0, 212, 255, 0.3);
   padding: 8px 20px;
   text-align: center;
   font-family: 'Courier New', Courier, monospace;
   font-size: 11px;
-  color: rgba(0, 255, 65, 0.6);
+  color: rgba(0, 212, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 1px;
   flex-shrink: 0;
@@ -291,7 +291,7 @@
   background: linear-gradient(
     to bottom,
     transparent 50%,
-    rgba(0, 255, 65, 0.02) 51%
+    rgba(0, 212, 255, 0.02) 51%
   );
   background-size: 100% 4px;
   animation: scanlineMove 8s linear infinite;
@@ -315,8 +315,8 @@
     max-width: none;
     border-radius: 0;
     border: none;
-    border-left: 2px solid #00ff41;
-    border-right: 2px solid #00ff41;
+    border-left: 2px solid #00d4ff;
+    border-right: 2px solid #00d4ff;
   }
 
   .terminalHeader {
@@ -399,7 +399,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 255, 65, 0.02);
+  background: rgba(0, 212, 255, 0.02);
   pointer-events: none;
   animation: flicker 0.15s infinite;
   opacity: 0.5;
