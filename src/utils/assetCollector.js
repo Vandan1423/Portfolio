@@ -11,7 +11,6 @@
  */
 
 import { STAR_SYSTEMS } from '../data/starSystemsData';
-import projectsData from '../data/projectsData';
 
 // Cube map texture URLs - LOCAL
 const CUBE_MAP_IMAGES = [
@@ -26,7 +25,7 @@ const CUBE_MAP_IMAGES = [
 // CRITICAL: Core 3D models that must load during loading screen
 // These are used directly in StarSystem.jsx and not in starSystemsData
 const CORE_MODELS = [
-    { url: '/models/Sun.glb', name: 'Sun', priority: 'critical' }, // 6.2MB - center of star system
+    { url: '/models/Sun.glb', name: 'Sun', priority: 'critical' }, // 1.5MB - center of star system
 ];
 
 /**
@@ -42,7 +41,6 @@ export const collectAssets = () => {
 
     // Track unique URLs to avoid duplicates
     const seenModelUrls = new Set();
-    const seenImageUrls = new Set();
 
     // 0. Add CRITICAL core models first (Sun.glb) - highest priority
     CORE_MODELS.forEach(model => {
@@ -66,7 +64,7 @@ export const collectAssets = () => {
                 // Only add unique URLs
                 if (!seenModelUrls.has(url)) {
                     seenModelUrls.add(url);
-                    // Saturn.glb is 2.1MB - still load it with planets
+                    // Saturn.glb is 480KB - still load it with planets
                     // All planet models are critical since StarSystem needs them immediately
                     assets.models.push({
                         url,
@@ -82,7 +80,7 @@ export const collectAssets = () => {
     }
 
     // 2. Add local cockpit model (medium priority - loads during loading screen)
-    // Large model (12MB) - needed for first scene (cockpit interior)
+    // Model (3MB) - needed for first scene (cockpit interior)
     assets.models.push({
         url: '/models/SpaceshipCockpit.glb',
         name: 'Cockpit',
@@ -100,50 +98,7 @@ export const collectAssets = () => {
         });
     });
 
-    // 4. Collect project screenshots
-    try {
-        projectsData.forEach(project => {
-            if (project.screenshots && Array.isArray(project.screenshots)) {
-                project.screenshots.forEach((url, idx) => {
-                    if (!seenImageUrls.has(url)) {
-                        seenImageUrls.add(url);
-                        assets.images.push({
-                            url,
-                            name: `${project.name} - Screenshot ${idx + 1}`,
-                            type: 'image',
-                            priority: 'low' // Project images can load last
-                        });
-                    }
-                });
-            }
-        });
-    } catch (error) {
-        console.error('Error collecting project images:', error);
-    }
-
-    // 5. Collect additional images (avatar, backgrounds)
-    // Avatar from AboutMe page
-    const avatarUrl = '/images/Avatar.jpeg';
-    if (!seenImageUrls.has(avatarUrl)) {
-        assets.images.push({
-            url: avatarUrl,
-            name: 'Avatar',
-            type: 'image',
-            priority: 'medium'
-        });
-    }
-
-    // PlanetDetailScene CSS background (using cube map texture)
-    const planetDetailBgUrl = '/images/SpaceCubeMap/Star2.jpeg';
-    if (!seenImageUrls.has(planetDetailBgUrl)) {
-        seenImageUrls.add(planetDetailBgUrl);
-        assets.images.push({
-            url: planetDetailBgUrl,
-            name: 'Planet Detail Background',
-            type: 'image',
-            priority: 'high' // High priority since used in planet detail scenes
-        });
-    }
+    // Note: Screenshots and avatar are NOT preloaded - they load on demand when needed
 
     return assets;
 };
