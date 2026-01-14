@@ -184,20 +184,29 @@ const useAssetPreloader = (onComplete) => {
                 }
 
                 // TIERED LOADING STRATEGY:
-                // Phase 1: Critical assets (cube textures) - fast, blocks screen
-                // Phase 2: Medium assets (cockpit) - loads during screen, doesn't block
-                // Phase 3: Deferred assets (heavy models) - background after app loads
+                // Phase 1: Critical assets (Sun, planets, cube textures) - MUST load before app
+                // Phase 2: Medium assets (cockpit) - loads during screen, with progress
+                // Phase 3: Deferred assets (project images) - background after app loads
 
-                // Get critical assets only (high priority)
+                // Get critical assets (Sun, planets, cube maps)
                 const criticalAssets = getCriticalAssetsOnly();
-                const criticalCount = criticalAssets.length;
+                
+                // Get medium priority assets (cockpit) - also load during loading screen
+                const allAssets = collectAssets();
+                const mediumAssets = [...allAssets.models, ...allAssets.images].filter(
+                    asset => asset.priority === 'medium'
+                );
+                
+                // Combine for progress tracking - all load during loading screen
+                const essentialAssets = [...criticalAssets, ...mediumAssets];
+                const essentialCount = essentialAssets.length;
 
-                // For progress tracking, only count critical assets
-                setTotalAssets(criticalCount);
+                // For progress tracking, count all essential assets
+                setTotalAssets(essentialCount);
 
-                console.log(`📦 Loading ${criticalCount} critical assets (cube maps, textures)`);
+                console.log(`📦 Loading ${essentialCount} essential assets (Sun, planets, cube maps, cockpit)`);
 
-                if (criticalCount === 0) {
+                if (essentialCount === 0) {
                     setIsComplete(true);
                     if (onComplete) onComplete();
                     return;
@@ -205,9 +214,9 @@ const useAssetPreloader = (onComplete) => {
 
                 let loaded = 0;
 
-                // Phase 1: Load critical assets FAST
-                for (let i = 0; i < criticalAssets.length; i += CONCURRENT_LOAD_LIMIT) {
-                    const batch = criticalAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
+                // Load ALL essential assets (critical + medium) with progress tracking
+                for (let i = 0; i < essentialAssets.length; i += CONCURRENT_LOAD_LIMIT) {
+                    const batch = essentialAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
 
                     // Load batch concurrently
                     const results = await Promise.all(
@@ -217,7 +226,7 @@ const useAssetPreloader = (onComplete) => {
                     // Update progress for each asset in batch
                     results.forEach(result => {
                         loaded++;
-                        const progressPercent = (loaded / criticalCount) * 100;
+                        const progressPercent = (loaded / essentialCount) * 100;
 
                         setLoadedCount(loaded);
                         setProgress(progressPercent);
@@ -230,30 +239,13 @@ const useAssetPreloader = (onComplete) => {
                     });
 
                     // Small delay between batches
-                    if (i + CONCURRENT_LOAD_LIMIT < criticalAssets.length) {
+                    if (i + CONCURRENT_LOAD_LIMIT < essentialAssets.length) {
                         await new Promise(resolve => setTimeout(resolve, 50));
                     }
                 }
 
-                // Critical assets done!
-                console.log(`✅ Critical assets loaded!`);
-
-                // Phase 1.5: Load medium priority assets (cockpit) - still during loading screen
-                const allAssets = collectAssets();
-                const mediumAssets = [...allAssets.models, ...allAssets.images].filter(
-                    asset => asset.priority === 'medium'
-                );
-
-                if (mediumAssets.length > 0) {
-                    console.log(`📦 Loading ${mediumAssets.length} medium priority assets (cockpit)`);
-
-                    for (let i = 0; i < mediumAssets.length; i += CONCURRENT_LOAD_LIMIT) {
-                        const batch = mediumAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
-                        await Promise.all(batch.map(asset => preloadAsset(asset)));
-                    }
-
-                    console.log(`✅ Medium assets loaded (cockpit ready)`);
-                }
+                // All essential assets done!
+                console.log(`✅ All essential assets loaded (Sun, planets, cube maps, cockpit)!`);
 
                 // All essential assets loaded - show app!
                 setIsComplete(true);

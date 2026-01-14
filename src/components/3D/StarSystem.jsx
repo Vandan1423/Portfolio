@@ -1,4 +1,4 @@
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -443,5 +443,8 @@ const Planet = ({
 
 // Removed static preloads - models now load dynamically when component mounts
 // This significantly improves initial page load time
+
+// CRITICAL: Preload Sun.glb for useGLTF cache - this 6.2MB model is needed immediately
+useGLTF.preload('/models/Sun.glb');
 
 export default StarSystem;

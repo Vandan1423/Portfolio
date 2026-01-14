@@ -23,6 +23,12 @@ const CUBE_MAP_IMAGES = [
     '/images/SpaceCubeMap/Star6.jpeg', // Negative Z (back)
 ];
 
+// CRITICAL: Core 3D models that must load during loading screen
+// These are used directly in StarSystem.jsx and not in starSystemsData
+const CORE_MODELS = [
+    { url: '/models/Sun.glb', name: 'Sun', priority: 'critical' }, // 6.2MB - center of star system
+];
+
 /**
  * Collects all assets that need to be preloaded
  * @returns {Object} Object containing arrays of models, images, and cube textures
@@ -38,6 +44,19 @@ export const collectAssets = () => {
     const seenModelUrls = new Set();
     const seenImageUrls = new Set();
 
+    // 0. Add CRITICAL core models first (Sun.glb) - highest priority
+    CORE_MODELS.forEach(model => {
+        if (!seenModelUrls.has(model.url)) {
+            seenModelUrls.add(model.url);
+            assets.models.push({
+                url: model.url,
+                name: model.name,
+                type: 'local-model',
+                priority: model.priority
+            });
+        }
+    });
+
     // 1. Collect 3D models from star systems
     try {
         Object.values(STAR_SYSTEMS).forEach(system => {
@@ -47,14 +66,13 @@ export const collectAssets = () => {
                 // Only add unique URLs
                 if (!seenModelUrls.has(url)) {
                     seenModelUrls.add(url);
-                    // Saturn.glb is 12MB - mark as deferred to prevent blocking initial load
-                    // All other planet models are critical since StarSystem needs them immediately
-                    const isHeavyModel = url.includes('Saturn.glb');
+                    // Saturn.glb is 2.1MB - still load it with planets
+                    // All planet models are critical since StarSystem needs them immediately
                     assets.models.push({
                         url,
                         name: planet.name,
                         type: url.startsWith('http') ? 'model' : 'local-model',
-                        priority: isHeavyModel ? 'deferred' : 'high' // Planet models needed immediately
+                        priority: 'critical' // Planet models needed immediately - load during loading screen
                     });
                 }
             });
@@ -63,13 +81,13 @@ export const collectAssets = () => {
         console.error('Error collecting star system models:', error);
     }
 
-    // 2. Add local cockpit model (deferred - loads after initial view)
-    // Large model (12MB) - not needed until CockpitInterior component renders
-    assets.models.unshift({
+    // 2. Add local cockpit model (medium priority - loads during loading screen but after planets)
+    // Large model (12MB) - needed for CockpitInterior but can load after critical models
+    assets.models.push({
         url: '/models/SpaceshipCockpit.glb',
         name: 'Cockpit',
         type: 'local-model',
-        priority: 'deferred' // Loads in background, not blocking
+        priority: 'medium' // Loads after critical but still during loading screen
     });
 
     // 3. Collect cube map textures (high priority - needed for background)
@@ -132,7 +150,7 @@ export const collectAssets = () => {
 
 /**
  * Get only critical assets that block the initial load screen
- * Critical = 'high' priority: Cube map textures, planet models, planet detail background
+ * Critical = 'critical' or 'high' priority: Sun, planet models, cube map textures
  * These must load during the loading screen so they're ready when entering star system
  *
  * Medium priority (cockpit) loads after these but before app shows
@@ -149,9 +167,9 @@ export const getCriticalAssetsOnly = () => {
         ...assets.images
     ];
 
-    // Filter to only high priority assets (planet models + cube maps)
-    // These MUST be loaded before showing the app to avoid 3-minute delay
-    return allAssets.filter(asset => asset.priority === 'high');
+    // Filter to critical and high priority assets (Sun, planet models, cube maps)
+    // These MUST be loaded before showing the app to avoid models loading late
+    return allAssets.filter(asset => asset.priority === 'critical' || asset.priority === 'high');
 };
 
 /**
@@ -167,8 +185,9 @@ export const getDeferredAssets = () => {
         ...assets.images
     ];
 
-    // Return medium, low, and deferred priority assets
-    return allAssets.filter(asset => ['medium', 'low', 'deferred'].includes(asset.priority));
+    // Return only low and deferred priority assets (project images, etc.)
+    // Medium priority now loads during loading screen with critical assets
+    return allAssets.filter(asset => ['low', 'deferred'].includes(asset.priority));
 };
 
 /**
