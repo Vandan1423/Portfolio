@@ -12,8 +12,15 @@
 
 import { STAR_SYSTEMS } from '../data/starSystemsData';
 
-// Cockpit background image - single static image for cockpit scene
-const COCKPIT_BACKGROUND = '/images/SpaceCubeMap/Star2.jpeg';
+// Cube map texture URLs - LOCAL
+const CUBE_MAP_IMAGES = [
+    '/images/SpaceCubeMap/Star1.jpeg', // Positive X (right)
+    '/images/SpaceCubeMap/Star2.jpeg', // Negative X (left)
+    '/images/SpaceCubeMap/Star3.jpeg', // Positive Y (top)
+    '/images/SpaceCubeMap/Star4.jpeg', // Negative Y (bottom)
+    '/images/SpaceCubeMap/Star5.jpeg', // Positive Z (front)
+    '/images/SpaceCubeMap/Star6.jpeg', // Negative Z (back)
+];
 
 // CRITICAL: Core 3D models that must load during loading screen
 // These are used directly in StarSystem.jsx and not in starSystemsData
@@ -81,17 +88,17 @@ export const collectAssets = () => {
         priority: 'medium' // Loads during loading screen - needed for first scene
     });
 
-    // 3. Cockpit background image (high priority - needed for initial cockpit scene)
-    assets.images.push({
-        url: COCKPIT_BACKGROUND,
-        name: 'Cockpit Background',
-        type: 'image',
-        priority: 'high'
+    // 3. Collect cube map textures (high priority - needed for background in both cockpit and star system)
+    CUBE_MAP_IMAGES.forEach((url, idx) => {
+        assets.cubeTextures.push({
+            url,
+            name: `Space Texture ${idx + 1}`,
+            type: 'texture',
+            priority: 'high'
+        });
     });
 
-    // Note: Screenshots, avatar, and cube map textures are NOT preloaded
-    // - Cube maps load on-demand when entering star system
-    // - Screenshots and avatar load when their sections are viewed
+    // Note: Screenshots and avatar are NOT preloaded - they load on demand when needed
 
     return assets;
 };
