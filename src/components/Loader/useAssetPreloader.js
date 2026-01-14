@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { getCriticalAssetsOnly, getDeferredAssets, collectAssets } from '../../utils/assetCollector';
+import { getCriticalAssetsOnly, getDeferredAssets } from '../../utils/assetCollector';
 import * as THREE from 'three';
 import { getGLTFLoader } from '../../utils/dracoLoader';
 
@@ -108,14 +108,17 @@ const preloadImage = (asset) => {
 const preloadModel = (asset) => {
     const loadPromise = new Promise((resolve) => {
         try {
+            // First, tell useGLTF to preload (this caches for later use)
+            // Do this BEFORE loading to ensure cache is ready
+            useGLTF.preload(asset.url);
+            
             // Use Draco-enabled GLTF loader for compressed models
             const loader = getGLTFLoader();
 
             loader.load(
                 asset.url,
-                (gltf) => {
-                    // Also cache in useGLTF for later use
-                    useGLTF.preload(asset.url);
+                () => {
+                    // Model loaded successfully
                     resolve({ success: true, asset });
                 },
                 undefined,
@@ -185,28 +188,18 @@ const useAssetPreloader = (onComplete) => {
 
                 // TIERED LOADING STRATEGY:
                 // Phase 1: Critical assets (Sun, planets, cube textures) - MUST load before app
-                // Phase 2: Medium assets (cockpit) - loads during screen, with progress
-                // Phase 3: Deferred assets (project images) - background after app loads
+                // Phase 2: Deferred assets (cockpit, project images) - background after app loads
 
                 // Get critical assets (Sun, planets, cube maps)
                 const criticalAssets = getCriticalAssetsOnly();
-                
-                // Get medium priority assets (cockpit) - also load during loading screen
-                const allAssets = collectAssets();
-                const mediumAssets = [...allAssets.models, ...allAssets.images].filter(
-                    asset => asset.priority === 'medium'
-                );
-                
-                // Combine for progress tracking - all load during loading screen
-                const essentialAssets = [...criticalAssets, ...mediumAssets];
-                const essentialCount = essentialAssets.length;
+                const criticalCount = criticalAssets.length;
 
-                // For progress tracking, count all essential assets
-                setTotalAssets(essentialCount);
+                // For progress tracking, count critical assets only
+                setTotalAssets(criticalCount);
 
-                console.log(`📦 Loading ${essentialCount} essential assets (Sun, planets, cube maps, cockpit)`);
+                console.log(`📦 Loading ${criticalCount} critical assets (Sun, planets, cube maps)`);
 
-                if (essentialCount === 0) {
+                if (criticalCount === 0) {
                     setIsComplete(true);
                     if (onComplete) onComplete();
                     return;
@@ -214,9 +207,9 @@ const useAssetPreloader = (onComplete) => {
 
                 let loaded = 0;
 
-                // Load ALL essential assets (critical + medium) with progress tracking
-                for (let i = 0; i < essentialAssets.length; i += CONCURRENT_LOAD_LIMIT) {
-                    const batch = essentialAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
+                // Load ALL critical assets with progress tracking
+                for (let i = 0; i < criticalAssets.length; i += CONCURRENT_LOAD_LIMIT) {
+                    const batch = criticalAssets.slice(i, i + CONCURRENT_LOAD_LIMIT);
 
                     // Load batch concurrently
                     const results = await Promise.all(
@@ -226,7 +219,7 @@ const useAssetPreloader = (onComplete) => {
                     // Update progress for each asset in batch
                     results.forEach(result => {
                         loaded++;
-                        const progressPercent = (loaded / essentialCount) * 100;
+                        const progressPercent = (loaded / criticalCount) * 100;
 
                         setLoadedCount(loaded);
                         setProgress(progressPercent);
@@ -239,15 +232,15 @@ const useAssetPreloader = (onComplete) => {
                     });
 
                     // Small delay between batches
-                    if (i + CONCURRENT_LOAD_LIMIT < essentialAssets.length) {
+                    if (i + CONCURRENT_LOAD_LIMIT < criticalAssets.length) {
                         await new Promise(resolve => setTimeout(resolve, 50));
                     }
                 }
 
-                // All essential assets done!
-                console.log(`✅ All essential assets loaded (Sun, planets, cube maps, cockpit)!`);
+                // All critical assets done!
+                console.log(`✅ All critical assets loaded (Sun, planets, cube maps)!`);
 
-                // All essential assets loaded - show app!
+                // All critical assets loaded - show app!
                 setIsComplete(true);
 
                 // Call complete callback

@@ -81,13 +81,13 @@ export const collectAssets = () => {
         console.error('Error collecting star system models:', error);
     }
 
-    // 2. Add local cockpit model (medium priority - loads during loading screen but after planets)
-    // Large model (12MB) - needed for CockpitInterior but can load after critical models
+    // 2. Add local cockpit model (deferred - loads in background after app shows)
+    // Large model (12MB) - can load lazily while user goes through launch sequence
     assets.models.push({
         url: '/models/SpaceshipCockpit.glb',
         name: 'Cockpit',
         type: 'local-model',
-        priority: 'medium' // Loads after critical but still during loading screen
+        priority: 'deferred' // Loads in background, doesn't block loading screen
     });
 
     // 3. Collect cube map textures (high priority - needed for background)

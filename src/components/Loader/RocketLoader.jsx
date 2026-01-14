@@ -71,6 +71,11 @@ const RocketLoader = ({ children }) => {
         }
         loadCompleteCalledRef.current = true;
 
+        // Clear emergency timeout since we're completing normally
+        if (emergencyTimeoutRef.current) {
+            clearTimeout(emergencyTimeoutRef.current);
+        }
+
         // Hold at 100% for a moment to let user see completion
         setTimeout(() => {
             // Phase 1: Fade to white (smooth transition)
