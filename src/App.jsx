@@ -457,9 +457,12 @@ function App() {
                         }}
                     >
                         <color attach="background" args={["#000000"]} />
-                        <Suspense fallback={null}>
-                            <SpaceCubeMap />
-                        </Suspense>
+                        {/* Load SpaceCubeMap only during exploration phase - saves 7.7MB on initial load */}
+                        {currentPhase === "exploration" && (
+                            <Suspense fallback={null}>
+                                <SpaceCubeMap />
+                            </Suspense>
+                        )}
                         <ambientLight intensity={0.3} />
                         <pointLight
                             position={[0, 0, 0]}
