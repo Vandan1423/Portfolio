@@ -38,6 +38,58 @@
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Instant loader to prevent white screen while React loads -->
+    <style>
+      #instant-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      #instant-loader.hidden {
+        display: none;
+      }
+      .loader-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(59, 130, 246, 0.1);
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      .loader-text {
+        margin-top: 20px;
+        color: #94a3b8;
+        font-size: 14px;
+        letter-spacing: 1px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <div id="instant-loader">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">INITIALIZING PORTFOLIO...</div>
+    </div>
+    
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Hide instant loader once React takes over (after a brief delay)
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('instant-loader');
+          if (loader) loader.classList.add('hidden');
+        }, 500);
+      });
+    </script>
   </body>
 </html>
