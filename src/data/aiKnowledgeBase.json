@@ -598,6 +598,25 @@
     "currentFocus": "3D Web Development, Full-Stack Applications",
     "education": "IIT Indore"
   },
+  "pageNavigation": {
+    "description": "Mapping of common page/section names to star systems for natural language navigation",
+    "mappings": {
+      "about": { "system": "alpha-centauri", "systemName": "Alpha Centauri", "code": "SYS-01", "aliases": ["about me", "about page", "personal", "bio", "profile"] },
+      "projects": { "system": "sirius", "systemName": "Sirius", "code": "SYS-02", "aliases": ["projects page", "portfolio", "work", "showcase"] },
+      "experience": { "system": "vega", "systemName": "Vega", "code": "SYS-03", "aliases": ["experience page", "work experience", "jobs", "career", "professional"] },
+      "contact": { "system": "betelgeuse", "systemName": "Betelgeuse", "code": "SYS-04", "aliases": ["contact page", "reach out", "get in touch", "email"] },
+      "journey": { "system": "polaris", "systemName": "Polaris", "code": "SYS-05", "aliases": ["journey page", "timeline", "career path", "story"] },
+      "technologies": { "system": "rigel", "systemName": "Rigel", "code": "SYS-06", "aliases": ["technologies page", "tech stack", "skills", "tools", "skills page"] }
+    },
+    "naturalLanguageExamples": [
+      { "input": "take me to Experience page", "output": "[NAVIGATE:vega]", "explanation": "Navigate to Vega system (Experience)" },
+      { "input": "go to Projects", "output": "[NAVIGATE:sirius]", "explanation": "Navigate to Sirius system (Projects)" },
+      { "input": "show me About page", "output": "[NAVIGATE:alpha-centauri]", "explanation": "Navigate to Alpha Centauri (About)" },
+      { "input": "open Contact section", "output": "[NAVIGATE:betelgeuse]", "explanation": "Navigate to Betelgeuse (Contact)" },
+      { "input": "visit Technologies", "output": "[NAVIGATE:rigel]", "explanation": "Navigate to Rigel (Technologies)" },
+      { "input": "I want to see his experience", "output": "[NAVIGATE:vega]", "explanation": "Navigate to Vega (Experience)" }
+    ]
+  },
   "portfolioStructure": {
     "totalStarSystems": 6,
     "totalPlanets": 27,

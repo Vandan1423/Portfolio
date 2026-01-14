@@ -15,6 +15,7 @@ import { useStarSystem } from '../../context/StarSystemContext';
 import { useNavigation } from '../../context/NavigationContext';
 import TerminalMessage from './TerminalMessage';
 import { processInput } from '../../services/AIService';
+import { resolveNavigationTarget } from '../../services/CommandParser';
 import { STAR_SYSTEMS } from '../../data/starSystemsData';
 import styles from './SagittariusTerminal.module.css';
 
@@ -26,10 +27,10 @@ export default function SagittariusTerminal() {
     addCommandMessage,
     addResponseMessage,
     clearMessages,
-    currentLocation,
-    addToNavigationHistory,
     isTyping,
-    setIsTyping
+    setIsTyping,
+    pendingNavigation,
+    setPendingNavigation
   } = useAI();
 
   const { currentSystemId, setTravelDestination, setTravelPhase } = useStarSystem();
@@ -40,11 +41,19 @@ export default function SagittariusTerminal() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Scroll to bottom helper function
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  // Auto-scroll to bottom when new messages arrive or typing state changes
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messageHistory]);
+    scrollToBottom();
+  }, [messageHistory, isTyping]);
 
   // Focus input when terminal opens
   useEffect(() => {
@@ -128,12 +137,22 @@ export default function SagittariusTerminal() {
     }
 
     if (command.startsWith('goto ')) {
-      const systemName = command.substring(5).trim();
-      const system = Object.values(STAR_SYSTEMS).find(s =>
-        s.name.toLowerCase().includes(systemName) ||
-        s.id.includes(systemName) ||
-        s.page.toLowerCase().includes(systemName)
-      );
+      const target = command.substring(5).trim();
+      
+      // Try intelligent resolution first
+      const resolved = resolveNavigationTarget(target);
+      let system = null;
+      
+      if (resolved) {
+        system = STAR_SYSTEMS[resolved.systemId];
+      } else {
+        // Fallback to original logic
+        system = Object.values(STAR_SYSTEMS).find(s =>
+          s.name.toLowerCase().includes(target.toLowerCase()) ||
+          s.id.includes(target.toLowerCase()) ||
+          s.page.toLowerCase().includes(target.toLowerCase())
+        );
+      }
 
       if (system) {
         // Check if already at this system
@@ -143,44 +162,91 @@ export default function SagittariusTerminal() {
         }
 
         addResponseMessage(`Initiating wormhole jump to ${system.name}...\n[Traveling now]`);
-        closeTerminal();
 
         // Small delay then trigger travel
         setTimeout(() => {
-          // Navigate to 3D portfolio page first (if not there)
+          // Navigate to home/3D portfolio page first (if not there)
           if (window.location.pathname !== '/') {
-            onNavigate('3d-portfolio');
+            onNavigate('home');
+            
+            // Wait for navigation to complete before initiating travel
+            setTimeout(() => {
+              setTravelDestination(system.id);
+              setTravelPhase('preparing');
+            }, 300);
+          } else {
+            // Already on homepage, initiate travel immediately
+            setTravelDestination(system.id);
+            setTravelPhase('preparing');
           }
-
-          // Trigger wormhole travel
-          setTravelDestination(system.id);
-          setTravelPhase('preparing');
+          
+          // Close terminal after initiating travel
+          setTimeout(() => {
+            closeTerminal();
+          }, 100);
         }, 300);
         return;
       } else {
-        addResponseMessage(`System "${systemName}" not found. Type 'systems' to see all.`, true);
+        addResponseMessage(`System "${target}" not found. Type 'systems' to see all.`, true);
         return;
       }
     }
 
     if (command.startsWith('visit ')) {
-      const planetName = command.substring(6).trim();
+      const target = command.substring(6).trim();
+      
+      // Use intelligent resolution first
+      const resolved = resolveNavigationTarget(target);
+      
+      if (resolved && resolved.type === 'planet') {
+        // Navigate to specific planet (possibly in another system)
+        const system = STAR_SYSTEMS[resolved.systemId];
+        const planet = system.planets.find(p => p.id === resolved.planetId);
+        
+        if (planet) {
+          addResponseMessage(`Navigating to ${planet.name} in ${system.name}...`);
+          setTimeout(() => {
+            onNavigate(system.page.toLowerCase().replace(/ /g, '-'), planet.sectionId);
+            
+            setTimeout(() => {
+              closeTerminal();
+            }, 100);
+          }, 500);
+          return;
+        }
+      } else if (resolved && resolved.type === 'system') {
+        // Navigate to system main page
+        const system = STAR_SYSTEMS[resolved.systemId];
+        addResponseMessage(`Navigating to ${system.name} system (${system.page})...`);
+        setTimeout(() => {
+          onNavigate(system.page.toLowerCase().replace(/ /g, '-'));
+          
+          setTimeout(() => {
+            closeTerminal();
+          }, 100);
+        }, 500);
+        return;
+      }
+      
+      // Fallback: Check current system's planets
       const system = STAR_SYSTEMS[currentSystemId];
       const planet = system.planets.find(p =>
-        p.name.toLowerCase().includes(planetName) ||
-        p.id.includes(planetName)
+        p.name.toLowerCase().includes(target.toLowerCase()) ||
+        p.id.includes(target.toLowerCase())
       );
 
       if (planet) {
         addResponseMessage(`Navigating to ${planet.name}...`);
-        // Navigate to the planet's page
         setTimeout(() => {
-          onNavigate(system.page.toLowerCase().replace(' ', '-'), planet.sectionId);
-          closeTerminal();
+          onNavigate(system.page.toLowerCase().replace(/ /g, '-'), planet.sectionId);
+          
+          setTimeout(() => {
+            closeTerminal();
+          }, 100);
         }, 500);
         return;
       } else {
-        addResponseMessage(`Planet "${planetName}" not found in current system. Type 'planets' to see all.`, true);
+        addResponseMessage(`Planet or system "${target}" not found. Type 'planets' or 'systems' to see all.`, true);
         return;
       }
     }
@@ -238,11 +304,25 @@ Examples: "what projects has vandan built?"
     }
 
     if (command === 'home') {
-      addResponseMessage('Returning to Alpha Centauri...');
+      addResponseMessage('Returning to Alpha Centauri (Home)...');
+      
       setTimeout(() => {
-        handleSystemTravel('alpha-centauri');
-        closeTerminal();
-      }, 500);
+        // Check if we're on the 3D portfolio page
+        if (window.location.pathname === '/') {
+          // On 3D page - use wormhole travel if not already at alpha-centauri
+          if (currentSystemId !== 'alpha-centauri') {
+            setTravelDestination('alpha-centauri');
+            setTravelPhase('preparing');
+          }
+        } else {
+          // On a different page - navigate directly to About Me page
+          onNavigate('about-me');
+        }
+        
+        setTimeout(() => {
+          closeTerminal();
+        }, 100);
+      }, 300);
       return;
     }
 
@@ -255,67 +335,130 @@ Examples: "what projects has vandan built?"
 
     try {
       const context = {
-        currentSystem: STAR_SYSTEMS[currentSystemId]?.name || 'Unknown',
+        currentSystem: currentSystemId,
         currentPlanet: null,
-        lastVisited: commandHistory[commandHistory.length - 1] || 'None',
-        visitHistory: commandHistory.slice(-5)
+        pendingNavigation: pendingNavigation
       };
 
       const result = await processInput(query, context);
 
       if (result.success) {
-        const response = result.response;
-        
-        // Check if AI response contains navigation command
-        const navMatch = response.match(/\[NAVIGATE:([\w-]+)(?::([\w-]+))?\]/);
-        
-        if (navMatch) {
-          const [fullMatch, systemId, planetId] = navMatch;
-          // Remove the navigation command from display text
-          const displayText = response.replace(fullMatch, '').trim();
+        // Handle navigation results
+        if (result.navigation) {
+          const nav = result.navigation;
           
-          addResponseMessage(displayText);
+          // Store as pending if it has a suggestion
+          if (result.pendingNavigation) {
+            setPendingNavigation(nav);
+          }
           
-          // Execute navigation after brief delay
-          setTimeout(() => {
-            if (planetId) {
-              // Navigate to specific planet
-              const system = STAR_SYSTEMS[systemId];
-              if (system) {
-                const planet = system.planets.find(p => p.id === planetId || p.sectionId === planetId);
-                if (planet) {
-                  closeTerminal();
-                  setTimeout(() => {
-                    onNavigate(system.page.toLowerCase().replace(' ', '-'), planet.sectionId);
-                  }, 300);
-                }
-              }
-            } else {
-              // Navigate to system
-              const system = STAR_SYSTEMS[systemId];
-              if (system && system.id !== currentSystemId) {
-                closeTerminal();
-                setTimeout(() => {
-                  if (window.location.pathname !== '/') {
-                    onNavigate('3d-portfolio');
-                  }
-                  setTravelDestination(system.id);
-                  setTravelPhase('preparing');
-                }, 300);
-              }
-            }
-          }, 1500);
+          addResponseMessage(result.response);
+          
+          // Execute navigation if confirmed (yes response) or direct navigation
+          if (result.isPendingConfirmation || result.isDirectNavigation) {
+            setPendingNavigation(null); // Clear pending
+            executeNavigation(nav);
+          }
         } else {
-          addResponseMessage(response);
+          addResponseMessage(result.response);
         }
       } else {
-        addResponseMessage(result.response, true);
+        addResponseMessage(result.response, result.isError);
       }
     } catch (error) {
+      console.error('AI Query Error:', error);
       addResponseMessage('Communication error. Please try again.', true);
     } finally {
       setIsTyping(false);
     }
+  };
+  
+  /**
+   * Execute navigation based on type
+   */
+  const executeNavigation = (navigation) => {
+    if (!navigation || !navigation.command) {
+      return;
+    }
+    
+    // Shorter delay before executing navigation
+    setTimeout(() => {
+      switch (navigation.type) {
+        case 'STAR_SYSTEM':
+          // Inter-system wormhole travel
+          if (navigation.needsWormhole) {
+            // Ensure we're on homepage/3D page first
+            if (window.location.pathname !== '/') {
+              onNavigate('home');
+              
+              // Wait for navigation to complete before initiating travel
+              setTimeout(() => {
+                setTravelDestination(navigation.systemId);
+                setTravelPhase('preparing');
+              }, 300);
+            } else {
+              // Already on homepage, initiate travel immediately
+              setTravelDestination(navigation.systemId);
+              setTravelPhase('preparing');
+            }
+            
+            // Then close terminal after initiating travel
+            setTimeout(() => {
+              closeTerminal();
+            }, 100);
+          } else {
+            addResponseMessage(`Already in ${navigation.systemName} system!`);
+          }
+          break;
+          
+        case 'PLANET_SAME_SYSTEM': {
+          // Direct planet navigation in same system
+          const system = STAR_SYSTEMS[navigation.systemId];
+          onNavigate(system.page.toLowerCase().replace(/ /g, '-'), navigation.planetId);
+          
+          setTimeout(() => {
+            closeTerminal();
+          }, 100);
+          break;
+        }
+          
+        case 'PLANET_OTHER_SYSTEM':
+          // Inter-system travel then planet detail
+          // First ensure we're on homepage/3D page
+          if (window.location.pathname !== '/') {
+            onNavigate('home');
+            
+            // Wait for navigation before initiating travel
+            setTimeout(() => {
+              setTravelDestination(navigation.systemId);
+              setTravelPhase('preparing');
+              sessionStorage.setItem('targetPlanet', navigation.planetId);
+            }, 300);
+          } else {
+            // Already on homepage
+            setTravelDestination(navigation.systemId);
+            setTravelPhase('preparing');
+            sessionStorage.setItem('targetPlanet', navigation.planetId);
+          }
+          
+          setTimeout(() => {
+            closeTerminal();
+          }, 100);
+          break;
+          
+        case 'STATIC_PAGE':
+          // Direct page navigation
+          onNavigate(navigation.page);
+          
+          setTimeout(() => {
+            closeTerminal();
+          }, 100);
+          break;
+          
+        default:
+          addResponseMessage('Navigation type not recognized.', true);
+      }
+    }, 500); // Reduced delay for user to read the message
   };
 
   const handleSubmit = async () => {
@@ -357,17 +500,22 @@ Examples: "what projects has vandan built?"
         </div>
 
         {/* Messages */}
-        <div className={styles.terminalMessages}>
+        <div className={styles.terminalMessages} ref={messagesContainerRef}>
           {messageHistory.map((msg, index) => (
             <TerminalMessage
               key={index}
               message={msg}
-              withTypewriter={msg.type === 'response' && index === messageHistory.length - 1}
+              withTypewriter={false}
             />
           ))}
           {isTyping && (
             <div className={styles.typingIndicator}>
-              Sagittarius is processing...
+              <span className={styles.typingText}>Sagittarius is processing</span>
+              <span className={styles.loadingDots}>
+                <span className={styles.loadingDot}></span>
+                <span className={styles.loadingDot}></span>
+                <span className={styles.loadingDot}></span>
+              </span>
             </div>
           )}
           <div ref={messagesEndRef} />

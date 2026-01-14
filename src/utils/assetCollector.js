@@ -13,14 +13,14 @@
 import { STAR_SYSTEMS } from '../data/starSystemsData';
 import projectsData from '../data/projectsData';
 
-// Cube map texture URLs from SpaceCubeMap component
+// Cube map texture URLs - LOCAL
 const CUBE_MAP_IMAGES = [
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048720/Star1_k9qpl9.png', // Positive X (right)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png', // Negative X (left)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048724/Star3_ptf4ey.png', // Positive Y (top)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048725/Star4_nj5osv.png', // Negative Y (bottom)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048715/Star5_rd4aab.png', // Positive Z (front)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048729/Star6_zqxvin.png', // Negative Z (back)
+    '/images/SpaceCubeMap/Star1.jpeg', // Positive X (right)
+    '/images/SpaceCubeMap/Star2.jpeg', // Negative X (left)
+    '/images/SpaceCubeMap/Star3.jpeg', // Positive Y (top)
+    '/images/SpaceCubeMap/Star4.jpeg', // Negative Y (bottom)
+    '/images/SpaceCubeMap/Star5.jpeg', // Positive Z (front)
+    '/images/SpaceCubeMap/Star6.jpeg', // Negative Z (back)
 ];
 
 /**
@@ -48,12 +48,13 @@ export const collectAssets = () => {
                 if (!seenModelUrls.has(url)) {
                     seenModelUrls.add(url);
                     // Saturn.glb is 12MB - mark as deferred to prevent blocking initial load
+                    // All other planet models are critical since StarSystem needs them immediately
                     const isHeavyModel = url.includes('Saturn.glb');
                     assets.models.push({
                         url,
                         name: planet.name,
                         type: url.startsWith('http') ? 'model' : 'local-model',
-                        priority: isHeavyModel ? 'deferred' : 'low' // Heavy models load lazily
+                        priority: isHeavyModel ? 'deferred' : 'high' // Planet models needed immediately
                     });
                 }
             });
@@ -62,13 +63,13 @@ export const collectAssets = () => {
         console.error('Error collecting star system models:', error);
     }
 
-    // 2. Add local cockpit model (medium priority - loads early but doesn't block)
-    // Too large (12MB) to block loading screen, but loads immediately after
+    // 2. Add local cockpit model (deferred - loads after initial view)
+    // Large model (12MB) - not needed until CockpitInterior component renders
     assets.models.unshift({
         url: '/models/SpaceshipCockpit.glb',
         name: 'Cockpit',
         type: 'local-model',
-        priority: 'medium' // Loads right after critical assets
+        priority: 'deferred' // Loads in background, not blocking
     });
 
     // 3. Collect cube map textures (high priority - needed for background)
@@ -104,7 +105,7 @@ export const collectAssets = () => {
 
     // 5. Collect additional images (avatar, backgrounds)
     // Avatar from AboutMe page
-    const avatarUrl = 'https://res.cloudinary.com/didezuerl/image/upload/v1766049447/Avatar_fnr2xa.png';
+    const avatarUrl = '/images/Avatar.jpeg';
     if (!seenImageUrls.has(avatarUrl)) {
         assets.images.push({
             url: avatarUrl,
@@ -114,8 +115,8 @@ export const collectAssets = () => {
         });
     }
 
-    // PlanetDetailScene CSS background (also in cube map, but needs to be preloaded as image for CSS)
-    const planetDetailBgUrl = 'https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png';
+    // PlanetDetailScene CSS background (using cube map texture)
+    const planetDetailBgUrl = '/images/SpaceCubeMap/Star2.jpeg';
     if (!seenImageUrls.has(planetDetailBgUrl)) {
         seenImageUrls.add(planetDetailBgUrl);
         assets.images.push({

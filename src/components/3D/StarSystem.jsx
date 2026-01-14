@@ -88,11 +88,11 @@ const StarSystem = ({
     useEffect(() => {
         // Model paths to preload
         const modelPaths = [
-            "https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb",
-            "https://res.cloudinary.com/didezuerl/image/upload/v1766050617/Pluto_zwcgdv.glb",
-            "https://res.cloudinary.com/didezuerl/image/upload/v1766050615/Earth_qgvnkk.glb",
-            "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet1_hjnset.glb",
-            "https://res.cloudinary.com/didezuerl/image/upload/v1766050616/Planet2_uoitxj.glb",
+            "/models/Sun.glb",
+            "/models/Pluto.glb",
+            "/models/Earth.glb",
+            "/models/Planet1.glb",
+            "/models/Planet2.glb",
             "/models/Saturn.glb",
         ];
 
@@ -363,7 +363,7 @@ const OortCloud = ({ innerRadius, outerRadius, sunPosition }) => {
  * Sun Component
  */
 const Sun = ({ position }) => {
-    const { scene } = useGLTF("https://res.cloudinary.com/didezuerl/image/upload/v1766050619/Sun_h53741.glb");
+    const { scene } = useGLTF("/models/Sun.glb");
     const sunRef = useRef();
 
     useFrame((state) => {

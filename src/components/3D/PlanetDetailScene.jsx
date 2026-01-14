@@ -154,7 +154,7 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
             className="w-full h-screen relative overflow-hidden"
             style={{
                 backgroundImage:
-                    "url(https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png)",
+                    "url(/images/SpaceCubeMap/Star2.jpeg)",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",

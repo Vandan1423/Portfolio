@@ -253,6 +253,15 @@ function App() {
         }
     }, [currentPage, currentPhase]);
 
+    // Listen for AI-triggered travel requests
+    useEffect(() => {
+        if (travelPhase === 'preparing' && destinationSystem) {
+            console.log('Detected travel request to:', destinationSystem.id);
+            // Trigger the wormhole travel sequence
+            handleSystemTravel(destinationSystem.id);
+        }
+    }, [travelPhase, destinationSystem]);
+
     // Handler for launch command from cockpit terminal
     const handleLaunchCommand = (command) => {
         if (command !== "launch") return;

@@ -47,7 +47,9 @@ export default defineConfig({
                 },
             },
         },
-        chunkSizeWarningLimit: 800, // Reduced from 1000
+        // Prevent inlining of models and large assets as base64
+        assetsInlineLimit: 0, // Never inline assets (keep as separate files for caching)
+        chunkSizeWarningLimit: 1000, // Increased to 1000KB for 3D chunks
         // Optimize CSS code splitting
         cssCodeSplit: true,
         // Minify with terser for better compression
@@ -59,7 +61,9 @@ export default defineConfig({
                 pure_funcs: ['console.log', 'console.info'], // Remove specific console methods
             },
         },
-        // Disable source maps for smaller build
+        // Disable source maps for smaller build (enable for debugging)
         sourcemap: false,
+        // Optimize asset output
+        assetsDir: 'assets', // Organize assets in dedicated folder
     },
 });

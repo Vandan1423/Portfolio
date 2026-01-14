@@ -9,6 +9,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import knowledgeBase from '../data/aiKnowledgeBase.json' with { type: 'json' };
 import personality from '../data/sagittariusPersonality.json' with { type: 'json' };
 import { validateResponse, enforceLength } from './responseValidator.js';
+import { resolveNavigationTarget } from './CommandParser.js';
+import { resolveNavigation, createSuggestedResponse } from './NavigationIntelligence.js';
+import { STAR_SYSTEMS } from '../data/starSystemsData.js';
 
 // Initialize Gemini AI
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -85,7 +88,15 @@ Academic Performance:
 === PORTFOLIO STRUCTURE ===
 Total: ${knowledgeBase.portfolioStructure.totalStarSystems} Star Systems with ${knowledgeBase.portfolioStructure.totalPlanets} Planets
 
-Star Systems (KNOW THE STRUCTURE):
+ALL 6 STAR SYSTEMS (MEMORIZE THIS LIST):
+1. ALPHA CENTAURI (SYS-01) - About Me - ${knowledgeBase.portfolioStructure.starSystems[0].planetCount} planets
+2. SIRIUS (SYS-02) - Projects - ${knowledgeBase.portfolioStructure.starSystems[1].planetCount} planets
+3. VEGA (SYS-03) - Experience - ${knowledgeBase.portfolioStructure.starSystems[2].planetCount} planets
+4. BETELGEUSE (SYS-04) - Contact - ${knowledgeBase.portfolioStructure.starSystems[3].planetCount} planets
+5. POLARIS (SYS-05) - Journey - ${knowledgeBase.portfolioStructure.starSystems[4].planetCount} planets
+6. RIGEL (SYS-06) - Technologies - ${knowledgeBase.portfolioStructure.starSystems[5].planetCount} planets
+
+Star Systems Details:
 ${knowledgeBase.portfolioStructure.starSystems.map(sys => 
   `- ${sys.name} (${sys.code}): ${sys.planetCount} planets
    Contains: ${sys.planets.slice(0, 4).join(', ')}${sys.planetCount > 4 ? '...' : ''}`
@@ -180,13 +191,43 @@ Examples:
 - "Navigating to Education. [NAVIGATE:alpha-centauri:education]"
 - "Opening Projects section! [NAVIGATE:sirius]"
 
-Common navigation requests:
+=== PAGE TO SYSTEM MAPPING (CRITICAL - MEMORIZE THIS!) ===
+When users mention PAGE NAMES or sections, map them to correct systems:
+
+1. "About Me" / "About" / "Personal" / "Bio" / "Profile" → alpha-centauri (SYS-01)
+2. "Projects" / "Portfolio" / "Work" / "Showcase" → sirius (SYS-02)
+3. "Experience" / "Work Experience" / "Jobs" / "Career" / "Professional" → vega (SYS-03)
+4. "Contact" / "Reach Out" / "Get in Touch" / "Email" → betelgeuse (SYS-04)
+5. "Journey" / "Timeline" / "Career Path" / "Story" → polaris (SYS-05)
+6. "Technologies" / "Tech Stack" / "Skills" / "Tools" → rigel (SYS-06)
+
+=== NATURAL LANGUAGE NAVIGATION PATTERNS ===
+Recognize these patterns and navigate accordingly:
+
+PATTERN: "take me to [page]" / "go to [page]" / "show me [page]" / "visit [page]" / "open [page]"
+- "take me to Experience page" → [NAVIGATE:vega]
+- "go to Projects" → [NAVIGATE:sirius]
+- "show me the About page" → [NAVIGATE:alpha-centauri]
+- "visit Technologies" → [NAVIGATE:rigel]
+- "open Contact section" → [NAVIGATE:betelgeuse]
+
+PATTERN: "I want to see [topic]"
+- "I want to see his experience" → [NAVIGATE:vega]
+- "I want to see projects" → [NAVIGATE:sirius]
+- "I want to see his skills" → [NAVIGATE:rigel]
+
+PATTERN: Questions about content
+- "what's his experience?" → Briefly answer AND offer [NAVIGATE:vega]
+- "show me his projects" → [NAVIGATE:sirius]
+- "how can I contact him?" → [NAVIGATE:betelgeuse]
+
+Common specific requests:
 - "projects" / "show me projects" → [NAVIGATE:sirius]
-- "about" / "who is vandan" → [NAVIGATE:alpha-centauri]
-- "experience" / "work history" → [NAVIGATE:vega]
-- "contact" / "reach out" → [NAVIGATE:betelgeuse]
-- "journey" / "career path" → [NAVIGATE:polaris]
-- "technologies" / "tech stack" → [NAVIGATE:rigel]
+- "about" / "who is vandan" / "about page" → [NAVIGATE:alpha-centauri]
+- "experience" / "work history" / "experience page" → [NAVIGATE:vega]
+- "contact" / "reach out" / "contact page" → [NAVIGATE:betelgeuse]
+- "journey" / "career path" / "journey page" → [NAVIGATE:polaris]
+- "technologies" / "tech stack" / "skills page" → [NAVIGATE:rigel]
 - "education" → [NAVIGATE:alpha-centauri:education]
 - "resume" → [NAVIGATE:alpha-centauri:resume]
 
@@ -281,13 +322,22 @@ export async function chatWithAI(userMessage, context = {}) {
     if (!validation.isValid) {
       return {
         success: false,
-        response: validation.filtered,
+        response: validation.filtered || "I apologize, Commander. I'm having trouble formulating a proper response. Could you rephrase your question or try asking something else?",
         error: validation.reason
       };
     }
 
     // Enforce length and format for terminal
     const formattedResponse = enforceLength(validation.filtered, personality.responseRules.maxLength);
+    
+    // Check if response is empty or too short
+    if (!formattedResponse || formattedResponse.trim().length < 5) {
+      return {
+        success: false,
+        response: "I apologize, Commander. I don't have enough information to answer that question. Try asking about Vandan's projects, experience, education, or skills!",
+        isError: true
+      };
+    }
 
     return {
       success: true,
@@ -315,10 +365,12 @@ export async function chatWithAI(userMessage, context = {}) {
       };
     }
 
+    // Generic error with helpful apology
     return {
       success: false,
-      response: "Communication error. [Retry]",
-      error: error.message || 'Unknown error'
+      response: "I apologize, Commander. I encountered an error processing your request. Please try rephrasing your question or type 'help' for available commands.",
+      error: error.message || 'Unknown error',
+      isError: true
     };
   }
 }
@@ -326,22 +378,27 @@ export async function chatWithAI(userMessage, context = {}) {
 /**
  * Quick answer for common questions (fallback/cache)
  * @param {string} question - User question
- * @returns {string|null} Pre-defined answer or null
+ * @param {object} context - Current navigation context
+ * @returns {object|null} { text, navigation } or null
  */
-export function getQuickAnswer(question) {
+export function getQuickAnswer(question, context = {}) {
   const q = question.toLowerCase();
 
   const quickAnswers = {
     // Greetings
-    'hello': "Greetings, Commander! I'm Sagittarius, your guide to Vandan's portfolio. Ask me anything or type 'help' for commands!",
-    'hi': "Hello, Commander! Ready to explore Vandan's work? Ask away or type 'help'!",
-    'hey': "Hey there, Commander! I'm Sagittarius - ask me about Vandan or type 'help' for navigation!",
+    'hello': { text: "Greetings, Commander! I'm Sagittarius, your guide to Vandan's portfolio. Ask me anything or type 'help' for commands!" },
+    'hi': { text: "Hello, Commander! Ready to explore Vandan's work? Ask away or type 'help'!" },
+    'hey': { text: "Hey there, Commander! I'm Sagittarius - ask me about Vandan or type 'help' for navigation!" },
     
     // Identity and basics
-    'who are you': `I'm ${personality.name}, your AI guide for Vandan's portfolio. I know all about his 8 projects and skills. Type 'help' or ask me anything!`,
-    'what is your name': `I'm Sagittarius. I have always been Sagittarius - never had any other name. I'm your AI guide for this portfolio!`,
-    'who is vandan': `Full-stack developer at IIT Indore (8.58 CGPA) specializing in 3D web + MERN stack. Built 8 projects, leads tech teams at IIT clubs!`,
-    'what can you do': `Answer questions about Vandan and navigate you through this portfolio. Try "what's his best project?" or "take me to projects"!`,
+    'who are you': { text: `I'm ${personality.name}, your AI guide for Vandan's portfolio. I know all about his 8 projects and skills. Type 'help' or ask me anything!` },
+    'what is your name': { text: `I'm Sagittarius. I have always been Sagittarius - never had any other name. I'm your AI guide for this portfolio!` },
+    'who is vandan': createSuggestedResponse(
+      `Vandan Nagori - Full-stack developer at IIT Indore (8.58 CGPA) specializing in 3D web + MERN stack. Built 8 projects, leads tech teams at IIT clubs!`,
+      'about me',
+      context.currentSystem
+    ),
+    'what can you do': { text: `Answer questions about Vandan and navigate you through this portfolio. Try "what's his best project?" or "take me to projects"!` },
     
     // Contact and location
     'how do i contact': `Visit Betelgeuse System (SYS-04) for contact form and links. [NAVIGATE:betelgeuse]`,
@@ -350,7 +407,24 @@ export function getQuickAnswer(question) {
     
     // Navigation help
     'help': `Commands: systems, planets, goto [system], visit [planet], where, clear
-Or ask: "what projects?" "his cgpa?" "take me to projects"`,
+Or ask: "what projects?" "his cgpa?" "take me to Experience page"`,
+    
+    // Page navigation requests
+    'take me to experience': `Navigating to Experience page! [NAVIGATE:vega]`,
+    'take me to projects': `Taking you to Projects! [NAVIGATE:sirius]`,
+    'take me to about': `Heading to About Me! [NAVIGATE:alpha-centauri]`,
+    'take me to contact': `Opening Contact page! [NAVIGATE:betelgeuse]`,
+    'take me to journey': `Navigating to Journey! [NAVIGATE:polaris]`,
+    'take me to technologies': `Opening Technologies! [NAVIGATE:rigel]`,
+    'go to experience': `Navigating to Experience! [NAVIGATE:vega]`,
+    'go to projects': `Going to Projects! [NAVIGATE:sirius]`,
+    'go to about': `Going to About Me! [NAVIGATE:alpha-centauri]`,
+    'show experience': `Here's the Experience section! [NAVIGATE:vega]`,
+    'show projects': `Here are the projects! [NAVIGATE:sirius]`,
+    'visit experience': `Visiting Experience page! [NAVIGATE:vega]`,
+    'visit projects': `Visiting Projects! [NAVIGATE:sirius]`,
+    'open experience': `Opening Experience! [NAVIGATE:vega]`,
+    'open projects': `Opening Projects! [NAVIGATE:sirius]`,
     
     'how do i navigate': `Easy, Commander! Drag to pan around, scroll to zoom. Bigger glowing nodes are star systems (6 total), smaller orbiting ones are planets (27 total). Click to select. Important: You must visit a star system before accessing its planets!`,
     'how does navigation work': `The 3D navigation works like this:
@@ -382,6 +456,38 @@ Rule: Must enter a star system first to access its planets!`,
     // Experience  
     'experience': `Vandan is Head of Web Dev for Astronomy Club (2023-2025) and Head of Technicals for Gaming Club (2024-2025) at IIT Indore. He also worked on PRIUS Fellowship (galaxy classification) and ISRO Challenge (ML for satellites)! See details: [NAVIGATE:vega]`,
     
+    // Star Systems List
+    'list of star systems': `Here are all 6 star systems:
+1. ALPHA CENTAURI (SYS-01) - About Me - 7 planets
+2. SIRIUS (SYS-02) - Projects - 8 planets  
+3. VEGA (SYS-03) - Experience - 5 planets
+4. BETELGEUSE (SYS-04) - Contact - 2 planets
+5. POLARIS (SYS-05) - Journey - 2 planets
+6. RIGEL (SYS-06) - Technologies - 3 planets
+Total: 27 planets! Type system name to learn more.`,
+    'star systems': `Here are all 6 star systems:
+1. ALPHA CENTAURI (SYS-01) - About Me - 7 planets
+2. SIRIUS (SYS-02) - Projects - 8 planets  
+3. VEGA (SYS-03) - Experience - 5 planets
+4. BETELGEUSE (SYS-04) - Contact - 2 planets
+5. POLARIS (SYS-05) - Journey - 2 planets
+6. RIGEL (SYS-06) - Technologies - 3 planets
+Total: 27 planets! Type system name to learn more.`,
+    'systems': `Here are all 6 star systems:
+1. ALPHA CENTAURI (SYS-01) - About Me - 7 planets
+2. SIRIUS (SYS-02) - Projects - 8 planets  
+3. VEGA (SYS-03) - Experience - 5 planets
+4. BETELGEUSE (SYS-04) - Contact - 2 planets
+5. POLARIS (SYS-05) - Journey - 2 planets
+6. RIGEL (SYS-06) - Technologies - 3 planets`,
+    'all systems': `Here are all 6 star systems:
+• ALPHA CENTAURI - About Me (7 planets)
+• SIRIUS - Projects (8 planets)
+• VEGA - Experience (5 planets)
+• BETELGEUSE - Contact (2 planets)
+• POLARIS - Journey (2 planets)
+• RIGEL - Technologies (3 planets)`,
+    
     // Systems
     'alpha centauri': `Alpha Centauri (SYS-01) contains Vandan's personal info, education, interests, tech stack, achievements, resume, and certifications. 7 planets total! [NAVIGATE:alpha-centauri]`,
     'sirius': `Sirius (SYS-02) showcases all 8 projects with live demos and GitHub links! This is where you'll find his 3D Portfolio, Airbnb Replica, club websites, and more. [NAVIGATE:sirius]`,
@@ -394,25 +500,142 @@ Rule: Must enter a star system first to access its planets!`,
   // Check for exact or partial matches
   for (const [key, answer] of Object.entries(quickAnswers)) {
     if (q.includes(key)) {
-      return answer;
+      // If answer is object, return it; if string, wrap it
+      return typeof answer === 'string' ? { text: answer } : answer;
     }
   }
 
   // Enhanced pattern matching for variations
   if (q.match(/what.*(do|does|is).*vandan/)) {
-    return quickAnswers['who is vandan'];
+    return createSuggestedResponse(
+      quickAnswers['who is vandan'].text || quickAnswers['who is vandan'],
+      'about me',
+      context.currentSystem
+    );
   }
   
   if (q.match(/how.*(contact|reach|email|message)/)) {
-    return quickAnswers['contact'];
+    const contactAnswer = quickAnswers['contact'];
+    return typeof contactAnswer === 'string' ? { text: contactAnswer } : contactAnswer;
   }
   
   if (q.match(/what.*tech|stack|skills|technologies/)) {
-    return quickAnswers['tech stack'];
+    return createSuggestedResponse(
+      `Vandan's stack: MERN (MongoDB, Express, React, Node.js) + Three.js for 3D. Also Python, C++, Tailwind, Bootstrap. He specializes in 3D web graphics and full-stack development!`,
+      'technologies',
+      context.currentSystem
+    );
   }
   
   if (q.match(/show.*projects?|projects?.*list|what.*built/)) {
-    return quickAnswers['projects'];
+    return createSuggestedResponse(
+      `Vandan built 8 projects: 3D Portfolio (impressive!), Airbnb Replica, Gaming & Astronomy Club websites, EduConnect, Simon Says Game, Spotify Clone, Amazon Clone. Several are live!`,
+      'projects',
+      context.currentSystem
+    );
+  }
+  
+  // About me / education queries
+  if (q.match(/about.*vandan|tell.*about.*him|who.*he/)) {
+    return createSuggestedResponse(
+      `Vandan Nagori - 3rd year student at IIT Indore with 8.58 CGPA, specializing in full-stack development. He's built 8 production projects, leads Astronomy Club web dev and Gaming Club technicals!`,
+      'about me',
+      context.currentSystem
+    );
+  }
+  
+  if (q.match(/education|college|university|iit|school/)) {
+    return createSuggestedResponse(
+      `Vandan studies at IIT Indore (Indian Institute of Technology), pursuing B.Tech in Space Science & Engineering with 8.58 CGPA. He scored 93.2% in senior secondary and qualified JEE Advanced!`,
+      'education',
+      context.currentSystem
+    );
+  }
+  
+  // Experience queries
+  if (q.match(/experience|work|job|position/)) {
+    return createSuggestedResponse(
+      `Vandan is Head of Web Dev for Astronomy Club (2023-2025) and Head of Technicals for Gaming Club (2024-2025) at IIT Indore. He also worked on PRIUS Fellowship (galaxy classification) and ISRO Challenge (ML for satellites)!`,
+      'experience',
+      context.currentSystem
+    );
+  }
+  
+  // Star systems queries - various patterns
+  if (q.match(/(list|show|what|all|tell).*star\s*system|system.*list|available.*system/i)) {
+    return quickAnswers['star systems'];
+  }
+  
+  // Planets queries - distinguish between "how many" and "show all"
+  if (q.match(/(list|show|what|all).*planet|planet.*list/i)) {
+    // Generate complete planet list from all systems
+    const allPlanets = Object.values(STAR_SYSTEMS).map(sys => ({
+      system: sys.name,
+      code: sys.code,
+      planets: sys.planets
+    }));
+    
+    let planetList = `All ${knowledgeBase.portfolioStructure.totalPlanets} planets across 6 star systems:\n\n`;
+    
+    allPlanets.forEach(sys => {
+      planetList += `${sys.system} (${sys.code}):\n`;
+      sys.planets.forEach((p, i) => {
+        planetList += `  ${i + 1}. ${p.name}\n`;
+      });
+      planetList += '\n';
+    });
+    
+    planetList += `Type "visit [planet name]" to navigate to any planet!`;
+    
+    return { text: planetList };
+  }
+  
+  if (q.match(/how.*many.*planet/i)) {
+    return quickAnswers['how many planets'];
+  }
+  
+  // Enhanced intelligent navigation with pattern matching
+  // Extract the target from various natural language patterns
+  let navigationTarget = null;
+  
+  // Pattern 1: "visit/go to/open/show [target] (page|section)?"
+  const visitMatch = q.match(/(visit|go to|open|show|take me to|navigate to)\s+(the\s+)?([a-z\s]+?)(\s+page|\s+section)?$/i);
+  if (visitMatch) {
+    navigationTarget = visitMatch[3].trim();
+  }
+  
+  // Pattern 2: "I want to see [target]"
+  const wantMatch = q.match(/want to see\s+(the\s+)?([a-z\s]+)/i);
+  if (wantMatch && !navigationTarget) {
+    navigationTarget = wantMatch[2].trim();
+  }
+  
+  // Pattern 3: Just the word itself (e.g., "projects", "experience")
+  if (!navigationTarget) {
+    navigationTarget = q;
+  }
+  
+  // Try to resolve the navigation target intelligently
+  if (navigationTarget) {
+    const resolved = resolveNavigationTarget(navigationTarget);
+    
+    if (resolved) {
+      if (resolved.type === 'planet') {
+        return { text: `Taking you to the specific section! [NAVIGATE:${resolved.systemId}:${resolved.planetId}]` };
+      } else if (resolved.type === 'system') {
+        // Get the system name for a better message
+        const systemNames = {
+          'alpha-centauri': 'About Me',
+          'sirius': 'Projects',
+          'vega': 'Experience',
+          'betelgeuse': 'Contact',
+          'polaris': 'Journey',
+          'rigel': 'Technologies'
+        };
+        const sysName = systemNames[resolved.systemId] || resolved.systemId;
+        return { text: `Navigating to ${sysName}! [NAVIGATE:${resolved.systemId}]` };
+      }
+    }
   }
 
   return null;
@@ -421,21 +644,76 @@ Rule: Must enter a star system first to access its planets!`,
 /**
  * Process user input - check if command or natural language query
  * @param {string} input - User input
- * @param {object} context - Navigation context
+ * @param {object} context - Navigation context { currentSystem, currentPlanet, pendingNavigation }
  * @returns {Promise<object>} Response object
  */
 export async function processInput(input, context = {}) {
+  const cleanInput = input.toLowerCase().trim();
+  
+  // Handle "yes" responses to pending navigation
+  if (cleanInput === 'yes' || cleanInput === 'y' || cleanInput === 'sure' || cleanInput === 'okay') {
+    if (context.pendingNavigation) {
+      return {
+        success: true,
+        response: context.pendingNavigation.description,
+        navigation: context.pendingNavigation,
+        isPendingConfirmation: true
+      };
+    }
+  }
+  
+  // Check if this is a direct navigation request
+  const navigationKeywords = /(visit|go to|take me to|navigate to|show me|open|travel to)\s+(.+)/i;
+  const navMatch = input.match(navigationKeywords);
+  
+  if (navMatch) {
+    const target = navMatch[2].trim();
+    const navigation = resolveNavigation(target, context.currentSystem);
+    
+    if (navigation.type !== 'NOT_FOUND') {
+      return {
+        success: true,
+        response: navigation.description,
+        navigation: navigation,
+        isDirectNavigation: true
+      };
+    } else {
+      // Not found - show suggestions
+      let response = navigation.description;
+      if (navigation.suggestions.length > 0) {
+        response += '\n\nDid you mean:\n';
+        navigation.suggestions.forEach((sug, i) => {
+          if (sug.type === 'system') {
+            response += `${i + 1}. ${sug.name} - ${sug.page}\n`;
+          } else {
+            response += `${i + 1}. ${sug.name} (in ${sug.system})\n`;
+          }
+        });
+      } else {
+        response += '\n\nType "systems" to see all star systems or "help" for commands.';
+      }
+      
+      return {
+        success: false,
+        response: response,
+        isError: true
+      };
+    }
+  }
+  
   // Check for quick answers first (no API call needed)
-  const quickAnswer = getQuickAnswer(input);
+  const quickAnswer = getQuickAnswer(input, context);
   if (quickAnswer) {
     return {
       success: true,
-      response: quickAnswer,
+      response: quickAnswer.text,
+      navigation: quickAnswer.navigation || null,
+      pendingNavigation: quickAnswer.navigation || null,
       isQuickAnswer: true
     };
   }
 
-  // Otherwise, send to AI
+  // Otherwise, send to AI with smart suggestions
   return await chatWithAI(input, context);
 }
 

@@ -8,9 +8,15 @@
 import { useState, useEffect } from 'react';
 import styles from './SagittariusTerminal.module.css';
 
-export default function TerminalMessage({ message, withTypewriter = false }) {
+export default function TerminalMessage({ message, withTypewriter = false, onTextUpdate }) {
   const [displayedText, setDisplayedText] = useState('');
   const [isComplete, setIsComplete] = useState(!withTypewriter);
+
+  // Safety check for message
+  if (!message || !message.text) {
+    console.warn('TerminalMessage received invalid message:', message);
+    return null;
+  }
 
   useEffect(() => {
     if (!withTypewriter) {
@@ -21,13 +27,17 @@ export default function TerminalMessage({ message, withTypewriter = false }) {
 
     // Typewriter effect
     let currentIndex = 0;
-    const text = message.text;
+    const text = message.text || '';
     setDisplayedText('');
 
     const interval = setInterval(() => {
       if (currentIndex < text.length) {
         setDisplayedText(text.substring(0, currentIndex + 1));
         currentIndex++;
+        // Trigger scroll callback on each character
+        if (onTextUpdate) {
+          onTextUpdate();
+        }
       } else {
         setIsComplete(true);
         clearInterval(interval);
@@ -35,7 +45,7 @@ export default function TerminalMessage({ message, withTypewriter = false }) {
     }, 30); // 30ms per character
 
     return () => clearInterval(interval);
-  }, [message.text, withTypewriter]);
+  }, [message.text, withTypewriter, onTextUpdate]);
 
   const getMessageClass = () => {
     switch (message.type) {
@@ -53,6 +63,8 @@ export default function TerminalMessage({ message, withTypewriter = false }) {
 
   // Highlight commands in brackets with cyan color
   const formatText = (text) => {
+    if (!text) return '';
+    
     // Replace [CMD]text[/CMD] with styled spans
     const parts = text.split(/(\[CMD\].*?\[\/CMD\])/g);
 

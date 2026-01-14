@@ -3,7 +3,13 @@ import styles from "./Projects.module.css";
 
 // Optimize Cloudinary URLs for faster loading
 const optimizeCloudinaryUrl = (url, options = {}) => {
-    if (!url || !url.includes('cloudinary.com')) return url;
+    // Return original URL if it's undefined/null
+    if (!url) return url;
+    
+    // Return original URL if it's NOT a Cloudinary URL (local images)
+    if (!url.includes('cloudinary.com')) {
+        return url;
+    }
 
     const { width = 'auto', quality = 'auto', format = 'auto', thumbnail = false } = options;
 
@@ -45,6 +51,11 @@ const ImageCarousel = ({ screenshots, projectName }) => {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [imageLoaded, setImageLoaded] = useState({});
 
+    // Debug: Log screenshots on mount
+    useEffect(() => {
+        console.log('ImageCarousel screenshots:', screenshots);
+    }, [screenshots]);
+
     const nextImage = (e) => {
         e?.stopPropagation();
         setCurrentIndex((prev) => (prev + 1) % screenshots.length);
@@ -73,6 +84,7 @@ const ImageCarousel = ({ screenshots, projectName }) => {
     }, [isFullscreen, currentIndex]);
 
     const handleImageLoad = (index) => {
+        console.log(`Image loaded at index ${index}`);
         setImageLoaded(prev => ({ ...prev, [index]: true }));
     };
 
@@ -90,12 +102,35 @@ const ImageCarousel = ({ screenshots, projectName }) => {
             if (index < 0 || index >= screenshots.length) return;
 
             const url = optimizeCloudinaryUrl(screenshots[index], { width: 1200 });
+            console.log(`Preloading image at index ${index}:`, url);
+            
             const img = new Image();
             img.src = url;
-            img.onload = () => handleImageLoad(index);
-            img.onerror = () => {
-                handleImageLoad(index); // Mark as loaded even on error
+            
+            // Timeout fallback: Show image after 2 seconds even if onLoad doesn't fire
+            const timeoutId = setTimeout(() => {
+                console.log(`Timeout fallback: Marking image ${index} as loaded`);
+                handleImageLoad(index);
+            }, 2000);
+            
+            img.onload = () => {
+                clearTimeout(timeoutId);
+                console.log(`Successfully loaded image at index ${index}`);
+                handleImageLoad(index);
             };
+            
+            img.onerror = (error) => {
+                clearTimeout(timeoutId);
+                console.error(`Failed to preload image at index ${index}:`, url, error);
+                handleImageLoad(index); // Mark as loaded even on error to show alt text
+            };
+            
+            // Immediately mark as loaded if image is already cached
+            if (img.complete) {
+                clearTimeout(timeoutId);
+                console.log(`Image ${index} already cached`);
+                handleImageLoad(index);
+            }
         };
 
         // Preload current image

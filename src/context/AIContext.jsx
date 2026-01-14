@@ -19,6 +19,7 @@ export function AIProvider({ children }) {
   const [messageHistory, setMessageHistory] = useState([]);
   const [navigationHistory, setNavigationHistory] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(null); // For "yes" navigation
 
   // Get current location from existing contexts
   const { currentPage } = useNavigation();
@@ -113,6 +114,8 @@ export function AIProvider({ children }) {
     navigationHistory,
     isTyping,
     setIsTyping,
+    pendingNavigation,
+    setPendingNavigation,
 
     // Terminal controls
     openTerminal,
@@ -136,6 +139,7 @@ export function AIProvider({ children }) {
   return <AIContext.Provider value={value}>{children}</AIContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAI() {
   const context = useContext(AIContext);
   if (!context) {

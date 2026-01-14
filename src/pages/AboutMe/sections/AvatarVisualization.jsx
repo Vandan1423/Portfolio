@@ -44,7 +44,7 @@ const AvatarVisualization = () => {
                 </div>
 
                 <img
-                    src="https://res.cloudinary.com/didezuerl/image/upload/v1766049375/Avatar_ygwbqw.png"
+                    src="/images/Avatar.jpeg"
                     alt="Avatar"
                     className={styles.avatarImage}
                 />

@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-// Cube map texture paths from Cloudinary (order: +X, -X, +Y, -Y, +Z, -Z)
+// Cube map texture paths - LOCAL (order: +X, -X, +Y, -Y, +Z, -Z)
 const CUBE_MAP_IMAGES = [
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048720/Star1_k9qpl9.png', // Positive X (right)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png', // Negative X (left)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048724/Star3_ptf4ey.png', // Positive Y (top)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048725/Star4_nj5osv.png', // Negative Y (bottom)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048715/Star5_rd4aab.png', // Positive Z (front)
-    'https://res.cloudinary.com/didezuerl/image/upload/v1766048729/Star6_zqxvin.png', // Negative Z (back)
+    '/images/SpaceCubeMap/Star1.jpeg', // Positive X (right)
+    '/images/SpaceCubeMap/Star2.jpeg', // Negative X (left)
+    '/images/SpaceCubeMap/Star3.jpeg', // Positive Y (top)
+    '/images/SpaceCubeMap/Star4.jpeg', // Negative Y (bottom)
+    '/images/SpaceCubeMap/Star5.jpeg', // Positive Z (front)
+    '/images/SpaceCubeMap/Star6.jpeg', // Negative Z (back)
 ];
 
 // Background sphere geometry
@@ -42,31 +42,45 @@ const SpaceCubeMap = ({
     const meshRef = useRef(null);
     const rotationRef = useRef({ x: 0, y: 0, z: 0 });
 
-    // Load cube map texture
+    // Load cube map texture with PARALLEL loading for speed
     useEffect(() => {
-        const loader = new THREE.CubeTextureLoader();
+        console.log('🌌 Loading cube map textures in parallel...');
 
-        console.log('🌌 Loading cube map for cockpit background...');
-
-        const texture = loader.load(
-            CUBE_MAP_IMAGES,
-            (loadedTexture) => {
-                loadedTexture.colorSpace = THREE.SRGBColorSpace;
-                setCubeTexture(loadedTexture);
-                console.log('✅ Cube map loaded and ready');
-            },
-            (progress) => {
-                // Progress callback
-                console.log(`📦 Cube map loading: ${progress.loaded}/${progress.total}`);
-            },
-            (error) => {
-                console.error('❌ Error loading cube map:', error);
-            }
+        // Load all 6 textures in parallel using Promise.all
+        const textureLoader = new THREE.TextureLoader();
+        const loadPromises = CUBE_MAP_IMAGES.map((url) =>
+            new Promise((resolve, reject) => {
+                textureLoader.load(
+                    url,
+                    (texture) => {
+                        texture.colorSpace = THREE.SRGBColorSpace;
+                        resolve(texture);
+                    },
+                    undefined,
+                    reject
+                );
+            })
         );
 
+        Promise.all(loadPromises)
+            .then((textures) => {
+                // Manually construct CubeTexture from loaded textures
+                const cubeTexture = new THREE.CubeTexture(
+                    textures.map((t) => t.image)
+                );
+                cubeTexture.needsUpdate = true;
+                cubeTexture.colorSpace = THREE.SRGBColorSpace;
+                
+                setCubeTexture(cubeTexture);
+                console.log('✅ All 6 cube map textures loaded in parallel!');
+            })
+            .catch((error) => {
+                console.error('❌ Error loading cube map textures:', error);
+            });
+
         return () => {
-            if (texture) {
-                texture.dispose();
+            if (cubeTexture) {
+                cubeTexture.dispose();
             }
         };
     }, [scene]);

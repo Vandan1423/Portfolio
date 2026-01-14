@@ -1,7 +1,7 @@
 .container {
     width: 100%;
     min-height: 100vh;
-    background: url("https://res.cloudinary.com/didezuerl/image/upload/v1766048721/Star2_e224oc.png")
+    background: url("/images/SpaceCubeMap/Star2.jpeg")
         center/cover no-repeat fixed;
     background-color: #0a0e27;
     position: relative;

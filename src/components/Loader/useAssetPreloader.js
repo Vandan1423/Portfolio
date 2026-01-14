@@ -15,7 +15,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { getCriticalAssetsOnly, getDeferredAssets, collectAssets } from '../../utils/assetCollector';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { getGLTFLoader } from '../../utils/dracoLoader';
 
 // Maximum number of assets to load concurrently
 const CONCURRENT_LOAD_LIMIT = 5;
@@ -101,15 +101,15 @@ const preloadImage = (asset) => {
 };
 
 /**
- * Preload a single 3D model
+ * Preload a single 3D model with Draco support
  * @param {Object} asset - Asset object with url and name
  * @returns {Promise} Resolves when model is preloaded or times out
  */
 const preloadModel = (asset) => {
     const loadPromise = new Promise((resolve) => {
         try {
-            // Use GLTFLoader directly to verify model loads
-            const loader = new GLTFLoader();
+            // Use Draco-enabled GLTF loader for compressed models
+            const loader = getGLTFLoader();
 
             loader.load(
                 asset.url,
@@ -298,11 +298,11 @@ const useAssetPreloader = (onComplete) => {
                         });
                     };
 
-                    // Start background loading after a delay (let app render first)
+                    // Start background loading after a short delay (500ms for faster startup)
                     if ('requestIdleCallback' in window) {
-                        requestIdleCallback(loadDeferredInBackground, { timeout: 3000 });
+                        requestIdleCallback(loadDeferredInBackground, { timeout: 500 });
                     } else {
-                        setTimeout(loadDeferredInBackground, 2000);
+                        setTimeout(loadDeferredInBackground, 500);
                     }
                 }
 
