@@ -83,31 +83,8 @@ const StarSystem = ({
     const groupRef = useRef();
     const centralStarRef = useRef();
 
-    // Dynamic model preloading - only loads when component mounts (exploration phase)
-    // This prevents blocking the initial page load
-    useEffect(() => {
-        // Model paths to preload
-        const modelPaths = [
-            "/models/Sun.glb",
-            "/models/Pluto.glb",
-            "/models/Earth.glb",
-            "/models/Planet1.glb",
-            "/models/Planet2.glb",
-            "/models/Saturn.glb",
-        ];
-
-        // Use requestIdleCallback for low-priority background loading
-        // Falls back to setTimeout if not supported
-        const preloadModels = () => {
-            modelPaths.forEach(path => useGLTF.preload(path));
-        };
-
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(preloadModels, { timeout: 2000 });
-        } else {
-            setTimeout(preloadModels, 100);
-        }
-    }, []); // Empty dependency array - run once on mount
+    // Models are preloaded during initial loading screen via useAssetPreloader
+    // No need for lazy loading here - models are ready when component mounts
 
     useFrame((state) => {
         // Pause system rotation when animations are paused

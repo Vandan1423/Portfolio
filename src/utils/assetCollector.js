@@ -132,8 +132,8 @@ export const collectAssets = () => {
 
 /**
  * Get only critical assets that block the initial load screen
- * Critical = 'high' priority: Cube map textures, planet detail background
- * These load FAST (small files) to show loading screen quickly
+ * Critical = 'high' priority: Cube map textures, planet models, planet detail background
+ * These must load during the loading screen so they're ready when entering star system
  *
  * Medium priority (cockpit) loads after these but before app shows
  *
@@ -149,7 +149,8 @@ export const getCriticalAssetsOnly = () => {
         ...assets.images
     ];
 
-    // Filter to only high priority assets (small, fast to load)
+    // Filter to only high priority assets (planet models + cube maps)
+    // These MUST be loaded before showing the app to avoid 3-minute delay
     return allAssets.filter(asset => asset.priority === 'high');
 };
 
