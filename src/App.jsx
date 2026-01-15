@@ -10,6 +10,7 @@ import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import "./App.css";
 
 // Lazy load heavy 3D components
@@ -623,6 +624,7 @@ function App() {
             </>
         )}
         <Analytics />
+        <SpeedInsights />
         </div>
     );
 }
