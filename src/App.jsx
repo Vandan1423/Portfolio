@@ -9,6 +9,7 @@ import { useTutorial } from "./context/TutorialContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
+import { Analytics } from '@vercel/analytics/react';
 import "./App.css";
 
 // Lazy load heavy 3D components
@@ -621,6 +622,7 @@ function App() {
             </Suspense>
             </>
         )}
+        <Analytics />
         </div>
     );
 }
