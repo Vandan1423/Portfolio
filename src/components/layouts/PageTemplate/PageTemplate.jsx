@@ -19,6 +19,9 @@ const PageTemplate = ({
     const { onBack, currentPage, onNavigate } = useNavigation();
     const { openTerminal } = useAI();
 
+    // Detect touch device
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+
     // Keyboard shortcut for opening Sagittarius Terminal (T key)
     useEffect(() => {
         const handleKeyPress = (e) => {
@@ -37,7 +40,7 @@ const PageTemplate = ({
 
     return (
         <div className={`${styles.container} ${className}`} {...props}>
-            {showBackButton && onBack && (
+            {showBackButton && onBack && !isTouchDevice && (
                 <Button
                     variant="ghost"
                     onClick={onBack}

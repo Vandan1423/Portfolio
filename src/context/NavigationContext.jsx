@@ -3,9 +3,12 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 
 const NavigationContext = createContext(undefined);
 
-// Utility function to detect mobile/tablet devices
+// Utility function to detect mobile/tablet/touch devices
 const isMobileOrTablet = () => {
-    return window.innerWidth <= 1024; // Cover mobile phones and iPads
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const isMobileWidth = window.innerWidth <= 1024; // Cover mobile phones and iPads
+    return hasTouch || hasCoarsePointer || isMobileWidth;
 };
 
 export function NavigationProvider({ children }) {
@@ -35,6 +38,12 @@ export function NavigationProvider({ children }) {
     }, [currentPage]);
 
     const handleNavigate = useCallback((page, section = null) => {
+        // Force touch devices to static pages - prevent access to 3d-portfolio
+        if (isMobileOrTablet() && page === '3d-portfolio') {
+            setCurrentPage('about-me');
+            setScrollTarget(section);
+            return;
+        }
         setCurrentPage(page);
         setScrollTarget(section);
     }, []);

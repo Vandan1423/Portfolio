@@ -387,21 +387,28 @@ function App() {
 
     // Render non-3D pages (including mobile)
     if (currentPage !== "3d-portfolio" || isMobile) {
+        // Detect touch device
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+        
         return (
             <div className="w-full h-screen bg-deep-space relative overflow-y-auto">
                 <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
                     {pageComponents[currentPage] || pageComponents["about-me"]}
                 </Suspense>
                 
-                {/* Sagittarius Avatar - Also available on static pages */}
-                <Suspense fallback={null}>
-                    <SagittariusAvatar />
-                </Suspense>
+                {/* Sagittarius Avatar - Hidden on static pages for touch devices */}
+                {!isTouchDevice && (
+                    <Suspense fallback={null}>
+                        <SagittariusAvatar />
+                    </Suspense>
+                )}
                 
-                {/* Sagittarius Terminal */}
-                <Suspense fallback={null}>
-                    <SagittariusTerminal />
-                </Suspense>
+                {/* Sagittarius Terminal - Hidden on static pages for touch devices */}
+                {!isTouchDevice && (
+                    <Suspense fallback={null}>
+                        <SagittariusTerminal />
+                    </Suspense>
+                )}
             </div>
         );
     }
