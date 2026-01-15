@@ -10,7 +10,7 @@ const ResumeSection = () => {
             </p>
             <div className={styles.resumeActions}>
                 <a
-                    href="/resume/Vandan_Nagori_Resume.pdf"
+                    href="/resume/CV_Tech.pdf"
                     download
                     className={styles.downloadBtn}
                 >
@@ -18,7 +18,7 @@ const ResumeSection = () => {
                     <span className={styles.btnText}>Download Resume</span>
                 </a>
                 <a
-                    href="/resume/Vandan_Nagori_Resume.pdf"
+                    href="/resume/CV_Tech.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.viewBtn}
