@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import {TextureLoader, SRGBColorSpace, CubeTexture, BackSide}  from "three";
 
 // Cube map texture paths - LOCAL (order: +X, -X, +Y, -Y, +Z, -Z)
 const CUBE_MAP_IMAGES = [
@@ -47,13 +47,13 @@ const SpaceCubeMap = ({
         console.log('🌌 Loading cube map textures in parallel...');
 
         // Load all 6 textures in parallel using Promise.all
-        const textureLoader = new THREE.TextureLoader();
+        const textureLoader = new TextureLoader();
         const loadPromises = CUBE_MAP_IMAGES.map((url) =>
             new Promise((resolve, reject) => {
                 textureLoader.load(
                     url,
                     (texture) => {
-                        texture.colorSpace = THREE.SRGBColorSpace;
+                        texture.colorSpace = SRGBColorSpace;
                         resolve(texture);
                     },
                     undefined,
@@ -65,11 +65,11 @@ const SpaceCubeMap = ({
         Promise.all(loadPromises)
             .then((textures) => {
                 // Manually construct CubeTexture from loaded textures
-                const cubeTexture = new THREE.CubeTexture(
+                const cubeTexture = new CubeTexture(
                     textures.map((t) => t.image)
                 );
                 cubeTexture.needsUpdate = true;
-                cubeTexture.colorSpace = THREE.SRGBColorSpace;
+                cubeTexture.colorSpace = SRGBColorSpace;
                 
                 setCubeTexture(cubeTexture);
                 console.log('✅ All 6 cube map textures loaded in parallel!');
@@ -111,7 +111,7 @@ const SpaceCubeMap = ({
             <sphereGeometry args={[SPHERE_RADIUS, SPHERE_WIDTH_SEGMENTS, SPHERE_HEIGHT_SEGMENTS]} />
             <meshBasicMaterial
                 envMap={cubeTexture}
-                side={THREE.BackSide}
+                side={BackSide}
                 depthWrite={false}
             />
         </mesh>

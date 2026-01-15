@@ -41,9 +41,6 @@ export default defineConfig({
 
                     // Split Framer Motion into separate chunk
                     'framer-vendor': ['framer-motion'],
-
-                    // Split Redux into separate chunk
-                    'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
                 },
             },
         },

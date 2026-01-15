@@ -1,7 +1,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useState, useRef, useEffect, useMemo, lazy, Suspense } from "react";
-import * as THREE from "three";
+import {Vector3} from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
 import { useAI } from "./context/AIContext";
@@ -56,8 +56,8 @@ const SmoothCameraTransition = ({
     onComplete,
 }) => {
     const { camera } = useThree();
-    const targetPosRef = useRef(new THREE.Vector3(...targetPosition));
-    const targetLookRef = useRef(new THREE.Vector3(...targetLookAt));
+    const targetPosRef = useRef(new Vector3(...targetPosition));
+    const targetLookRef = useRef(new Vector3(...targetLookAt));
 
     useFrame(() => {
         if (!isTransitioningRef.current) return;
@@ -66,11 +66,11 @@ const SmoothCameraTransition = ({
         camera.position.lerp(targetPosRef.current, CAMERA_LERP_SPEED);
 
         // Smoothly lerp camera lookAt
-        const currentLookAt = new THREE.Vector3();
+        const currentLookAt = new Vector3();
         camera.getWorldDirection(currentLookAt);
         currentLookAt.add(camera.position);
 
-        const newLookAt = new THREE.Vector3();
+        const newLookAt = new Vector3();
         newLookAt.lerpVectors(
             currentLookAt,
             targetLookRef.current,

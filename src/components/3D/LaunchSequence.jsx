@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import * as THREE from "three";
+import {Vector3, MathUtils, DoubleSide, AdditiveBlending} from "three";
 
 // Animation phase durations (seconds)
 const DURATION_TRAVEL = 10;
@@ -96,7 +96,7 @@ const LaunchSequence = ({
     const animationState = useRef({
         startTime: 0,
         elapsedTime: 0,
-        initialCameraPos: new THREE.Vector3(),
+        initialCameraPos: new Vector3(),
         initialWormholeZ: initialWormholePosition[2],
         speed: 0,
         maxSpeed: MAX_SPEED,
@@ -206,16 +206,16 @@ const LaunchSequence = ({
             onVelocityChange?.(1 - fadeProgress * VELOCITY_EXIT_REDUCTION);
 
             // Restore normal FOV
-            camera.fov = THREE.MathUtils.lerp(camera.fov, FOV_NORMAL, delta * FOV_LERP_SPEED);
+            camera.fov = MathUtils.lerp(camera.fov, FOV_NORMAL, delta * FOV_LERP_SPEED);
             camera.updateProjectionMatrix();
 
             // Reset camera shake
-            const restoredX = THREE.MathUtils.lerp(
+            const restoredX = MathUtils.lerp(
                 camera.position.x,
                 animationState.current.initialCameraPos.x,
                 delta * CAMERA_RESTORE_LERP_SPEED
             );
-            const restoredY = THREE.MathUtils.lerp(
+            const restoredY = MathUtils.lerp(
                 camera.position.y,
                 animationState.current.initialCameraPos.y,
                 delta * CAMERA_RESTORE_LERP_SPEED
@@ -240,7 +240,7 @@ const LaunchSequence = ({
                         opacity={whiteFlashOpacity}
                         depthTest={false}
                         depthWrite={false}
-                        side={THREE.DoubleSide}
+                        side={DoubleSide}
                     />
                 </mesh>
             )}
@@ -335,7 +335,7 @@ const StarStreaks = ({ speed = 0, maxSpeed = 1, cameraZ = 0 }) => {
                 transparent
                 opacity={STAR_OPACITY}
                 sizeAttenuation={true}
-                blending={THREE.AdditiveBlending}
+                blending={AdditiveBlending}
             />
         </points>
     );

@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import {Vector3, Quaternion, Matrix4} from "three";
 import SpacecraftModel from "./SpacecraftModel";
 
 // Docking animation configuration
@@ -55,7 +55,7 @@ const SPACECRAFT_LIGHTS = [
 
 // Get idle position (top-left corner, visible)
 const getIdlePosition = (planetScale) => {
-    return new THREE.Vector3(
+    return new Vector3(
         planetScale * IDLE_POSITION_X,
         planetScale * IDLE_POSITION_Y,
         planetScale * IDLE_POSITION_Z
@@ -64,7 +64,7 @@ const getIdlePosition = (planetScale) => {
 
 // Calculate docking point on planet surface using spherical coordinates
 const getDockingPoint = (center, radius) => {
-    return new THREE.Vector3(
+    return new Vector3(
         center.x + radius * Math.sin(DOCKING_PHI) * Math.cos(DOCKING_THETA),
         center.y + radius * Math.cos(DOCKING_PHI),
         center.z + radius * Math.sin(DOCKING_PHI) * Math.sin(DOCKING_THETA)
@@ -87,13 +87,13 @@ const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
  *
  * @param {boolean} isDocking - Whether spacecraft is currently docking
  * @param {number} planetScale - Scale of the planet for docking calculations
- * @param {THREE.Vector3} planetPosition - Center position of the planet
+ * @param {Vector3} planetPosition - Center position of the planet
  * @param {function} onDockComplete - Callback when docking sequence completes
  */
 const DockingSpacecraft = ({
     isDocking,
     planetScale,
-    planetPosition = new THREE.Vector3(0, 0, 0),
+    planetPosition = new Vector3(0, 0, 0),
     onDockComplete,
 }) => {
     const spacecraftRef = useRef();
@@ -107,10 +107,10 @@ const DockingSpacecraft = ({
 
     // Reusable objects to avoid garbage collection in useFrame (performance optimization)
     const reusableObjects = useRef({
-        bezierPosition: new THREE.Vector3(),
-        targetQuaternion: new THREE.Quaternion(),
-        tempMatrix: new THREE.Matrix4(),
-        upVector: new THREE.Vector3(0, 1, 0),
+        bezierPosition: new Vector3(),
+        targetQuaternion: new Quaternion(),
+        tempMatrix: new Matrix4(),
+        upVector: new Vector3(0, 1, 0),
     });
 
     const planetRadius = planetScale;
@@ -132,14 +132,14 @@ const DockingSpacecraft = ({
                 // Calculate Bezier curve control points for natural arc approach
                 const startPos = animationState.current.startPosition;
                 const dockPoint = animationState.current.dockingPoint;
-                const midPoint = new THREE.Vector3().lerpVectors(
+                const midPoint = new Vector3().lerpVectors(
                     startPos,
                     dockPoint,
                     0.5
                 );
 
                 // Control point 1: Elevated arc (for smooth entry)
-                animationState.current.controlPoint1 = new THREE.Vector3(
+                animationState.current.controlPoint1 = new Vector3(
                     midPoint.x,
                     midPoint.y + planetScale * CONTROL_POINT_1_ELEVATION,
                     midPoint.z
@@ -147,7 +147,7 @@ const DockingSpacecraft = ({
 
                 // Control point 2: Near planet (for final approach)
                 animationState.current.controlPoint2 =
-                    new THREE.Vector3().lerpVectors(
+                    new Vector3().lerpVectors(
                         midPoint,
                         dockPoint,
                         CONTROL_POINT_2_LERP

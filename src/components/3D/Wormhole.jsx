@@ -1,6 +1,14 @@
 import { useRef, useMemo, forwardRef } from "react";
 import { useFrame, extend } from "@react-three/fiber";
-import * as THREE from "three";
+import { 
+    Color, 
+    Vector2, 
+    LatheGeometry, 
+    CylinderGeometry, 
+    DoubleSide, 
+    AdditiveBlending, 
+    BackSide 
+} from "three";
 import { shaderMaterial } from "@react-three/drei";
 
 // Geometry configuration
@@ -84,10 +92,10 @@ const LIGHT_SIDE_OFFSET = 6;
 const VortexDiskMaterial = shaderMaterial(
     {
         uTime: 0,
-        uColorCore: new THREE.Color("#001a33"),
-        uColorMid: new THREE.Color("#00aaff"),
-        uColorOuter: new THREE.Color("#00ffff"),
-        uColorHighlight: new THREE.Color("#ffffff"),
+        uColorCore: new Color("#001a33"),
+        uColorMid: new Color("#00aaff"),
+        uColorOuter: new Color("#00ffff"),
+        uColorHighlight: new Color("#ffffff"),
     },
     `
     varying vec2 vUv;
@@ -213,8 +221,8 @@ extend({ VortexDiskMaterial });
 const RimGlowMaterial = shaderMaterial(
     {
         uTime: 0,
-        uColor: new THREE.Color("#00ffff"),
-        uColorBright: new THREE.Color("#ffffff"),
+        uColor: new Color("#00ffff"),
+        uColorBright: new Color("#ffffff"),
     },
     `
     varying vec2 vUv;
@@ -265,7 +273,7 @@ extend({ RimGlowMaterial });
 const CoronaMaterial = shaderMaterial(
     {
         uTime: 0,
-        uColor: new THREE.Color("#00ffff"),
+        uColor: new Color("#00ffff"),
     },
     `
     varying vec2 vUv;
@@ -336,8 +344,8 @@ extend({ CoronaMaterial });
 const ThroatMaterial = shaderMaterial(
     {
         uTime: 0,
-        uColor1: new THREE.Color("#00ffff"),
-        uColor2: new THREE.Color("#0066ff"),
+        uColor1: new Color("#00ffff"),
+        uColor2: new Color("#0066ff"),
     },
     `
     varying vec2 vUv;
@@ -401,7 +409,7 @@ extend({ ThroatMaterial });
 const TunnelGlowMaterial = shaderMaterial(
     {
         uTime: 0,
-        uColor: new THREE.Color("#0088ff"),
+        uColor: new Color("#0088ff"),
     },
     `
     varying vec2 vUv;
@@ -506,15 +514,15 @@ const Wormhole = forwardRef(({
                 THROAT_BASE_RADIUS * THROAT_BASE_RADIUS +
                 z * z * THROAT_RADIUS_MULTIPLIER
             );
-            points.push(new THREE.Vector2(radius, z));
+            points.push(new Vector2(radius, z));
         }
 
-        return new THREE.LatheGeometry(points, THROAT_LATHE_SEGMENTS);
+        return new LatheGeometry(points, THROAT_LATHE_SEGMENTS);
     }, []);
 
     // Inner tunnel cylinder
     const tunnelGeometry = useMemo(() => {
-        return new THREE.CylinderGeometry(
+        return new CylinderGeometry(
             TUNNEL_RADIUS,
             TUNNEL_RADIUS,
             TUNNEL_LENGTH,
@@ -650,10 +658,10 @@ const Wormhole = forwardRef(({
                 <tunnelGlowMaterial
                     ref={tunnelGlowRef}
                     transparent
-                    side={THREE.DoubleSide}
+                    side={DoubleSide}
                     depthWrite={false}
-                    blending={THREE.AdditiveBlending}
-                    uColor={new THREE.Color(colors.tunnel)}
+                    blending={AdditiveBlending}
+                    uColor={new Color(colors.tunnel)}
                 />
             </mesh>
 
@@ -661,11 +669,11 @@ const Wormhole = forwardRef(({
                 <throatMaterial
                     ref={throatRef}
                     transparent
-                    side={THREE.DoubleSide}
+                    side={DoubleSide}
                     depthWrite={false}
-                    blending={THREE.AdditiveBlending}
-                    uColor1={new THREE.Color(colors.throat1)}
-                    uColor2={new THREE.Color(colors.throat2)}
+                    blending={AdditiveBlending}
+                    uColor1={new Color(colors.throat1)}
+                    uColor2={new Color(colors.throat2)}
                 />
             </mesh>
 
@@ -674,7 +682,7 @@ const Wormhole = forwardRef(({
                     color={colors.core}
                     transparent
                     opacity={0.3}
-                    side={THREE.BackSide}
+                    side={BackSide}
                 />
             </mesh>
 
@@ -684,13 +692,13 @@ const Wormhole = forwardRef(({
                 <vortexDiskMaterial
                     ref={vortexFrontRef}
                     transparent
-                    side={THREE.DoubleSide}
+                    side={DoubleSide}
                     depthWrite={false}
-                    blending={THREE.AdditiveBlending}
-                    uColorCore={new THREE.Color(colors.core)}
-                    uColorMid={new THREE.Color(colors.mid)}
-                    uColorOuter={new THREE.Color(colors.outer)}
-                    uColorHighlight={new THREE.Color(colors.highlight)}
+                    blending={AdditiveBlending}
+                    uColorCore={new Color(colors.core)}
+                    uColorMid={new Color(colors.mid)}
+                    uColorOuter={new Color(colors.outer)}
+                    uColorHighlight={new Color(colors.highlight)}
                 />
             </mesh>
 
@@ -700,11 +708,11 @@ const Wormhole = forwardRef(({
                 <rimGlowMaterial
                     ref={rimFrontRef}
                     transparent
-                    side={THREE.DoubleSide}
+                    side={DoubleSide}
                     depthWrite={false}
-                    blending={THREE.AdditiveBlending}
-                    uColor={new THREE.Color(colors.outer)}
-                    uColorBright={new THREE.Color(colors.highlight)}
+                    blending={AdditiveBlending}
+                    uColor={new Color(colors.outer)}
+                    uColorBright={new Color(colors.highlight)}
                 />
             </mesh>
 
@@ -714,13 +722,13 @@ const Wormhole = forwardRef(({
                 <vortexDiskMaterial
                     ref={vortexBackRef}
                     transparent
-                    side={THREE.DoubleSide}
+                    side={DoubleSide}
                     depthWrite={false}
-                    blending={THREE.AdditiveBlending}
-                    uColorCore={new THREE.Color(colors.core)}
-                    uColorMid={new THREE.Color(colors.mid)}
-                    uColorOuter={new THREE.Color(colors.outer)}
-                    uColorHighlight={new THREE.Color(colors.highlight)}
+                    blending={AdditiveBlending}
+                    uColorCore={new Color(colors.core)}
+                    uColorMid={new Color(colors.mid)}
+                    uColorOuter={new Color(colors.outer)}
+                    uColorHighlight={new Color(colors.highlight)}
                 />
             </mesh>
 
@@ -730,11 +738,11 @@ const Wormhole = forwardRef(({
                 <rimGlowMaterial
                     ref={rimBackRef}
                     transparent
-                    side={THREE.DoubleSide}
+                    side={DoubleSide}
                     depthWrite={false}
-                    blending={THREE.AdditiveBlending}
-                    uColor={new THREE.Color(colors.outer)}
-                    uColorBright={new THREE.Color(colors.highlight)}
+                    blending={AdditiveBlending}
+                    uColor={new Color(colors.outer)}
+                    uColorBright={new Color(colors.highlight)}
                 />
             </mesh>
 
@@ -761,7 +769,7 @@ const Wormhole = forwardRef(({
                     transparent
                     opacity={PARTICLE_OPACITY}
                     sizeAttenuation
-                    blending={THREE.AdditiveBlending}
+                    blending={AdditiveBlending}
                     depthWrite={false}
                 />
             </points>

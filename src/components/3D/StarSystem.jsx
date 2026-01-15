@@ -1,7 +1,7 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import * as THREE from "three";
+import {Object3D, Vector3} from "three";
 
 // Sun configuration
 const SUN_POSITION = [0, 0, -10];
@@ -203,7 +203,7 @@ const AsteroidBelt = ({ innerRadius, outerRadius, sunPosition }) => {
 
     useFrame((state) => {
         if (instancedMeshRef.current) {
-            const dummy = new THREE.Object3D();
+            const dummy = new Object3D();
 
             asteroidData.forEach((asteroid, i) => {
                 const currentAngle = asteroid.angle + state.clock.elapsedTime * asteroid.orbitSpeed;
@@ -294,7 +294,7 @@ const OortCloud = ({ innerRadius, outerRadius, sunPosition }) => {
 
     useFrame((state) => {
         if (instancedMeshRef.current) {
-            const dummy = new THREE.Object3D();
+            const dummy = new Object3D();
 
             cloudData.forEach((particle, i) => {
                 const currentAngle = particle.angle + state.clock.elapsedTime * particle.orbitSpeed;
@@ -372,7 +372,7 @@ const OrbitLine = ({ radius, color, sunPosition, yOffset = 0 }) => {
         for (let i = 0; i <= ORBIT_LINE_SEGMENTS; i++) {
             const angle = (i / ORBIT_LINE_SEGMENTS) * Math.PI * 2;
             pts.push(
-                new THREE.Vector3(
+                new Vector3(
                     Math.cos(angle) * radius,
                     yOffset,
                     Math.sin(angle) * radius

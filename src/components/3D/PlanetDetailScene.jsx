@@ -1,7 +1,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { useRef, useState, useEffect, useMemo, Suspense, lazy } from "react";
-import * as THREE from "three";
+import {Vector3, BufferGeometry} from "three";
 import { getSectionData } from "../../data/sectionData";
 import { useAI } from "../../context/AIContext";
 import PlanetInfoPanel from "../UI/PlanetInfoPanel";
@@ -375,7 +375,7 @@ const PlanetDetailContent = ({
                 <DockingSpacecraft
                     isDocking={isDocking}
                     planetScale={planetScale}
-                    planetPosition={new THREE.Vector3(...LINE_START_POINT)}
+                    planetPosition={new Vector3(...LINE_START_POINT)}
                     onDockComplete={onDockComplete}
                 />
             </group>
@@ -504,13 +504,13 @@ const ConnectingLine3D = ({ startPoint, endPoint, color = "#00ffff" }) => {
     // Create line geometry
     const points = useMemo(() => {
         return [
-            new THREE.Vector3(...startPoint),
-            new THREE.Vector3(...endPoint),
+            new Vector3(...startPoint),
+            new Vector3(...endPoint),
         ];
     }, [startPoint, endPoint]);
 
     const lineGeometry = useMemo(() => {
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const geometry = new BufferGeometry().setFromPoints(points);
         return geometry;
     }, [points]);
 
