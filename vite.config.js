@@ -66,4 +66,5 @@ export default defineConfig({
         // Optimize asset output
         assetsDir: 'assets', // Organize assets in dedicated folder
     },
+    base: '/', // Set base path for relative asset loading
 });
