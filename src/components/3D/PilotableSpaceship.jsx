@@ -1,7 +1,7 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF, Trail } from '@react-three/drei';
-import { Vector3, Color } from 'three';
+import { useGLTF } from '@react-three/drei';
+import { Vector3 } from 'three';
 import { useGameMode } from '../../context/GameModeContext';
 
 // Spacecraft model path
@@ -9,7 +9,7 @@ const SPACECRAFT_MODEL_PATH = '/models/SpaceshipCockpit.glb';
 
 // Visual configuration
 const CONFIG = {
-    shipScale: 0.15,
+    shipScale: 0.6,
     engineGlowIntensity: {
         idle: 0.5,
         thrust: 2.0,
@@ -17,8 +17,6 @@ const CONFIG = {
     },
     bankingAngle: 0.3, // Max banking angle in radians
     bankingSpeed: 3.0, // How fast to bank
-    trailLength: 15,
-    trailWidth: 0.5,
 };
 
 /**
@@ -50,10 +48,10 @@ const EngineGlow = ({ thrustLevel, isBoosting }) => {
     const glowColor = isBoosting ? '#ff6600' : '#00ffff';
 
     return (
-        <group position={[0, 0, 0.8]}>
+        <group position={[0, 0, 2.5]}>
             {/* Main engine glow */}
             <mesh ref={glowRef}>
-                <sphereGeometry args={[0.3, 16, 16]} />
+                <sphereGeometry args={[0.5, 16, 16]} />
                 <meshStandardMaterial
                     color={glowColor}
                     emissive={glowColor}
@@ -67,7 +65,7 @@ const EngineGlow = ({ thrustLevel, isBoosting }) => {
             <pointLight
                 color={glowColor}
                 intensity={2 + thrustLevel * 3}
-                distance={5}
+                distance={10}
                 decay={2}
             />
         </group>
@@ -128,48 +126,37 @@ const PilotableSpaceship = () => {
                 <primitive
                     object={clonedScene}
                     scale={CONFIG.shipScale}
-                    rotation={[0, Math.PI, 0]} // Face forward
+                    rotation={[0, Math.PI / 2, 0]} // Back faces camera (+Z)
                 />
 
                 {/* Engine glow effects */}
                 <EngineGlow thrustLevel={thrustLevel} isBoosting={isBoosting} />
 
                 {/* Secondary engine glows (left and right) */}
-                <group position={[-0.3, -0.1, 0.6]}>
+                <group position={[-1.0, -0.3, 2.0]}>
                     <pointLight
                         color={isBoosting ? '#ff6600' : '#00ffff'}
                         intensity={1 + thrustLevel * 2}
-                        distance={3}
+                        distance={6}
                         decay={2}
                     />
                 </group>
-                <group position={[0.3, -0.1, 0.6]}>
+                <group position={[1.0, -0.3, 2.0]}>
                     <pointLight
                         color={isBoosting ? '#ff6600' : '#00ffff'}
                         intensity={1 + thrustLevel * 2}
-                        distance={3}
+                        distance={6}
                         decay={2}
                     />
                 </group>
             </group>
 
-            {/* Trail effect when moving */}
-            {thrustLevel > 0.1 && (
-                <Trail
-                    width={CONFIG.trailWidth * (isBoosting ? 2 : 1)}
-                    length={CONFIG.trailLength}
-                    color={isBoosting ? new Color('#ff6600') : new Color('#00ffff')}
-                    attenuation={(t) => t * t}
-                    target={meshRef}
-                />
-            )}
-
             {/* Ship lighting */}
             <pointLight
-                position={[0, 0.5, 0]}
+                position={[0, 1.5, 0]}
                 color="#ffffff"
                 intensity={0.5}
-                distance={3}
+                distance={8}
             />
         </group>
     );

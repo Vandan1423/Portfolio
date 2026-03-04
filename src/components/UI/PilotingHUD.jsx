@@ -93,8 +93,18 @@ const PilotingHUD = () => {
             <div className={styles.bottomPanel}>
                 <div className={styles.controlsHint}>
                     <div className={styles.controlGroup}>
-                        <span className={styles.key}>W A S D</span>
-                        <span className={styles.action}>Move</span>
+                        <span className={styles.key}>MOUSE</span>
+                        <span className={styles.action}>Look / Steer</span>
+                    </div>
+                    <div className={styles.controlDivider}>|</div>
+                    <div className={styles.controlGroup}>
+                        <span className={styles.key}>W S</span>
+                        <span className={styles.action}>Thrust</span>
+                    </div>
+                    <div className={styles.controlDivider}>|</div>
+                    <div className={styles.controlGroup}>
+                        <span className={styles.key}>A D</span>
+                        <span className={styles.action}>Strafe</span>
                     </div>
                     <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
@@ -108,13 +118,13 @@ const PilotingHUD = () => {
                     </div>
                     <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
-                        <span className={styles.key}>R / F</span>
-                        <span className={styles.action}>Up/Down</span>
+                        <span className={styles.key}>Q E</span>
+                        <span className={styles.action}>Roll</span>
                     </div>
                     <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
-                        <span className={styles.key}>O</span>
-                        <span className={styles.action}>Orbit View</span>
+                        <span className={styles.key}>ESC</span>
+                        <span className={styles.action}>Exit</span>
                     </div>
                 </div>
             </div>

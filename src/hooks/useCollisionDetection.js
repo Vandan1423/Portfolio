@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Vector3 } from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useGameMode } from '../context/GameModeContext';
@@ -10,10 +10,17 @@ const DETECTION_CONFIG = {
     // Update rate (every N frames) - throttle for performance
     updateInterval: 2,
     // Distance multiplier for landing zone (relative to orbit radius)
-    landingZoneMultiplier: 0.4,
+    landingZoneMultiplier: 0.45,
     // Distance multiplier for collision zone
     collisionZoneMultiplier: 0.15,
+    // Hysteresis: keep canLand=true for this many frames after leaving the zone
+    hysteresisFrames: 45,
 };
+
+// Must match StarSystem.jsx constants
+const SUN_X = 0;
+const SUN_Z = -10;
+const SYSTEM_ROTATION_SPEED = 0.01;
 
 /**
  * useCollisionDetection Hook
@@ -32,8 +39,10 @@ export function useCollisionDetection(planets, enabled = true) {
 
     const frameCount = useRef(0);
     const tempVec = useRef(new Vector3());
+    // Hysteresis counter: counts down after canLand last became true
+    const canLandLatchRef = useRef(0);
 
-    useFrame(() => {
+    useFrame((state) => {
         if (!enabled || controlMode !== 'piloting' || !planets?.length) {
             return;
         }
@@ -44,21 +53,37 @@ export function useCollisionDetection(planets, enabled = true) {
             return;
         }
 
+        // Use the same clock as StarSystem.jsx (r3f clock, starts at 0)
+        const elapsedTime = state.clock.elapsedTime;
+
+        // System group Y-rotation (matches StarSystem.jsx: SYSTEM_ROTATION_SPEED = 0.01)
+        const groupRotY = elapsedTime * SYSTEM_ROTATION_SPEED;
+        const cosR = Math.cos(groupRotY);
+        const sinR = Math.sin(groupRotY);
+
         let nearestPlanet = null;
         let nearestDistance = Infinity;
-        let canLand = false;
+        let rawCanLand = false;
 
-        // Check each planet
-        for (const planet of planets) {
-            // Calculate planet's current position in orbit
-            // Planets orbit around origin, so we need their current position
-            const time = Date.now() * 0.001; // Current time in seconds
-            const angle = time * planet.orbitSpeed;
-            const planetX = Math.cos(angle) * planet.orbitRadius;
-            const planetZ = Math.sin(angle) * planet.orbitRadius;
-            const planetY = 0; // Planets orbit on XZ plane
+        // Check each planet — index must match what StarSystem.jsx passes to Planet
+        planets.forEach((planet, index) => {
+            // Exactly matches Planet component in StarSystem.jsx:
+            //   const initialAngle = useMemo(() => index * (Math.PI / 2), [index]);
+            //   const angle = state.clock.elapsedTime * orbitSpeed + initialAngle;
+            //   x = sunPosition[0] + cos(angle) * orbitRadius
+            //   z = sunPosition[2] + sin(angle) * orbitRadius
+            const initialAngle = index * (Math.PI / 2);
+            const angle = elapsedTime * planet.orbitSpeed + initialAngle;
 
-            tempVec.current.set(planetX, planetY, planetZ);
+            // Planet local position inside the rotating StarSystem group
+            const localX = SUN_X + Math.cos(angle) * planet.orbitRadius;
+            const localZ = SUN_Z + Math.sin(angle) * planet.orbitRadius;
+
+            // Rotate by the StarSystem group's Y rotation to get world-space position
+            const worldX = localX * cosR - localZ * sinR;
+            const worldZ = localX * sinR + localZ * cosR;
+
+            tempVec.current.set(worldX, 0, worldZ);
 
             // Calculate distance from ship to planet
             const distance = shipPosition.distanceTo(tempVec.current);
@@ -76,20 +101,27 @@ export function useCollisionDetection(planets, enabled = true) {
             // Check landing zone
             const landingRadius = planet.orbitRadius * DETECTION_CONFIG.landingZoneMultiplier;
             if (distance < landingRadius) {
-                canLand = true;
+                rawCanLand = true;
             }
 
             // Check collision zone (too close)
             const collisionRadius = planet.orbitRadius * DETECTION_CONFIG.collisionZoneMultiplier;
             if (distance < collisionRadius) {
-                // Could trigger forced landing or bounce here
-                // For now, just ensure canLand is true
-                canLand = true;
+                rawCanLand = true;
             }
+        });
+
+        // Hysteresis: keep canLand true for a short window after leaving the zone
+        // This prevents the prompt from flickering at zone edges
+        if (rawCanLand) {
+            canLandLatchRef.current = DETECTION_CONFIG.hysteresisFrames;
+        } else if (canLandLatchRef.current > 0) {
+            canLandLatchRef.current--;
+            rawCanLand = true;
         }
 
         // Update context with results
-        updateCollisionState(nearestPlanet, canLand, nearestDistance);
+        updateCollisionState(nearestPlanet, rawCanLand, nearestDistance);
     });
 
     return null; // State is managed in context

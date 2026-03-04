@@ -8,9 +8,7 @@ import { useAI } from "./context/AIContext";
 import { useTutorial } from "./context/TutorialContext";
 import { useGameMode } from "./context/GameModeContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
-import useSpaceshipControls from "./hooks/useSpaceshipControls";
-import useSpaceshipPhysics from "./hooks/useSpaceshipPhysics";
-import useCollisionDetection from "./hooks/useCollisionDetection";
+
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
 import { Analytics } from '@vercel/analytics/react';
@@ -186,7 +184,6 @@ function App() {
         controlMode,
         enterPilotingMode,
         enterOrbitMode,
-        initiateLanding,
         nearestPlanet,
         canLand,
         landedPlanet,
@@ -195,8 +192,8 @@ function App() {
     // Component state
     const [currentPhase, setCurrentPhase] = useState("cockpit");
     const [isTransitioning, setIsTransitioning] = useState(false);
-    const [systemStatus, setSystemStatus] = useState("SYSTEMS STANDBY");
-    const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
+    const [systemStatus, setSystemStatus] = useState("EXPLORATION MODE");
+    const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true);
     const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(true);
     const [isFullscreenCheckComplete, setIsFullscreenCheckComplete] = useState(false);
 
@@ -205,6 +202,7 @@ function App() {
     const wormholeRef = useRef();
     const isCameraTransitioningRef = useRef(false);
     const prevPhaseRef = useRef(currentPhase);
+    const prevControlModeRef = useRef(controlMode);
 
     // Check if user is already in fullscreen mode on mount
     useEffect(() => {
@@ -277,26 +275,20 @@ function App() {
         }
     }, [currentPage, currentPhase]);
 
-    // Listen for AI-triggered travel requests
+    // Handle ESC / any exit from piloting — always trigger smooth return to orbit view
     useEffect(() => {
-        if (travelPhase === 'preparing' && destinationSystem) {
-            console.log('Detected travel request to:', destinationSystem.id);
-            // Trigger the wormhole travel sequence
-            handleSystemTravel(destinationSystem.id);
+        const prev = prevControlModeRef.current;
+        prevControlModeRef.current = controlMode;
+
+        if (prev === 'piloting' && controlMode === 'orbit' && currentPhase === 'exploration') {
+            // Disable orbit controls during transition; they re-enable in onComplete callback
+            setOrbitControlsEnabled(false);
+            isCameraTransitioningRef.current = true;
         }
-    }, [travelPhase, destinationSystem]);
-
-    // Handler for launch command from cockpit terminal
-    const handleLaunchCommand = (command) => {
-        if (command !== "launch") return;
-
-        setCurrentPhase("launching");
-        setTravelPhase("launching");
-        setSystemStatus("LAUNCHING");
-    };
+    }, [controlMode, currentPhase]);
 
     // Handler for wormhole travel to another system
-    const handleSystemTravel = (systemId) => {
+    const handleSystemTravel = useCallback((systemId) => {
         setTravelDestination(systemId);
         setIsTransitioning(true);
         isCameraTransitioningRef.current = false;
@@ -328,7 +320,25 @@ function App() {
                 setSystemStatus("WORMHOLE JUMP IN PROGRESS");
             });
         }, totalDelay);
+    }, [setTravelDestination, setTravelPhase]);
+
+    // Handler for launch command from cockpit terminal
+    const handleLaunchCommand = (command) => {
+        if (command !== "launch") return;
+
+        setCurrentPhase("launching");
+        setTravelPhase("launching");
+        setSystemStatus("LAUNCHING");
     };
+
+    // Listen for AI-triggered travel requests
+    useEffect(() => {
+        if (travelPhase === 'preparing' && destinationSystem) {
+            console.log('Detected travel request to:', destinationSystem.id);
+            // Trigger the wormhole travel sequence
+            handleSystemTravel(destinationSystem.id);
+        }
+    }, [travelPhase, destinationSystem, handleSystemTravel]);
 
     // Handler for planet docking completion
     const handleDockingComplete = (planet) => {
@@ -415,20 +425,31 @@ function App() {
             // 'O' key returns to orbit mode
             if (key === 'o' && controlMode === 'piloting') {
                 event.preventDefault();
+                // Release pointer lock before switching to orbit
+                if (document.pointerLockElement) {
+                    document.exitPointerLock();
+                }
                 enterOrbitMode();
                 isCameraTransitioningRef.current = true;
             }
 
-            // 'L' key initiates landing when in range
+            // 'L' key initiates landing - navigate directly to planet detail scene
             if (key === 'l' && controlMode === 'piloting' && canLand && nearestPlanet) {
                 event.preventDefault();
-                initiateLanding(nearestPlanet);
+                // Release pointer lock and exit piloting mode
+                if (document.pointerLockElement) {
+                    document.exitPointerLock();
+                }
+                enterOrbitMode();
+                // Navigate directly to the planet's detail scene
+                setSelectedPlanet(nearestPlanet);
+                startTransition(() => setCurrentPhase("planet-detail"));
             }
         };
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [openTerminal, currentPhase, controlMode, canLand, nearestPlanet, enterPilotingMode, enterOrbitMode, initiateLanding, setSelectedPlanet]);
+    }, [openTerminal, currentPhase, controlMode, canLand, nearestPlanet, enterPilotingMode, enterOrbitMode, setSelectedPlanet, setCurrentPhase]);
 
     // Lazy page component getter - only creates the component when actually needed
     // Instead of eagerly creating ALL 6 page components on every render
@@ -507,23 +528,16 @@ function App() {
                 <>
                     <Canvas
                         camera={{
-                            position: CAMERA_POSITIONS.COCKPIT,
+                            position: CAMERA_POSITIONS.EXPLORATION,
                             fov: 60,
                             near: 0.1,
                             far: 2000,
                         }}
                         onCreated={({ camera }) => {
                             cameraRef.current = camera;
-                            // Set initial camera based on current phase
-                            if (
-                                currentPhase === "cockpit" ||
-                                currentPhase === "launching"
-                            ) {
-                                camera.position.set(
-                                    ...CAMERA_POSITIONS.COCKPIT
-                                );
-                                camera.lookAt(0, 0, -5); // Look forward
-                            }
+                            // Start directly in exploration view
+                            camera.position.set(...CAMERA_POSITIONS.EXPLORATION);
+                            camera.lookAt(0, 0, 0);
                         }}
                         gl={{
                             antialias: true,

@@ -11,22 +11,26 @@ const PHYSICS_CONFIG = {
     boostMaxSpeed: 120,
     acceleration: 30,
     boostAcceleration: 60,
+    strafeAcceleration: 18, // ~60% of forward accel for strafing
     deceleration: 20,
     brakeDeceleration: 50,
-    turnSpeed: 1.5,
+    // Keyboard pitch/roll (manual override, secondary to mouse)
     pitchSpeed: 1.0,
     rollSpeed: 1.5,
-    dragCoefficient: 0.98, // Air resistance (1 = no drag, 0 = instant stop)
-    minVelocity: 0.1, // Below this, velocity becomes 0
+    dragCoefficient: 0.98, // Per-frame at 60fps, applied frame-rate independently
+    minVelocity: 0.1,
+    // Pitch limits (in radians)
+    maxPitch: Math.PI * 0.44, // ~80 degrees
 };
 
 /**
  * useSpaceshipPhysics Hook
  *
  * Handles physics simulation for spaceship movement using useFrame.
- * Updates position, velocity, and rotation based on control inputs.
+ * Mouse controls yaw/pitch (ship follows where you look).
+ * WASD controls thrust/strafe. Q/E for roll. R/F for manual pitch.
  *
- * @param {Object} controls - Control state from useSpaceshipControls
+ * @param {Object} controls - Control state from useSpaceshipControls (includes consumeMouseDelta)
  * @param {boolean} enabled - Whether physics simulation is active
  * @returns {Object} Current physics state and methods
  */
@@ -72,41 +76,47 @@ export function useSpaceshipPhysics(controls, enabled = true) {
         const {
             forward,
             backward,
-            left,
-            right,
+            strafeLeft,
+            strafeRight,
             up,
             down,
             rollLeft,
             rollRight,
             boost,
             brake,
+            consumeMouseDelta,
         } = controls;
 
         // Get current config based on boost state
         const maxSpeed = boost ? PHYSICS_CONFIG.boostMaxSpeed : PHYSICS_CONFIG.maxSpeed;
         const accel = boost ? PHYSICS_CONFIG.boostAcceleration : PHYSICS_CONFIG.acceleration;
+        const strafeAccel = boost ? PHYSICS_CONFIG.strafeAcceleration * 1.5 : PHYSICS_CONFIG.strafeAcceleration;
 
         // Update boost state
         setIsBoosting(boost);
 
-        // ===== ROTATION =====
-        // Yaw (left/right turning)
-        if (left) {
-            rotation.current.y += PHYSICS_CONFIG.turnSpeed * dt;
-        }
-        if (right) {
-            rotation.current.y -= PHYSICS_CONFIG.turnSpeed * dt;
+        // ===== MOUSE-DRIVEN YAW/PITCH =====
+        if (consumeMouseDelta) {
+            const mouseDelta = consumeMouseDelta();
+
+            // Apply mouse yaw (horizontal mouse = yaw rotation)
+            rotation.current.y -= mouseDelta.x;
+
+            // Apply mouse pitch (vertical mouse = pitch rotation) with clamping
+            rotation.current.x -= mouseDelta.y;
+            rotation.current.x = Math.max(-PHYSICS_CONFIG.maxPitch, Math.min(PHYSICS_CONFIG.maxPitch, rotation.current.x));
         }
 
-        // Pitch (up/down)
+        // ===== KEYBOARD ROTATION (manual overrides) =====
+        // Pitch (R/F keys - manual pitch override)
         if (up) {
-            rotation.current.x = Math.max(rotation.current.x - PHYSICS_CONFIG.pitchSpeed * dt, -Math.PI / 3);
+            rotation.current.x = Math.max(rotation.current.x - PHYSICS_CONFIG.pitchSpeed * dt, -PHYSICS_CONFIG.maxPitch);
         }
         if (down) {
-            rotation.current.x = Math.min(rotation.current.x + PHYSICS_CONFIG.pitchSpeed * dt, Math.PI / 3);
+            rotation.current.x = Math.min(rotation.current.x + PHYSICS_CONFIG.pitchSpeed * dt, PHYSICS_CONFIG.maxPitch);
         }
 
-        // Roll
+        // Roll (Q/E keys)
         if (rollLeft) {
             rotation.current.z += PHYSICS_CONFIG.rollSpeed * dt;
         }
@@ -114,9 +124,9 @@ export function useSpaceshipPhysics(controls, enabled = true) {
             rotation.current.z -= PHYSICS_CONFIG.rollSpeed * dt;
         }
 
-        // Gradual roll return to level
+        // Frame-rate independent roll auto-leveling
         if (!rollLeft && !rollRight) {
-            rotation.current.z *= 0.95;
+            rotation.current.z *= Math.pow(0.05, dt); // Exponential decay, ~95% per second
         }
 
         // ===== THRUST =====
@@ -136,6 +146,18 @@ export function useSpaceshipPhysics(controls, enabled = true) {
             thrustAmount = Math.max(thrustAmount, 0.3);
         }
 
+        // ===== STRAFE (A/D) =====
+        if (strafeLeft) {
+            const right = getRightDirection();
+            velocity.current.addScaledVector(right, -strafeAccel * dt);
+            thrustAmount = Math.max(thrustAmount, 0.2);
+        }
+        if (strafeRight) {
+            const right = getRightDirection();
+            velocity.current.addScaledVector(right, strafeAccel * dt);
+            thrustAmount = Math.max(thrustAmount, 0.2);
+        }
+
         // ===== BRAKING =====
         if (brake) {
             // Active braking
@@ -148,10 +170,9 @@ export function useSpaceshipPhysics(controls, enabled = true) {
             thrustAmount = 0.2; // Slight glow during brake
         }
 
-        // ===== DRAG =====
-        // Natural deceleration when not thrusting
-        if (!forward && !backward && !brake) {
-            velocity.current.multiplyScalar(PHYSICS_CONFIG.dragCoefficient);
+        // ===== DRAG (frame-rate independent) =====
+        if (!forward && !backward && !brake && !strafeLeft && !strafeRight) {
+            velocity.current.multiplyScalar(Math.pow(PHYSICS_CONFIG.dragCoefficient, dt * 60));
         }
 
         // ===== SPEED CLAMPING =====
@@ -167,11 +188,9 @@ export function useSpaceshipPhysics(controls, enabled = true) {
         position.current.addScaledVector(velocity.current, dt);
 
         // ===== BOUNDARY CHECK =====
-        // Keep ship within playable area
         const maxDistance = 500;
         if (position.current.length() > maxDistance) {
             position.current.normalize().multiplyScalar(maxDistance);
-            // Bounce velocity back
             velocity.current.multiplyScalar(-0.5);
         }
 
