@@ -32,8 +32,8 @@ const PilotingController = ({ planets }) => {
     // Spaceship controls (Mouse + WASD + modifiers)
     const controls = useSpaceshipControls(isPiloting);
 
-    // Physics simulation
-    useSpaceshipPhysics(controls, isPiloting);
+    // Physics simulation (pass planets for collision prevention)
+    useSpaceshipPhysics(controls, isPiloting, planets);
 
     // Collision detection with planets
     useCollisionDetection(planets, isPiloting);

@@ -190,7 +190,7 @@ function App() {
     } = useGameMode();
 
     // Component state
-    const [currentPhase, setCurrentPhase] = useState("cockpit");
+    const [currentPhase, setCurrentPhase] = useState("exploration");
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [systemStatus, setSystemStatus] = useState("EXPLORATION MODE");
     const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true);
@@ -649,8 +649,8 @@ function App() {
                         )}
                     </Canvas>
 
-                    {/* Status display for all phases */}
-                    {controlMode !== 'walking' && (
+                    {/* Status display for all phases (hidden during piloting — PilotingHUD takes over) */}
+                    {controlMode !== 'walking' && controlMode !== 'piloting' && (
                         <StatusDisplay
                             phase={currentPhase}
                             systemStatus={systemStatus}

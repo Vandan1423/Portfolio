@@ -12,6 +12,7 @@ const PHYSICS_CONFIG = {
     acceleration: 30,
     boostAcceleration: 60,
     strafeAcceleration: 18, // ~60% of forward accel for strafing
+    strafeYawSpeed: 0.4,  // Subtle yaw rotation during strafing for visual feedback
     deceleration: 20,
     brakeDeceleration: 50,
     // Keyboard pitch/roll (manual override, secondary to mouse)
@@ -34,8 +35,8 @@ const PHYSICS_CONFIG = {
  * @param {boolean} enabled - Whether physics simulation is active
  * @returns {Object} Current physics state and methods
  */
-export function useSpaceshipPhysics(controls, enabled = true) {
-    const { updateShipState, setThrustLevel, setIsBoosting, shipPositionRef, shipVelocityRef, shipRotationRef } = useGameMode();
+export function useSpaceshipPhysics(controls, enabled = true, planets = []) {
+    const { updateShipState, setThrustLevel, setIsBoosting, shipPositionRef, shipVelocityRef, shipRotationRef, planetWorldPositionsRef } = useGameMode();
 
     // Reusable objects to avoid garbage collection
     const tempVec = useRef(new Vector3());
@@ -150,11 +151,15 @@ export function useSpaceshipPhysics(controls, enabled = true) {
         if (strafeLeft) {
             const right = getRightDirection();
             velocity.current.addScaledVector(right, -strafeAccel * dt);
+            // Subtle yaw into the strafe direction for visual feedback
+            rotation.current.y += PHYSICS_CONFIG.strafeYawSpeed * dt;
             thrustAmount = Math.max(thrustAmount, 0.2);
         }
         if (strafeRight) {
             const right = getRightDirection();
             velocity.current.addScaledVector(right, strafeAccel * dt);
+            // Subtle yaw into the strafe direction for visual feedback
+            rotation.current.y -= PHYSICS_CONFIG.strafeYawSpeed * dt;
             thrustAmount = Math.max(thrustAmount, 0.2);
         }
 
@@ -186,6 +191,46 @@ export function useSpaceshipPhysics(controls, enabled = true) {
 
         // ===== POSITION UPDATE =====
         position.current.addScaledVector(velocity.current, dt);
+
+        // ===== SUN COLLISION PREVENTION =====
+        // Sun is at (0, 0, -10) with scale 4.0
+        const sunPos = tempVec.current.set(0, 0, -10);
+        const sunCollisionRadius = 12; // Sun scale 4 * 2.5 + buffer
+        const sunDist = position.current.distanceTo(sunPos);
+        if (sunDist < sunCollisionRadius) {
+            const pushDir = new Vector3().copy(position.current).sub(sunPos).normalize();
+            position.current.copy(sunPos).addScaledVector(pushDir, sunCollisionRadius);
+            const dot = velocity.current.dot(pushDir);
+            if (dot < 0) {
+                velocity.current.addScaledVector(pushDir, -dot * 1.5);
+            }
+        }
+
+        // ===== PLANET COLLISION PREVENTION =====
+        const posMap = planetWorldPositionsRef.current;
+        if (posMap && posMap.size > 0 && planets.length > 0) {
+            planets.forEach((planet) => {
+                const worldPos = posMap.get(planet.id);
+                if (!worldPos) return;
+
+                // Collision radius = planet visual scale + safety buffer
+                const collisionRadius = (planet.scale || 3) * 2.5 + 2;
+                const dist = position.current.distanceTo(worldPos);
+
+                if (dist < collisionRadius) {
+                    // Push the ship out of the planet
+                    tempVec.current.copy(position.current).sub(worldPos).normalize();
+                    // Place ship at the collision boundary
+                    position.current.copy(worldPos).addScaledVector(tempVec.current, collisionRadius);
+                    // Reflect velocity away from planet and dampen it
+                    const dotProduct = velocity.current.dot(tempVec.current);
+                    if (dotProduct < 0) {
+                        // Ship is moving towards the planet — bounce it away
+                        velocity.current.addScaledVector(tempVec.current, -dotProduct * 1.5);
+                    }
+                }
+            });
+        }
 
         // ===== BOUNDARY CHECK =====
         const maxDistance = 500;

@@ -39,6 +39,9 @@ export function GameModeProvider({ children }) {
     const [thrustLevel, setThrustLevel] = useState(0);
     const [isBoosting, setIsBoosting] = useState(false);
 
+    // Shared world-position map: planets write here, collision detection reads
+    const planetWorldPositionsRef = useRef(new Map());
+
     // Switch to piloting mode
     const enterPilotingMode = useCallback(() => {
         if (controlMode === 'orbit') {
@@ -140,6 +143,9 @@ export function GameModeProvider({ children }) {
         setThrustLevel,
         isBoosting,
         setIsBoosting,
+
+        // Shared planet positions
+        planetWorldPositionsRef,
 
         // Mode switching functions
         enterPilotingMode,

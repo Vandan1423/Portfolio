@@ -9,14 +9,15 @@ const SPACECRAFT_MODEL_PATH = '/models/SpaceshipCockpit.glb';
 
 // Visual configuration
 const CONFIG = {
-    shipScale: 0.6,
+    shipScale: 0.3,
     engineGlowIntensity: {
         idle: 0.5,
         thrust: 2.0,
         boost: 4.0,
     },
-    bankingAngle: 0.3, // Max banking angle in radians
-    bankingSpeed: 3.0, // How fast to bank
+    bankingAngle: 0.4,  // Max banking angle in radians
+    bankingSpeed: 4.0,  // How fast to bank
+    strafeRollAngle: 0.25, // Roll angle when strafing (ship leans into turn)
 };
 
 /**
@@ -98,22 +99,32 @@ const PilotableSpaceship = () => {
     // Clone scene to avoid conflicts
     const clonedScene = useMemo(() => scene.clone(), [scene]);
 
+    // Track previous yaw for delta calculation
+    const prevYawRef = useRef(shipRotation.y);
+
     // Calculate banking based on turning
     useFrame((state, delta) => {
         if (!groupRef.current || !meshRef.current) return;
+
+        const dt = Math.min(delta, 0.1);
 
         // Update group position and rotation from game state
         groupRef.current.position.copy(shipPosition);
         groupRef.current.rotation.copy(shipRotation);
 
-        // Calculate banking based on velocity direction vs facing direction
-        // When turning, the ship should bank in the direction of the turn
-        const speed = shipVelocity.length();
-        const turnRate = shipRotation.y; // Current yaw
+        // Calculate yaw rate (change per frame) for bank direction
+        const yawRate = (shipRotation.y - prevYawRef.current) / Math.max(dt, 0.001);
+        prevYawRef.current = shipRotation.y;
 
-        // Smooth banking
-        const targetBank = -turnRate * CONFIG.bankingAngle * Math.min(speed / 30, 1);
-        bankingRef.current += (targetBank - bankingRef.current) * CONFIG.bankingSpeed * delta;
+        // Bank proportional to yaw rate (ship leans into turns & strafes)
+        const speed = shipVelocity.length();
+        const speedFactor = Math.min(speed / 20, 1);
+        const targetBank = yawRate * CONFIG.bankingAngle * speedFactor;
+
+        // Smooth banking transition
+        bankingRef.current += (targetBank - bankingRef.current) * CONFIG.bankingSpeed * dt;
+        // Clamp to avoid extreme angles
+        bankingRef.current = Math.max(-CONFIG.bankingAngle, Math.min(CONFIG.bankingAngle, bankingRef.current));
 
         // Apply banking to the mesh (local rotation)
         meshRef.current.rotation.z = bankingRef.current;
@@ -129,10 +140,7 @@ const PilotableSpaceship = () => {
                     rotation={[0, Math.PI / 2, 0]} // Back faces camera (+Z)
                 />
 
-                {/* Engine glow effects */}
-                <EngineGlow thrustLevel={thrustLevel} isBoosting={isBoosting} />
-
-                {/* Secondary engine glows (left and right) */}
+                {/* Engine lights (left and right) */}
                 <group position={[-1.0, -0.3, 2.0]}>
                     <pointLight
                         color={isBoosting ? '#ff6600' : '#00ffff'}

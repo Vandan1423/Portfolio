@@ -2,6 +2,7 @@ import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import {Object3D, Vector3} from "three";
+import { useGameMode } from "../../context/GameModeContext";
 
 // Sun configuration
 const SUN_POSITION = [0, 0, -10];
@@ -135,6 +136,7 @@ const StarSystem = ({
             {planets.map((planet, index) => (
                 <Planet
                     key={planet.id}
+                    id={planet.id}
                     {...planet}
                     index={index}
                     sunPosition={SUN_POSITION}
@@ -408,6 +410,7 @@ const OrbitLine = ({ radius, color, sunPosition, yOffset = 0 }) => {
  * Renders individual planet with rotation and orbital motion
  */
 const Planet = ({
+    id,
     scale,
     modelPath,
     orbitRadius,
@@ -419,6 +422,8 @@ const Planet = ({
 }) => {
     const { scene } = useGLTF(modelPath);
     const planetRef = useRef();
+    const { planetWorldPositionsRef } = useGameMode();
+    const _worldPos = useRef(new Vector3());
 
     // Stagger starting positions
     const initialAngle = useMemo(() => index * (Math.PI / 2), [index]);
@@ -435,6 +440,10 @@ const Planet = ({
             const y = sunPosition[1] + yOffset;
 
             planetRef.current.position.set(x, y, z);
+
+            // Write actual world position to shared map for collision detection
+            planetRef.current.getWorldPosition(_worldPos.current);
+            planetWorldPositionsRef.current.set(id, _worldPos.current.clone());
         }
     });
 

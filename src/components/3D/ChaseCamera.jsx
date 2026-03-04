@@ -8,33 +8,34 @@ import { useGameMode } from '../../context/GameModeContext';
  */
 const CAMERA_CONFIG = {
     // Base offset behind and above the ship (in ship's local space)
-    baseOffset: new Vector3(0, 1.8, 5.0),
+    // Raised higher and pulled back further for a centered modern-game feel
+    baseOffset: new Vector3(0, 3.5, 4.5),
 
     // How far ahead of the ship to look (in ship's forward direction)
-    lookAheadDistance: 4,
+    lookAheadDistance: 6,
 
     // Spring-damper for camera position (higher = stiffer/snappier)
-    positionStiffness: 50,
-    positionDamping: 12,
+    positionStiffness: 60,
+    positionDamping: 14,
 
     // Spring-damper for look-at target (higher = more responsive aiming)
-    lookAtStiffness: 80,
-    lookAtDamping: 14,
+    lookAtStiffness: 90,
+    lookAtDamping: 16,
 
     // Dynamic FOV based on speed
-    baseFOV: 65,
-    maxFOV: 80,
+    baseFOV: 60,
+    maxFOV: 75,
     speedForMaxFOV: 100,
     fovLerpSpeed: 3.0,
 
     // Speed-based camera pull-back (camera moves further at high speed)
     speedPullBackZ: 2.5,   // Extra distance behind at max speed
-    speedPullBackY: 0.6,   // Extra height at max speed
+    speedPullBackY: 0.8,   // Extra height at max speed
     speedForMaxPullBack: 100,
 
-    // Camera tilt on yaw (adds visceral turning feel)
-    maxTiltAngle: 0.05,  // ~3 degrees in radians
-    tiltSpeed: 4.0,       // How fast tilt responds
+    // Camera tilt on yaw — very subtle to avoid looking tilted
+    maxTiltAngle: 0.015,  // ~0.9 degrees in radians
+    tiltSpeed: 6.0,       // How fast tilt responds (faster = less lag)
 };
 
 /**
