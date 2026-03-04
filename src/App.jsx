@@ -528,16 +528,24 @@ function App() {
                 <>
                     <Canvas
                         camera={{
-                            position: CAMERA_POSITIONS.EXPLORATION,
+                            position: currentPhase === "cockpit" || currentPhase === "launching"
+                                ? CAMERA_POSITIONS.COCKPIT
+                                : CAMERA_POSITIONS.EXPLORATION,
                             fov: 60,
                             near: 0.1,
                             far: 2000,
                         }}
                         onCreated={({ camera }) => {
                             cameraRef.current = camera;
-                            // Start directly in exploration view
-                            camera.position.set(...CAMERA_POSITIONS.EXPLORATION);
-                            camera.lookAt(0, 0, 0);
+                            // Position camera based on current phase
+                            const isCockpitPhase = currentPhase === "cockpit" || currentPhase === "launching";
+                            if (isCockpitPhase) {
+                                camera.position.set(...CAMERA_POSITIONS.COCKPIT);
+                                camera.lookAt(0, 0, -5);
+                            } else {
+                                camera.position.set(...CAMERA_POSITIONS.EXPLORATION);
+                                camera.lookAt(0, 0, 0);
+                            }
                         }}
                         gl={{
                             antialias: true,
