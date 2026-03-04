@@ -57,6 +57,13 @@ const ExplorationControls = ({ isVisible, isNavigationOpen }) => {
             <span className={styles.keyHighlight}>N</span>
             <span className={styles.action}>Navigation</span>
           </div>
+
+          <div className={styles.divider} />
+
+          <div className={styles.controlItem}>
+            <span className={styles.keyHighlight}>P</span>
+            <span className={styles.action}>Pilot Ship</span>
+          </div>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { NavigationProvider } from './context/NavigationContext';
 import { StarSystemProvider } from './context/StarSystemContext';
 import { AIProvider } from './context/AIContext';
 import { TutorialProvider } from './context/TutorialContext';
+import { GameModeProvider } from './context/GameModeContext';
 import RocketLoader from './components/Loader/RocketLoader';
 import App from './App.jsx';
 import './index.css';
@@ -70,7 +71,9 @@ createRoot(document.getElementById('root')).render(
           <StarSystemProvider>
             <AIProvider>
               <TutorialProvider>
-                <App />
+                <GameModeProvider>
+                  <App />
+                </GameModeProvider>
               </TutorialProvider>
             </AIProvider>
           </StarSystemProvider>

@@ -1,12 +1,16 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useState, useRef, useEffect, useMemo, lazy, Suspense } from "react";
+import { useState, useRef, useEffect, useMemo, lazy, Suspense, startTransition, useCallback } from "react";
 import {Vector3} from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
 import { useAI } from "./context/AIContext";
 import { useTutorial } from "./context/TutorialContext";
+import { useGameMode } from "./context/GameModeContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
+import useSpaceshipControls from "./hooks/useSpaceshipControls";
+import useSpaceshipPhysics from "./hooks/useSpaceshipPhysics";
+import useCollisionDetection from "./hooks/useCollisionDetection";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
 import { Analytics } from '@vercel/analytics/react';
@@ -23,6 +27,11 @@ const PlanetDetailScene = lazy(() => import("./components/3D/PlanetDetailScene")
 const NeuralLinkMap = lazy(() => import("./components/UI/NeuralLinkMap"));
 const SagittariusTerminal = lazy(() => import("./components/AI/SagittariusTerminal"));
 const SagittariusAvatar = lazy(() => import("./components/UI/SagittariusAvatar"));
+
+// Piloting mode components
+const PilotingController = lazy(() => import("./components/3D/PilotingController"));
+const PilotingHUD = lazy(() => import("./components/UI/PilotingHUD"));
+const PlanetSurface = lazy(() => import("./components/3D/PlanetSurface"));
 
 // Lazy load page components
 const AboutMe = lazy(() => import("./pages/AboutMe/AboutMe"));
@@ -99,7 +108,7 @@ const SmoothCameraTransition = ({
  * StatusDisplay Component
  * Shows current system status in the top-left corner
  */
-const StatusDisplay = ({ phase, systemStatus, currentSystemName }) => {
+const StatusDisplay = ({ phase, systemStatus, currentSystemName, controlMode }) => {
     const statusConfig = {
         cockpit: {
             borderColor: "border-green-500/30",
@@ -114,10 +123,12 @@ const StatusDisplay = ({ phase, systemStatus, currentSystemName }) => {
             pulse: true,
         },
         exploration: {
-            borderColor: "border-cyan-500/30",
-            textColor: "text-cyan-400",
+            borderColor: controlMode === 'piloting' ? "border-orange-500/30" : "border-cyan-500/30",
+            textColor: controlMode === 'piloting' ? "text-orange-400" : "text-cyan-400",
             title: currentSystemName || "UNKNOWN SYSTEM",
-            helper: "Press 'N' for navigation",
+            helper: controlMode === 'piloting'
+                ? "PILOTING MODE - Press 'O' for orbit view"
+                : "Press 'N' for navigation | 'P' to pilot ship",
         },
     };
 
@@ -170,6 +181,17 @@ function App() {
     // Tutorial context
     const { setTutorialStep, tutorialStep, notifyUserInteraction, notifyExplorationEntered, dismissCurrentTutorial, showTutorial } = useTutorial();
 
+    // Game mode context
+    const {
+        controlMode,
+        enterPilotingMode,
+        enterOrbitMode,
+        initiateLanding,
+        nearestPlanet,
+        canLand,
+        landedPlanet,
+    } = useGameMode();
+
     // Component state
     const [currentPhase, setCurrentPhase] = useState("cockpit");
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -209,9 +231,9 @@ function App() {
             // Future enhancement: could add logic here if needed
         };
 
-        document.addEventListener("fullscreenchange", handleFullscreenChange);
-        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-        document.addEventListener("msfullscreenchange", handleFullscreenChange);
+        document.addEventListener("fullscreenchange", handleFullscreenChange, { passive: true });
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange, { passive: true });
+        document.addEventListener("msfullscreenchange", handleFullscreenChange, { passive: true });
 
         return () => {
             document.removeEventListener("fullscreenchange", handleFullscreenChange);
@@ -287,19 +309,24 @@ function App() {
                 cameraRef.current.lookAt(0, 0, -5);
             }
 
-            setCurrentPhase("cockpit");
-            setSystemStatus("WARP DRIVE INITIATED - PREPARE FOR JUMP");
-            setTravelPhase("preparing");
-            setIsTransitioning(false);
+            // Wrap non-urgent state updates in startTransition to reduce INP
+            startTransition(() => {
+                setCurrentPhase("cockpit");
+                setSystemStatus("WARP DRIVE INITIATED - PREPARE FOR JUMP");
+                setTravelPhase("preparing");
+                setIsTransitioning(false);
+            });
         }, TRANSITION_DELAYS.BRIEF_FADE);
 
         // Auto-trigger launch sequence after showing cockpit
         const totalDelay =
             TRANSITION_DELAYS.BRIEF_FADE + TRANSITION_DELAYS.COCKPIT_VIEW;
         setTimeout(() => {
-            setCurrentPhase("launching");
-            setTravelPhase("launching");
-            setSystemStatus("WORMHOLE JUMP IN PROGRESS");
+            startTransition(() => {
+                setCurrentPhase("launching");
+                setTravelPhase("launching");
+                setSystemStatus("WORMHOLE JUMP IN PROGRESS");
+            });
         }, totalDelay);
     };
 
@@ -334,9 +361,9 @@ function App() {
         };
 
         // Listen for mouse movement, clicks, or keyboard
-        window.addEventListener('mousemove', handleInteraction, { once: true });
-        window.addEventListener('click', handleInteraction, { once: true });
-        window.addEventListener('keydown', handleInteraction, { once: true });
+        window.addEventListener('mousemove', handleInteraction, { once: true, passive: true });
+        window.addEventListener('click', handleInteraction, { once: true, passive: true });
+        window.addEventListener('keydown', handleInteraction, { once: true, passive: true });
 
         return () => {
             window.removeEventListener('mousemove', handleInteraction);
@@ -345,9 +372,10 @@ function App() {
         };
     }, [showTutorial, currentPhase, notifyUserInteraction]);
 
-    // Terminal keyboard shortcut (T key) - custom implementation
+    // Terminal keyboard shortcut (T key) AND P/O/L mode switching - CONSOLIDATED into single listener
+    // Combining multiple keydown listeners into one reduces INP by avoiding redundant event processing
     useEffect(() => {
-        const handleKeyPress = (event) => {
+        const handleKeyDown = (event) => {
             // Ignore if user is typing in an input field
             if (
                 event.target.tagName === "INPUT" ||
@@ -356,46 +384,77 @@ function App() {
                 return;
             }
 
+            const key = event.key.toLowerCase();
+
             // 'T' key opens terminal
-            if (event.key.toLowerCase() === 't') {
+            if (key === 't') {
                 event.preventDefault();
                 openTerminal();
+                return;
+            }
+
+            // Escape key - return from planet detail
+            if (event.key === 'Escape' && currentPhase === "planet-detail") {
+                startTransition(() => {
+                    setSelectedPlanet(null);
+                    setCurrentPhase("exploration");
+                });
+                return;
+            }
+
+            // Only allow mode switching during exploration phase
+            if (currentPhase !== "exploration") return;
+
+            // 'P' key enters piloting mode
+            if (key === 'p' && controlMode === 'orbit') {
+                event.preventDefault();
+                enterPilotingMode();
+                setOrbitControlsEnabled(false);
+            }
+
+            // 'O' key returns to orbit mode
+            if (key === 'o' && controlMode === 'piloting') {
+                event.preventDefault();
+                enterOrbitMode();
+                isCameraTransitioningRef.current = true;
+            }
+
+            // 'L' key initiates landing when in range
+            if (key === 'l' && controlMode === 'piloting' && canLand && nearestPlanet) {
+                event.preventDefault();
+                initiateLanding(nearestPlanet);
             }
         };
 
-        window.addEventListener("keydown", handleKeyPress);
-        return () => window.removeEventListener("keydown", handleKeyPress);
-    }, [openTerminal]);
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [openTerminal, currentPhase, controlMode, canLand, nearestPlanet, enterPilotingMode, enterOrbitMode, initiateLanding, setSelectedPlanet]);
 
-    useKeyboardShortcut("Escape", () => {
-        if (currentPhase === "planet-detail") {
-            setSelectedPlanet(null);
-            setCurrentPhase("exploration");
+    // Lazy page component getter - only creates the component when actually needed
+    // Instead of eagerly creating ALL 6 page components on every render
+    const getPageComponent = useCallback((page) => {
+        switch (page) {
+            case 'about-me': return <AboutMe />;
+            case 'projects': return <Projects />;
+            case 'experience': return <Experience />;
+            case 'contact': return <Contact />;
+            case 'journey': return <Journey />;
+            case 'technologies': return <Technologies />;
+            default: return <AboutMe />;
         }
-    });
+    }, []);
 
-    // Memoized page components mapping
-    const pageComponents = useMemo(
-        () => ({
-            "about-me": <AboutMe />,
-            projects: <Projects />,
-            experience: <Experience />,
-            contact: <Contact />,
-            journey: <Journey />,
-            technologies: <Technologies />,
-        }),
-        []
-    );
+    // Cache touch device detection to avoid expensive matchMedia call on every render
+    const isTouchDevice = useMemo(() => {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+    }, []);
 
     // Render non-3D pages (including mobile)
     if (currentPage !== "3d-portfolio" || isMobile) {
-        // Detect touch device
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
-        
         return (
             <div className="w-full h-screen bg-deep-space relative overflow-y-auto">
                 <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
-                    {pageComponents[currentPage] || pageComponents["about-me"]}
+                    {getPageComponent(currentPage)}
                 </Suspense>
                 
                 {/* Sagittarius Avatar - Hidden on static pages for touch devices */}
@@ -425,7 +484,14 @@ function App() {
             {/* Only render 3D content after fullscreen check is complete and prompt is dismissed */}
             {isFullscreenCheckComplete && !showFullscreenPrompt && (
                 <>
-                    {currentPhase === "planet-detail" && selectedPlanet ? (
+                    {/* Planet Surface - Walking exploration mode */}
+                    {controlMode === 'walking' && landedPlanet && (
+                        <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
+                            <PlanetSurface />
+                        </Suspense>
+                    )}
+
+                    {currentPhase === "planet-detail" && selectedPlanet && controlMode !== 'walking' ? (
                 <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
                     <PlanetDetailScene
                         planet={selectedPlanet}
@@ -490,7 +556,8 @@ function App() {
                         <OrbitControls
                             enabled={
                                 currentPhase === "exploration" &&
-                                orbitControlsEnabled
+                                orbitControlsEnabled &&
+                                controlMode === 'orbit'
                             }
                             enablePan={false}
                             minDistance={50}
@@ -498,6 +565,13 @@ function App() {
                             maxPolarAngle={Math.PI / 1.8}
                             minPolarAngle={Math.PI / 4}
                         />
+
+                        {/* Piloting controller (spaceship, camera, collision detection) */}
+                        {currentPhase === "exploration" && (controlMode === 'piloting' || controlMode === 'landing') && (
+                            <Suspense fallback={null}>
+                                <PilotingController planets={currentSystem?.planets || []} />
+                            </Suspense>
+                        )}
 
                         {/* Cockpit interior for cockpit and launching phases */}
                         {(currentPhase === "cockpit" ||
@@ -562,11 +636,14 @@ function App() {
                     </Canvas>
 
                     {/* Status display for all phases */}
-                    <StatusDisplay
-                        phase={currentPhase}
-                        systemStatus={systemStatus}
-                        currentSystemName={currentSystem?.name}
-                    />
+                    {controlMode !== 'walking' && (
+                        <StatusDisplay
+                            phase={currentPhase}
+                            systemStatus={systemStatus}
+                            currentSystemName={currentSystem?.name}
+                            controlMode={controlMode}
+                        />
+                    )}
 
                     {/* Navigation screen for exploration phase */}
                     {currentPhase === "exploration" && (
@@ -594,11 +671,18 @@ function App() {
                         </Suspense>
                     )}
 
-                    {/* Exploration controls hint panel - only in exploration phase */}
+                    {/* Exploration controls hint panel - only in exploration phase and orbit mode */}
                     <ExplorationControls
-                        isVisible={currentPhase === "exploration"}
+                        isVisible={currentPhase === "exploration" && controlMode === 'orbit'}
                         isNavigationOpen={isNavigationVisible}
                     />
+
+                    {/* Piloting HUD - only in exploration phase and piloting mode */}
+                    {currentPhase === "exploration" && controlMode === 'piloting' && (
+                        <Suspense fallback={null}>
+                            <PilotingHUD />
+                        </Suspense>
+                    )}
 
                     {/* Black transition screen when switching to cockpit */}
                     {isTransitioning && (

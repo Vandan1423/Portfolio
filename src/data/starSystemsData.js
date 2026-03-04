@@ -14,6 +14,13 @@ export const STAR_SYSTEMS = {
         page: "About Me",
         description: "Personal information & introduction",
         color: "cyan",
+        // Surface configuration for planet exploration
+        surface: {
+            theme: 'rocky',
+            groundColor: '#8B4513',
+            atmosphereColor: '#ff6b35',
+            skyColor: '#1a0a00',
+        },
         planets: [
             {
                 id: "personal-info",
@@ -144,6 +151,12 @@ export const STAR_SYSTEMS = {
         page: "Projects",
         description: "Portfolio & project showcase",
         color: "blue",
+        surface: {
+            theme: 'tech',
+            groundColor: '#1a1a2e',
+            atmosphereColor: '#3b82f6',
+            skyColor: '#0a0a1a',
+        },
         planets: [
             {
                 id: "project-1",
@@ -291,6 +304,12 @@ export const STAR_SYSTEMS = {
         page: "Experience",
         description: "Professional journey & timeline",
         color: "purple",
+        surface: {
+            theme: 'crystal',
+            groundColor: '#2a0040',
+            atmosphereColor: '#8b5cf6',
+            skyColor: '#0d001a',
+        },
         planets: [
             {
                 id: "exp-1",
@@ -388,6 +407,12 @@ export const STAR_SYSTEMS = {
         page: "Contact",
         description: "Communication & social links",
         color: "orange",
+        surface: {
+            theme: 'desert',
+            groundColor: '#c2a366',
+            atmosphereColor: '#f97316',
+            skyColor: '#1a1000',
+        },
         planets: [
             {
                 id: "contact-form",
@@ -433,6 +458,12 @@ export const STAR_SYSTEMS = {
         page: "Journey",
         description: "Career path & milestones",
         color: "indigo",
+        surface: {
+            theme: 'ice',
+            groundColor: '#e0f7fa',
+            atmosphereColor: '#6366f1',
+            skyColor: '#0a0a1f',
+        },
         planets: [
             {
                 id: "journey-milestones",
@@ -478,6 +509,12 @@ export const STAR_SYSTEMS = {
         page: "Technologies",
         description: "Skills & technical expertise",
         color: "teal",
+        surface: {
+            theme: 'circuit',
+            groundColor: '#0d1117',
+            atmosphereColor: '#14b8a6',
+            skyColor: '#000a0a',
+        },
         planets: [
             {
                 id: "frontend-tech",

@@ -1,0 +1,307 @@
+.container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    font-family: 'Orbitron', 'Rajdhani', monospace;
+}
+
+/* Left panel - Speed */
+.leftPanel {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+}
+
+/* Right panel - Navigation */
+.rightPanel {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+}
+
+/* Bottom panel - Controls */
+.bottomPanel {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Panel styling */
+.panel {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(10, 25, 47, 0.9) 100%);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 16px 20px;
+    backdrop-filter: blur(10px);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(0, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    min-width: 180px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.icon {
+    color: rgba(0, 255, 255, 0.8);
+    font-size: 10px;
+}
+
+.title {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0, 255, 255, 0.9);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Speed display */
+.speedDisplay {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.speedValue {
+    font-size: 32px;
+    font-weight: 700;
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.speedUnit {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+/* Speed bar */
+.speedBar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.speedFill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ffff, #00ccff);
+    border-radius: 3px;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+.speedFill.boosting {
+    background: linear-gradient(90deg, #ff6600, #ff9900);
+    box-shadow: 0 0 12px rgba(255, 102, 0, 0.7);
+}
+
+/* Status indicators */
+.boostIndicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #ff6600;
+    text-shadow: 0 0 8px rgba(255, 102, 0, 0.5);
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+.boostIcon {
+    font-size: 14px;
+}
+
+.thrustIndicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: rgba(0, 255, 255, 0.7);
+}
+
+.thrustIcon {
+    font-size: 12px;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Planet info */
+.planetInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.planetName {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+.planetDistance {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Landing prompt */
+.landingPrompt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(0, 255, 0, 0.15);
+    border: 1px solid rgba(0, 255, 0, 0.4);
+    border-radius: 6px;
+    animation: glow 1.5s ease-in-out infinite;
+}
+
+.landKey {
+    font-size: 14px;
+    font-weight: 700;
+    color: #00ff00;
+    background: rgba(0, 255, 0, 0.2);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 0, 0.5);
+}
+
+.landingPrompt span:last-child {
+    font-size: 11px;
+    color: #00ff00;
+    letter-spacing: 1px;
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    }
+}
+
+/* Controls hint */
+.controlsHint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(10, 25, 47, 0.85) 100%);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px 20px;
+    backdrop-filter: blur(10px);
+}
+
+.controlGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.controlDivider {
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+}
+
+.key {
+    font-size: 11px;
+    font-weight: 600;
+    color: #00ffff;
+    background: rgba(0, 255, 255, 0.15);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.action {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Crosshair */
+.crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.crosshairInner {
+    width: 8px;
+    height: 8px;
+    border: 2px solid rgba(0, 255, 255, 0.6);
+    border-radius: 50%;
+    position: relative;
+}
+
+.crosshairInner::before,
+.crosshairInner::after {
+    content: '';
+    position: absolute;
+    background: rgba(0, 255, 255, 0.6);
+}
+
+.crosshairInner::before {
+    width: 12px;
+    height: 1px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.crosshairInner::after {
+    width: 1px;
+    height: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .controlsHint {
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 300px;
+    }
+
+    .controlDivider {
+        display: none;
+    }
+
+    .panel {
+        padding: 12px 16px;
+        min-width: 150px;
+    }
+
+    .speedValue {
+        font-size: 24px;
+    }
+}

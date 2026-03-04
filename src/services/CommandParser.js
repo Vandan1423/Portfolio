@@ -248,6 +248,28 @@ const COMMANDS = {
   map: {
     aliases: [],
     action: 'openNeuralMap'
+  },
+
+  // Piloting commands
+  pilot: {
+    aliases: ['fly', 'ship'],
+    description: 'Enter piloting mode',
+    action: 'enterPilotingMode'
+  },
+  observe: {
+    aliases: ['orbit', 'watch'],
+    description: 'Return to orbit observation mode',
+    action: 'enterOrbitMode'
+  },
+  land: {
+    aliases: ['dock', 'touchdown'],
+    description: 'Land on nearest planet (when in range)',
+    action: 'initiateLanding'
+  },
+  takeoff: {
+    aliases: ['launch', 'liftoff', 'depart'],
+    description: 'Take off from planet surface',
+    action: 'returnToShip'
   }
 };
 

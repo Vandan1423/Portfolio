@@ -29,6 +29,24 @@ export function TutorialProvider({ children }) {
             trigger: 'planet-detail', // Shows when on planet detail scene
             duration: 0, // Stays until manually dismissed
         },
+        {
+            id: 'piloting-hint',
+            message: "Press 'P' to pilot your ship! Use WASD to fly through space.",
+            trigger: 'exploration', // Shows during exploration phase
+            duration: 0,
+        },
+        {
+            id: 'landing-hint',
+            message: "Approach a planet and press 'L' to land and explore on foot!",
+            trigger: 'piloting', // Shows when near a planet
+            duration: 0,
+        },
+        {
+            id: 'walking-hint',
+            message: "Use WASD to walk around. Press 'E' near stations to interact. Press 'B' to return to your ship!",
+            trigger: 'walking', // Shows when on planet surface
+            duration: 0,
+        },
     ];
 
     // Welcome message (shows on every visit)

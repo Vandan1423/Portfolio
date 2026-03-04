@@ -87,8 +87,8 @@ const RocketLoader = ({ children }) => {
                 setTransitionPhase("complete");
                 // Only NOW allow the app to render
                 setShouldRenderApp(true);
-            }, 1500);
-        }, 1000); // Hold at 100% for 1 second
+            }, 600);
+        }, 300); // Hold at 100% for 300ms
     };
 
     // Asset preloading with progress tracking
