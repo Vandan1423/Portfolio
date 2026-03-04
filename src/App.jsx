@@ -190,7 +190,7 @@ function App() {
     } = useGameMode();
 
     // Component state
-    const [currentPhase, setCurrentPhase] = useState("exploration");
+    const [currentPhase, setCurrentPhase] = useState("cockpit");
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [systemStatus, setSystemStatus] = useState("EXPLORATION MODE");
     const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true);
