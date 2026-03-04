@@ -21,27 +21,20 @@ export function NavigationProvider({ children }) {
     const [scrollTarget, setScrollTarget] = useState(null);
     const [isMobile, setIsMobile] = useState(isMobileOrTablet());
 
-    // Listen for window resize to update mobile state (debounced for INP)
+    // Listen for window resize to update mobile state
     useEffect(() => {
-        let resizeTimer;
         const handleResize = () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                const mobile = isMobileOrTablet();
-                setIsMobile(mobile);
+            const mobile = isMobileOrTablet();
+            setIsMobile(mobile);
 
-                // If currently on 3d-portfolio and resized to mobile, redirect to about-me
-                if (mobile && currentPage === '3d-portfolio') {
-                    setCurrentPage('about-me');
-                }
-            }, 150); // Debounce 150ms
+            // If currently on 3d-portfolio and resized to mobile, redirect to about-me
+            if (mobile && currentPage === '3d-portfolio') {
+                setCurrentPage('about-me');
+            }
         };
 
-        window.addEventListener('resize', handleResize, { passive: true });
-        return () => {
-            clearTimeout(resizeTimer);
-            window.removeEventListener('resize', handleResize);
-        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, [currentPage]);
 
     const handleNavigate = useCallback((page, section = null) => {

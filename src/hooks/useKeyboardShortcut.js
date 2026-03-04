@@ -1,21 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * Custom hook for keyboard shortcut handling
  * Listens for specific key presses and provides toggle functionality
- * Uses refs for stable event listener to reduce INP
  *
  * @param {string} targetKey - The key to listen for (e.g., 'n', 'Escape')
  * @returns {Object} - { isActive, toggle, setIsActive }
  */
 export const useKeyboardShortcut = (targetKey = "n") => {
     const [isActive, setIsActive] = useState(false);
-    const isActiveRef = useRef(false);
-
-    // Keep ref in sync with state
-    useEffect(() => {
-        isActiveRef.current = isActive;
-    }, [isActive]);
 
     const toggle = useCallback(() => {
         setIsActive((prev) => !prev);
@@ -38,7 +31,7 @@ export const useKeyboardShortcut = (targetKey = "n") => {
             }
 
             // ESC key always closes (sets to false)
-            if (event.key === "Escape" && isActiveRef.current) {
+            if (event.key === "Escape" && isActive) {
                 event.preventDefault();
                 setIsActive(false);
             }
@@ -51,7 +44,7 @@ export const useKeyboardShortcut = (targetKey = "n") => {
         return () => {
             window.removeEventListener("keydown", handleKeyPress);
         };
-    }, [targetKey, toggle]); // Removed isActive from deps - using ref instead
+    }, [targetKey, toggle, isActive]);
 
     return { isActive, toggle, setIsActive };
 };

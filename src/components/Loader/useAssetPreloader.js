@@ -191,17 +191,20 @@ const useAssetPreloader = (onComplete) => {
                 }
 
                 // TIERED LOADING STRATEGY:
-                // Phase 1: Critical assets only (Sun, planets, cube textures) - load during screen
-                // Phase 2: Medium + Deferred assets - background after app loads
+                // Phase 1: Critical + Medium assets (Sun, planets, cube textures, cockpit) - load during screen
+                // Phase 2: Deferred assets (project images) - background after app loads
 
                 // Get critical assets (Sun, planets, cube maps)
                 const criticalAssets = getCriticalAssetsOnly();
                 
-                // Skip medium assets during loading screen to speed up LCP
-                // They will load in the background after app shows
+                // Get medium priority assets (cockpit, avatar)
+                const allAssets = collectAssets();
+                const mediumAssets = [...allAssets.models, ...allAssets.images].filter(
+                    asset => asset.priority === 'medium'
+                );
                 
-                // Only count critical assets for progress
-                const essentialAssets = criticalAssets;
+                // Combine for progress tracking - all load during loading screen
+                const essentialAssets = [...criticalAssets, ...mediumAssets];
                 const essentialCount = essentialAssets.length;
 
                 // For progress tracking, count all essential assets
@@ -259,13 +262,9 @@ const useAssetPreloader = (onComplete) => {
                     setTimeout(() => onComplete(), 100);
                 }
 
-                // Phase 2: Load deferred + medium assets in background (don't block)
-                // This includes heavy 12MB models and cockpit model that load lazily
-                const allAssetsForDeferred = collectAssets();
-                const mediumAssets = [...allAssetsForDeferred.models, ...allAssetsForDeferred.images].filter(
-                    asset => asset.priority === 'medium'
-                );
-                const deferredAssets = [...mediumAssets, ...getDeferredAssets()];
+                // Phase 2: Load deferred assets in background (don't block)
+                // This includes heavy 12MB models that load lazily
+                const deferredAssets = getDeferredAssets();
                 if (deferredAssets.length > 0) {
                     console.log(`📦 Loading ${deferredAssets.length} deferred assets in background (heavy models, images)`);
 

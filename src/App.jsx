@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useState, useRef, useEffect, useMemo, lazy, Suspense, startTransition, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo, lazy, Suspense } from "react";
 import {Vector3} from "three";
 import { useNavigation } from "./context/NavigationContext";
 import { useStarSystem } from "./context/StarSystemContext";
@@ -8,7 +8,9 @@ import { useAI } from "./context/AIContext";
 import { useTutorial } from "./context/TutorialContext";
 import { useGameMode } from "./context/GameModeContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
-
+import useSpaceshipControls from "./hooks/useSpaceshipControls";
+import useSpaceshipPhysics from "./hooks/useSpaceshipPhysics";
+import useCollisionDetection from "./hooks/useCollisionDetection";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
 import { Analytics } from '@vercel/analytics/react';
@@ -229,9 +231,9 @@ function App() {
             // Future enhancement: could add logic here if needed
         };
 
-        document.addEventListener("fullscreenchange", handleFullscreenChange, { passive: true });
-        document.addEventListener("webkitfullscreenchange", handleFullscreenChange, { passive: true });
-        document.addEventListener("msfullscreenchange", handleFullscreenChange, { passive: true });
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+        document.addEventListener("msfullscreenchange", handleFullscreenChange);
 
         return () => {
             document.removeEventListener("fullscreenchange", handleFullscreenChange);
@@ -301,24 +303,19 @@ function App() {
                 cameraRef.current.lookAt(0, 0, -5);
             }
 
-            // Wrap non-urgent state updates in startTransition to reduce INP
-            startTransition(() => {
-                setCurrentPhase("cockpit");
-                setSystemStatus("WARP DRIVE INITIATED - PREPARE FOR JUMP");
-                setTravelPhase("preparing");
-                setIsTransitioning(false);
-            });
+            setCurrentPhase("cockpit");
+            setSystemStatus("WARP DRIVE INITIATED - PREPARE FOR JUMP");
+            setTravelPhase("preparing");
+            setIsTransitioning(false);
         }, TRANSITION_DELAYS.BRIEF_FADE);
 
         // Auto-trigger launch sequence after showing cockpit
         const totalDelay =
             TRANSITION_DELAYS.BRIEF_FADE + TRANSITION_DELAYS.COCKPIT_VIEW;
         setTimeout(() => {
-            startTransition(() => {
-                setCurrentPhase("launching");
-                setTravelPhase("launching");
-                setSystemStatus("WORMHOLE JUMP IN PROGRESS");
-            });
+            setCurrentPhase("launching");
+            setTravelPhase("launching");
+            setSystemStatus("WORMHOLE JUMP IN PROGRESS");
         }, totalDelay);
     }, [setTravelDestination, setTravelPhase]);
 
@@ -371,9 +368,9 @@ function App() {
         };
 
         // Listen for mouse movement, clicks, or keyboard
-        window.addEventListener('mousemove', handleInteraction, { once: true, passive: true });
-        window.addEventListener('click', handleInteraction, { once: true, passive: true });
-        window.addEventListener('keydown', handleInteraction, { once: true, passive: true });
+        window.addEventListener('mousemove', handleInteraction, { once: true });
+        window.addEventListener('click', handleInteraction, { once: true });
+        window.addEventListener('keydown', handleInteraction, { once: true });
 
         return () => {
             window.removeEventListener('mousemove', handleInteraction);
@@ -382,10 +379,9 @@ function App() {
         };
     }, [showTutorial, currentPhase, notifyUserInteraction]);
 
-    // Terminal keyboard shortcut (T key) AND P/O/L mode switching - CONSOLIDATED into single listener
-    // Combining multiple keydown listeners into one reduces INP by avoiding redundant event processing
+    // Terminal keyboard shortcut (T key) - custom implementation
     useEffect(() => {
-        const handleKeyDown = (event) => {
+        const handleKeyPress = (event) => {
             // Ignore if user is typing in an input field
             if (
                 event.target.tagName === "INPUT" ||
@@ -394,26 +390,39 @@ function App() {
                 return;
             }
 
-            const key = event.key.toLowerCase();
-
             // 'T' key opens terminal
-            if (key === 't') {
+            if (event.key.toLowerCase() === 't') {
                 event.preventDefault();
                 openTerminal();
-                return;
             }
+        };
 
-            // Escape key - return from planet detail
-            if (event.key === 'Escape' && currentPhase === "planet-detail") {
-                startTransition(() => {
-                    setSelectedPlanet(null);
-                    setCurrentPhase("exploration");
-                });
+        window.addEventListener("keydown", handleKeyPress);
+        return () => window.removeEventListener("keydown", handleKeyPress);
+    }, [openTerminal]);
+
+    useKeyboardShortcut("Escape", () => {
+        if (currentPhase === "planet-detail") {
+            setSelectedPlanet(null);
+            setCurrentPhase("exploration");
+        }
+    });
+
+    // P/O key handlers for piloting/orbit mode toggle
+    useEffect(() => {
+        const handleModeSwitch = (event) => {
+            // Ignore if user is typing in an input field
+            if (
+                event.target.tagName === "INPUT" ||
+                event.target.tagName === "TEXTAREA"
+            ) {
                 return;
             }
 
             // Only allow mode switching during exploration phase
             if (currentPhase !== "exploration") return;
+
+            const key = event.key.toLowerCase();
 
             // 'P' key enters piloting mode
             if (key === 'p' && controlMode === 'orbit') {
@@ -443,39 +452,36 @@ function App() {
                 enterOrbitMode();
                 // Navigate directly to the planet's detail scene
                 setSelectedPlanet(nearestPlanet);
-                startTransition(() => setCurrentPhase("planet-detail"));
+                setCurrentPhase("planet-detail");
             }
         };
 
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [openTerminal, currentPhase, controlMode, canLand, nearestPlanet, enterPilotingMode, enterOrbitMode, setSelectedPlanet, setCurrentPhase]);
+        window.addEventListener("keydown", handleModeSwitch);
+        return () => window.removeEventListener("keydown", handleModeSwitch);
+    }, [currentPhase, controlMode, canLand, nearestPlanet, enterPilotingMode, enterOrbitMode, setSelectedPlanet]);
 
-    // Lazy page component getter - only creates the component when actually needed
-    // Instead of eagerly creating ALL 6 page components on every render
-    const getPageComponent = useCallback((page) => {
-        switch (page) {
-            case 'about-me': return <AboutMe />;
-            case 'projects': return <Projects />;
-            case 'experience': return <Experience />;
-            case 'contact': return <Contact />;
-            case 'journey': return <Journey />;
-            case 'technologies': return <Technologies />;
-            default: return <AboutMe />;
-        }
-    }, []);
-
-    // Cache touch device detection to avoid expensive matchMedia call on every render
-    const isTouchDevice = useMemo(() => {
-        return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
-    }, []);
+    // Memoized page components mapping
+    const pageComponents = useMemo(
+        () => ({
+            "about-me": <AboutMe />,
+            projects: <Projects />,
+            experience: <Experience />,
+            contact: <Contact />,
+            journey: <Journey />,
+            technologies: <Technologies />,
+        }),
+        []
+    );
 
     // Render non-3D pages (including mobile)
     if (currentPage !== "3d-portfolio" || isMobile) {
+        // Detect touch device
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+        
         return (
             <div className="w-full h-screen bg-deep-space relative overflow-y-auto">
                 <Suspense fallback={<div className="w-full h-screen bg-deep-space" />}>
-                    {getPageComponent(currentPage)}
+                    {pageComponents[currentPage] || pageComponents["about-me"]}
                 </Suspense>
                 
                 {/* Sagittarius Avatar - Hidden on static pages for touch devices */}

@@ -27,11 +27,14 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#000000" />
 
-    <!-- Non-blocking Google Fonts (moved from CSS @import to avoid render-blocking) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" /></noscript>
+    <!-- Preload critical textures for instant cockpit and planet backgrounds -->
+    <!-- Cube map textures (used in SpaceCubeMap for cockpit scene) -->
+    <link rel="preload" as="image" href="/images/SpaceCubeMap/Star1.jpeg" crossorigin="anonymous" />
+    <link rel="preload" as="image" href="/images/SpaceCubeMap/Star2.jpeg" crossorigin="anonymous" />
+    <link rel="preload" as="image" href="/images/SpaceCubeMap/Star3.jpeg" crossorigin="anonymous" />
+    <link rel="preload" as="image" href="/images/SpaceCubeMap/Star4.jpeg" crossorigin="anonymous" />
+    <link rel="preload" as="image" href="/images/SpaceCubeMap/Star5.jpeg" crossorigin="anonymous" />
+    <link rel="preload" as="image" href="/images/SpaceCubeMap/Star6.jpeg" crossorigin="anonymous" />
   </head>
   <body>
     <div id="root"></div>
