@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/_vercel/insights/:path*",
+      "destination": "/_vercel/insights/:path*"
+    },
+    {
+      "source": "/_vercel/speed-insights/:path*",
+      "destination": "/_vercel/speed-insights/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
