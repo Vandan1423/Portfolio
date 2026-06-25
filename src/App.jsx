@@ -8,13 +8,10 @@ import { useAI } from "./context/AIContext";
 import { useTutorial } from "./context/TutorialContext";
 import { useGameMode } from "./context/GameModeContext";
 import useKeyboardShortcut from "./hooks/useKeyboardShortcut";
-import useSpaceshipControls from "./hooks/useSpaceshipControls";
-import useSpaceshipPhysics from "./hooks/useSpaceshipPhysics";
-import useCollisionDetection from "./hooks/useCollisionDetection";
 import FullscreenPrompt from "./components/UI/FullscreenPrompt";
 import ExplorationControls from "./components/UI/ExplorationControls";
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import "./App.css";
 
 // Lazy load heavy 3D components
