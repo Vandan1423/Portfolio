@@ -13,7 +13,7 @@ const EducationSection = () => {
             <div className={styles.educationStats}>
                 <div className={styles.statBox}>
                     <span className={styles.statLabel}>CGPA</span>
-                    <span className={styles.statValue}>8.58</span>
+                    <span className={styles.statValue}>8.83</span>
                 </div>
                 <div className={styles.statBox}>
                     <span className={styles.statLabel}>Year</span>

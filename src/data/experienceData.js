@@ -6,9 +6,9 @@ const experienceData = [
         duration: "July 2023 - July 2025",
         type: "Leadership",
         location: "IIT Indore",
-        status: "Current",
+        status: "Completed",
         icon: "🚀",
-        shortDescription: "Leading web development initiatives for the Astronomy Club, managing the official website and overseeing all digital presence to serve the astronomy enthusiast community.",
+        shortDescription: "Leading web development team of Astronomy Club, managing the official website and overseeing all digital presence to serve the astronomy enthusiast community.",
 
         keyResponsibilities: [
             "Website Development - Lead development and maintenance using React.js and Tailwind CSS",
@@ -36,7 +36,7 @@ const experienceData = [
         duration: "December 2024 - April 2025",
         type: "Leadership",
         location: "IIT Indore",
-        status: "Current",
+        status: "Completed",
         icon: "🎮",
         shortDescription: "Leading technical operations for the Gaming Club, overseeing website development, managing technical infrastructure for gaming events, and coordinating tournament logistics.",
 
@@ -110,36 +110,6 @@ const experienceData = [
 
         skillsDeveloped: "Machine learning model development, image segmentation, deep learning optimization, handling large-scale satellite datasets"
     },
-    {
-        id: "exp-05",
-        title: "Web Development - Delta Batch",
-        organization: "Apna College",
-        duration: "2024",
-        type: "Certification",
-        location: "Online",
-        status: "Completed",
-        icon: "📜",
-        shortDescription: "Completed comprehensive full-stack web development certification program covering modern technologies and industry best practices from frontend to backend development.",
-
-        keyResponsibilities: [
-            "Frontend Development - Mastered HTML5, CSS3, JavaScript ES6+, and responsive design principles using Bootstrap and Tailwind CSS",
-            "Backend Development - Built robust server-side applications using Node.js and Express.js with template rendering using EJS",
-            "Database Management - Implemented data persistence using both SQL (relational) and MongoDB (NoSQL) databases",
-            "Version Control - Utilized Git and GitHub for version control, collaboration, and project management",
-            "Modern React Development - Created dynamic single-page applications using React.js with state management using Redux",
-            "Full-Stack Project - Developed end-to-end web application implementing RESTful API architecture with complete CRUD operations",
-            "API Development - Designed and implemented RESTful APIs following industry standards and best practices"
-        ],
-
-        technologies: ["HTML", "CSS", "JavaScript", "Bootstrap", "Tailwind CSS", "Git/GitHub", "Node.js", "Express.js", "EJS", "SQL", "MongoDB", "React.js", "Redux"],
-
-        impact: "Successfully completed intensive full-stack development course covering entire web development lifecycle. Built multiple projects demonstrating proficiency in modern web technologies. Gained practical experience in building scalable web applications with RESTful architecture. Developed strong foundation in both frontend and backend development principles.",
-
-        skillsDeveloped: "Full-stack development, RESTful API design, database design and optimization, modern JavaScript frameworks, responsive web design, version control workflows, debugging and problem-solving",
-
-        certificate: "/certificate/DeltaBatchCertificate.pdf",
-        note: "Comprehensive certification program covering complete web development stack from HTML/CSS fundamentals to advanced React and backend technologies"
-    }
 ];
 
 export default experienceData;

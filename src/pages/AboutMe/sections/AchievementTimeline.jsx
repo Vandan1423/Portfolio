@@ -4,7 +4,7 @@ import styles from './AchievementTimeline.module.css';
 const achievementData = [
     {
         title: "Academic Excellence",
-        description: "Maintained 8.58 CGPA at IIT Indore in Space Science & Engineering"
+        description: "Maintained 8.83 CGPA at IIT Indore in Space Science & Engineering"
     },
     {
         title: "Full-Stack Development",

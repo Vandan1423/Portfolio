@@ -40,7 +40,7 @@ const ResumeSection = () => {
                     </li>
                     <li className={styles.highlightItem}>
                         <span className={styles.highlightIcon}>🏆</span>
-                        8.58 CGPA | 93.2% in Senior Secondary
+                        8.83 CGPA | 93.2% in Senior Secondary
                     </li>
                     <li className={styles.highlightItem}>
                         <span className={styles.highlightIcon}>🛠️</span>

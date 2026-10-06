@@ -32,7 +32,7 @@ export const sectionData = {
             ],
             stats: [
                 { label: "Year", value: "3rd", icon: "🎓" },
-                { label: "CGPA", value: "8.58", icon: "📊" },
+                { label: "CGPA", value: "8.83", icon: "📊" },
                 { label: "Projects", value: "4+", icon: "🚀" },
             ],
             highlights: [
@@ -58,10 +58,10 @@ export const sectionData = {
                 { label: "Degree", value: "B.Tech" },
                 { label: "Major", value: "Space Science & Engineering" },
                 { label: "Year", value: "2023 - Present" },
-                { label: "CGPA", value: "8.58" },
+                { label: "CGPA", value: "8.83" },
             ],
             stats: [
-                { label: "CGPA", value: "8.58", icon: "📊" },
+                { label: "CGPA", value: "8.83", icon: "📊" },
                 { label: "Senior Sec", value: "93.2%", icon: "📚" },
                 { label: "Secondary", value: "86.2%", icon: "📖" },
             ],
@@ -773,18 +773,18 @@ export const sectionData = {
             details: [
                 { label: "Research", value: "PRIUS Fellowship" },
                 { label: "Competition", value: "ISRO-NRSC" },
-                { label: "Academic", value: "8.58 CGPA" },
+                { label: "Academic", value: "8.83 CGPA" },
                 { label: "Leadership", value: "2 Head Positions" },
             ],
             stats: [
                 { label: "Awards", value: "3+", icon: "🏆" },
-                { label: "CGPA", value: "8.58", icon: "📊" },
+                { label: "CGPA", value: "8.83", icon: "📊" },
                 { label: "Recognition", value: "5+", icon: "⭐" },
             ],
             highlights: [
                 "PRIUS Fellowship for Galaxy Classification",
                 "ISRO-NRSC National Challenge",
-                "Academic Excellence - 8.58 CGPA at IIT Indore",
+                "Academic Excellence - 8.83 CGPA at IIT Indore",
                 "Leadership Recognition in 2 Technical Clubs",
             ],
             color: "#818cf8",

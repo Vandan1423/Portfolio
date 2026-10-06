@@ -13,7 +13,7 @@ const journeyData = [
         title: "IIT Indore Admission",
         category: "Education",
         description:
-            "Secured admission to IIT Indore for B.Tech in Space Science & Engineering through JEE Advanced",
+            "Secured admission to IIT Indore for B.Tech in Space Science & Engineering through JEE Advanced (AIR 7823)",
         icon: "🎓",
         color: "#818CF8",
     },
@@ -31,7 +31,7 @@ const journeyData = [
         title: "Web Development Discovery",
         category: "Skills",
         description:
-            "Enrolled in Apna College's Delta Batch, mastered MERN stack and modern web technologies",
+            "Enrolled in Apna College's Delta Batch, mastered Full stack and modern web technologies",
         icon: "🌐",
         color: "#34D399",
     },
@@ -40,7 +40,7 @@ const journeyData = [
         title: "First Major Projects",
         category: "Projects",
         description:
-            "Built Wanderlust (Airbnb clone) and BookHeaven, implementing full-stack features with authentication and CRUD operations",
+            "Built Wanderlust (Airbnb clone), implementing full-stack features with authentication and CRUD operations",
         icon: "🚀",
         color: "#F59E0B",
     },

@@ -2,12 +2,12 @@
   "personalInfo": {
     "name": "Vandan Nagori",
     "role": "Full Stack Developer & 3D Web Specialist",
-    "currentStatus": "Student at IIT Indore (CGPA: 8.58)",
+    "currentStatus": "Student at IIT Indore (CGPA: 8.83)",
     "bio": "Passionate full-stack developer specializing in modern web technologies and 3D graphics. Currently studying at IIT Indore with hands-on experience in MERN stack, Three.js, and building immersive web experiences. Combines technical expertise with creative vision to build unique, performant applications that push the boundaries of web development.",
     "email": "Available in Contact section (Betelgeuse System)",
     "location": "IIT Indore, India",
     "academicPerformance": {
-      "cgpa": "8.58",
+      "cgpa": "8.83",
       "secondarySchool": "86.2% (CBSE)",
       "seniorSecondary": "93.2% (CBSE)",
       "entrance": "JEE Advanced qualified"
@@ -27,7 +27,7 @@
       "degree": "Bachelor of Technology in Space Science & Engineering",
       "status": "Currently pursuing",
       "duration": "2023 - Present",
-      "cgpa": "8.58",
+      "cgpa": "8.83",
       "highlights": [
         "Specialized in Space Science & Engineering domain",
         "Active participation in technical clubs and societies",
@@ -46,13 +46,13 @@
       "ISRO-NRSC National Challenge participant - ML for satellite imagery",
       "Created immersive 3D portfolio with Three.js",
       "Delta Batch Web Development certification (Apna College)",
-      "Maintained 8.58 CGPA at premier IIT institution",
+      "Maintained 8.83 CGPA at premier IIT institution",
       "Successfully deployed multiple live websites",
       "Strong proficiency in MERN stack and modern frameworks"
     ]
   },
   "whoIsVandan": {
-    "summary": "Vandan Nagori is a talented full-stack developer and current student at IIT Indore pursuing B.Tech in Space Science & Engineering with an impressive 8.58 CGPA. He combines technical expertise in modern web technologies with creative vision to build unique, performant applications. His work spans from complex 3D web experiences using Three.js to full-stack MERN applications, demonstrating proficiency across the entire development spectrum.",
+    "summary": "Vandan Nagori is a talented full-stack developer and current student at IIT Indore pursuing B.Tech in Space Science & Engineering with an impressive 8.83 CGPA. He combines technical expertise in modern web technologies with creative vision to build unique, performant applications. His work spans from complex 3D web experiences using Three.js to full-stack MERN applications, demonstrating proficiency across the entire development spectrum.",
     "detailedProfile": "Vandan stands out as a developer who doesn't just code - he creates experiences. His immersive 3D portfolio showcases advanced skills in WebGL, GLSL shaders, and 3D graphics programming, while his full-stack projects like Airbnb Replica and EduConnect demonstrate solid backend architecture and database design. He's not afraid to take on leadership roles, currently heading web development for IIT Indore's Astronomy Club and technical operations for the Gaming Club.",
     "strengths": [
       "3D Graphics Programming - Expert in Three.js, React Three Fiber, and GLSL shader development",
@@ -718,9 +718,9 @@
   "conversationalContext": {
     "commonQuestions": {
       "aboutVandan": {
-        "whoIsVandan": "Vandan is a talented full-stack developer at IIT Indore with 8.58 CGPA, specializing in 3D web development and MERN stack. He's built 8+ projects, leads technical teams, and creates immersive web experiences.",
+        "whoIsVandan": "Vandan is a talented full-stack developer at IIT Indore with 8.83 CGPA, specializing in 3D web development and MERN stack. He's built 8+ projects, leads technical teams, and creates immersive web experiences.",
         "whatDoesHeDo": "Vandan builds full-stack web applications with a special focus on 3D graphics using Three.js. He creates everything from interactive portfolios to complete rental marketplaces, academic portals, and club websites.",
-        "whereStudies": "Vandan studies at Indian Institute of Technology (IIT) Indore, pursuing B.Tech in Space Science & Engineering with an excellent 8.58 CGPA.",
+        "whereStudies": "Vandan studies at Indian Institute of Technology (IIT) Indore, pursuing B.Tech in Space Science & Engineering with an excellent 8.83 CGPA.",
         "howToContact": "You can contact Vandan through the contact form in Betelgeuse System (SYS-04). He's also available on LinkedIn and GitHub.",
         "whatMakesHimUnique": "Vandan combines technical expertise with creative vision - he doesn't just code, he creates experiences. His 3D portfolio showcases advanced WebGL and shader programming while his full-stack projects demonstrate solid architecture."
       },
@@ -815,7 +815,7 @@
     }
   },
   "quickAnswers": {
-    "cgpa": "Vandan maintains an excellent 8.58 CGPA at IIT Indore.",
+    "cgpa": "Vandan maintains an excellent 8.83 CGPA at IIT Indore.",
     "college": "Indian Institute of Technology (IIT) Indore",
     "degree": "B.Tech in Space Science & Engineering",
     "location": "IIT Indore, India",

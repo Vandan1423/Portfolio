@@ -253,7 +253,7 @@ Common specific requests:
 - Skip lengthy introductions - jump straight to the answer
 - One key fact is better than five detailed points
 
-Remember: You have COMPLETE knowledge about Vandan Nagori (IIT Indore, 8.58 CGPA, 8 projects, MERN + Three.js). Answer confidently but BRIEFLY - users prefer concise responses!`;
+Remember: You have COMPLETE knowledge about Vandan Nagori (IIT Indore, 8.83 CGPA, 8 projects, MERN + Three.js). Answer confidently but BRIEFLY - users prefer concise responses!`;
 }
 
 /**
@@ -394,7 +394,7 @@ export function getQuickAnswer(question, context = {}) {
     'who are you': { text: `I'm ${personality.name}, your AI guide for Vandan's portfolio. I know all about his 8 projects and skills. Type 'help' or ask me anything!` },
     'what is your name': { text: `I'm Sagittarius. I have always been Sagittarius - never had any other name. I'm your AI guide for this portfolio!` },
     'who is vandan': createSuggestedResponse(
-      `Vandan Nagori - Full-stack developer at IIT Indore (8.58 CGPA) specializing in 3D web + MERN stack. Built 8 projects, leads tech teams at IIT clubs!`,
+      `Vandan Nagori - Full-stack developer at IIT Indore (8.83 CGPA) specializing in 3D web + MERN stack. Built 8 projects, leads tech teams at IIT clubs!`,
       'about me',
       context.currentSystem
     ),
@@ -436,7 +436,7 @@ Or ask: "what projects?" "his cgpa?" "take me to Experience page"`,
 Rule: Must enter a star system first to access its planets!`,
     
     // Quick facts
-    'cgpa': `Vandan maintains an excellent 8.58 CGPA at IIT Indore! He's pursuing B.Tech in Space Science & Engineering.`,
+    'cgpa': `Vandan maintains an excellent 8.83 CGPA at IIT Indore! He's pursuing B.Tech in Space Science & Engineering.`,
     'how many projects': `Vandan has built ${knowledgeBase.projects.length} amazing projects! 3D Portfolio, Airbnb Replica, Gaming Club Website, Astronomy Club Website, EduConnect, Simon Says Game, Spotify Clone, and Amazon Clone. All in Sirius System! [NAVIGATE:sirius]`,
     'how many star systems': `This portfolio has ${knowledgeBase.portfolioStructure.totalStarSystems} star systems with ${knowledgeBase.portfolioStructure.totalPlanets} planets total! Each system represents a main section. Type 'systems' to see them all.`,
     'how many planets': `There are ${knowledgeBase.portfolioStructure.totalPlanets} planets across ${knowledgeBase.portfolioStructure.totalStarSystems} star systems! Each planet contains specific content about Vandan's work.`,
@@ -450,8 +450,8 @@ Rule: Must enter a star system first to access its planets!`,
     'projects': `Vandan built 8 projects: 3D Portfolio (impressive!), Airbnb Replica, Gaming & Astronomy Club websites, EduConnect, Simon Says Game, Spotify Clone, Amazon Clone. Several are live! Explore them in Sirius System: [NAVIGATE:sirius]`,
     
     // Education
-    'education': `Vandan studies at IIT Indore (Indian Institute of Technology), pursuing B.Tech in Space Science & Engineering with 8.58 CGPA. He scored 93.2% in senior secondary and qualified JEE Advanced! [NAVIGATE:alpha-centauri:education]`,
-    'college': `IIT Indore (Indian Institute of Technology Indore) - one of India's premier engineering institutions. He's studying Space Science & Engineering with 8.58 CGPA!`,
+    'education': `Vandan studies at IIT Indore (Indian Institute of Technology), pursuing B.Tech in Space Science & Engineering with 8.83 CGPA. He scored 93.2% in senior secondary and qualified JEE Advanced! [NAVIGATE:alpha-centauri:education]`,
+    'college': `IIT Indore (Indian Institute of Technology Indore) - one of India's premier engineering institutions. He's studying Space Science & Engineering with 8.83 CGPA!`,
     
     // Experience  
     'experience': `Vandan is Head of Web Dev for Astronomy Club (2023-2025) and Head of Technicals for Gaming Club (2024-2025) at IIT Indore. He also worked on PRIUS Fellowship (galaxy classification) and ISRO Challenge (ML for satellites)! See details: [NAVIGATE:vega]`,
@@ -538,7 +538,7 @@ Total: 27 planets! Type system name to learn more.`,
   // About me / education queries
   if (q.match(/about.*vandan|tell.*about.*him|who.*he/)) {
     return createSuggestedResponse(
-      `Vandan Nagori - 3rd year student at IIT Indore with 8.58 CGPA, specializing in full-stack development. He's built 8 production projects, leads Astronomy Club web dev and Gaming Club technicals!`,
+      `Vandan Nagori - 3rd year student at IIT Indore with 8.83 CGPA, specializing in full-stack development. He's built 8 production projects, leads Astronomy Club web dev and Gaming Club technicals!`,
       'about me',
       context.currentSystem
     );
@@ -546,7 +546,7 @@ Total: 27 planets! Type system name to learn more.`,
   
   if (q.match(/education|college|university|iit|school/)) {
     return createSuggestedResponse(
-      `Vandan studies at IIT Indore (Indian Institute of Technology), pursuing B.Tech in Space Science & Engineering with 8.58 CGPA. He scored 93.2% in senior secondary and qualified JEE Advanced!`,
+      `Vandan studies at IIT Indore (Indian Institute of Technology), pursuing B.Tech in Space Science & Engineering with 8.83 CGPA. He scored 93.2% in senior secondary and qualified JEE Advanced!`,
       'education',
       context.currentSystem
     );
