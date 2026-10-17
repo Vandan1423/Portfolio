@@ -200,23 +200,33 @@ export const projects = [
         featured: true,
     },
     {
-        id: "jpl-auction",
-        name: "JPL Auction",
+        id: "auction-hub",
+        name: "Auction Hub",
         year: "2026",
         context: "Paid client project",
         summary:
-            "A real-time cricket player auction with an organizer console and a live screen for viewers.",
+            "A real-time cricket player auction platform with an auctioneer's control panel and a live projector screen. Built for a paid client, then rebuilt so any tournament can run its own auction.",
         points: [
-            "Enforces bid increments and a purse-reservation cap, so every team can still afford a full squad.",
-            "Ran a live auction for 8 teams and a pool of 100 players.",
-            "Undo, state restore after a reconnect, and Excel and PDF reports.",
+            "First built for JPL as a paid client project and used to run its live auction for 8 teams and a pool of 100 players. Now a six-step wizard sets up any tournament: teams, owners, purse, squad size, categories and bid increments.",
+            "Bidding rules are pure, unit-tested functions: slab increments, per-category limits, required roles, and a purse reservation so every team can still complete its squad.",
+            "Socket.IO keeps the control panel and projector in sync, with undo for bids and sales. Photos are stored on Cloudinary with free-plan limit handling, and reports export to Excel and PDF.",
         ],
-        stack: ["Node.js", "Express", "MongoDB", "Socket.IO"],
+        stack: ["Node.js", "Express", "MongoDB", "Socket.IO", "EJS", "Cloudinary"],
         links: {
             live: null,
             code: "https://github.com/Vandan1423/JPL_Auction",
         },
-        screenshots: [],
+        screenshots: [
+            "/images/JPL_Auction/Auction1.png",
+            "/images/JPL_Auction/Auction2.png",
+            "/images/JPL_Auction/Auction3.png",
+            "/images/JPL_Auction/Auction4.png",
+            "/images/JPL_Auction/Auction5.png",
+            "/images/JPL_Auction/Auction6.png",
+            "/images/JPL_Auction/Auction7.png",
+            "/images/JPL_Auction/Auction8.png",
+            "/images/JPL_Auction/Auction9.png",
+        ],
         featured: true,
     },
     {
@@ -525,7 +535,7 @@ export const journey = [
     {
         year: "2026",
         title: "First paid client project",
-        detail: "JPL Auction, a live cricket player auction.",
+        detail: "A live cricket player auction for JPL, later rebuilt as Auction Hub for any tournament.",
     },
     {
         year: "2026",
