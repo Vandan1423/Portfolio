@@ -1,36 +1,29 @@
-import React from 'react';
+import { education } from '../../../data/profile';
 import styles from './EducationSection.module.css';
 
 const EducationSection = () => {
     return (
         <div className={styles.infoBox}>
-            <h3 className={styles.degreeTitle}>
-                B.Tech Space Science & Engineering
-            </h3>
-            <p className={styles.institute}>
-                Indian Institute of Technology, Indore
-            </p>
+            <div className={styles.header}>
+                <div>
+                    <h3 className={styles.degreeTitle}>{education.degree}</h3>
+                    <p className={styles.institute}>{education.school}</p>
+                </div>
+                <span className={styles.years}>{education.years}</span>
+            </div>
             <div className={styles.educationStats}>
                 <div className={styles.statBox}>
                     <span className={styles.statLabel}>CGPA</span>
-                    <span className={styles.statValue}>8.83</span>
+                    <span className={styles.statValue}>{education.cgpa}</span>
                 </div>
-                <div className={styles.statBox}>
-                    <span className={styles.statLabel}>Year</span>
-                    <span className={styles.statValue}>
-                        2023 - Present
-                    </span>
-                </div>
-            </div>
-            <div className={styles.previousEducation}>
-                <div className={styles.eduItem}>
-                    <span>Senior Secondary (CBSE)</span>
-                    <span className={styles.percentage}>93.2%</span>
-                </div>
-                <div className={styles.eduItem}>
-                    <span>Secondary (CBSE)</span>
-                    <span className={styles.percentage}>86.2%</span>
-                </div>
+                {(education.schooling || []).map((school) => (
+                    <div key={school.name} className={styles.statBox}>
+                        <span className={styles.statLabel}>{school.name}</span>
+                        <span className={styles.statValue}>
+                            {school.score} <span className={styles.statYear}>{school.year}</span>
+                        </span>
+                    </div>
+                ))}
             </div>
         </div>
     );

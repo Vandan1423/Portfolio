@@ -6,7 +6,6 @@ import useSpaceshipPhysics from '../../hooks/useSpaceshipPhysics';
 import useCollisionDetection from '../../hooks/useCollisionDetection';
 import PilotableSpaceship from './PilotableSpaceship';
 import ChaseCamera from './ChaseCamera';
-import LandingSequence from './LandingSequence';
 
 /**
  * PilotingController Component
@@ -16,18 +15,16 @@ import LandingSequence from './LandingSequence';
  * - Spaceship controls and physics
  * - Collision detection
  * - Chase camera
- * - Landing sequence
  *
  * This component must be rendered inside a Canvas.
  */
 const PilotingController = ({ planets }) => {
-    const { controlMode, enterOrbitMode, landingPhase } = useGameMode();
+    const { controlMode, enterOrbitMode } = useGameMode();
     const { gl } = useThree();
     const pointerLockRequestedRef = useRef(false);
 
     // Only active during piloting mode
     const isPiloting = controlMode === 'piloting';
-    const isLanding = controlMode === 'landing';
 
     // Spaceship controls (Mouse + WASD + modifiers)
     const controls = useSpaceshipControls(isPiloting);
@@ -109,13 +106,6 @@ const PilotingController = ({ planets }) => {
             {isPiloting && (
                 <Suspense fallback={null}>
                     <ChaseCamera />
-                </Suspense>
-            )}
-
-            {/* Landing sequence (visible during landing phase) */}
-            {isLanding && (
-                <Suspense fallback={null}>
-                    <LandingSequence />
                 </Suspense>
             )}
         </>

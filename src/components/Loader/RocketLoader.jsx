@@ -5,15 +5,13 @@
  * Handles:
  * - First-visit detection via localStorage
  * - Asset preloading with progress tracking
- * - Rocket launch animation
+ * - A plain progress bar
  * - Transition to main application
  *
  * Only shows on first visit to optimize returning user experience.
  */
 
 import { useState, useEffect, useRef } from "react";
-import LoaderBackground from "./LoaderBackground";
-import RocketAnimation from "./RocketAnimation";
 import ProgressDisplay from "./ProgressDisplay";
 import useAssetPreloader from "./useAssetPreloader";
 import styles from "./RocketLoader.module.css";
@@ -78,7 +76,7 @@ const RocketLoader = ({ children }) => {
 
         // Hold at 100% for a moment to let user see completion
         setTimeout(() => {
-            // Phase 1: Fade to white (smooth transition)
+            // Phase 1: Fade out
             setTransitionPhase("fading-out");
 
             setTimeout(() => {
@@ -87,8 +85,8 @@ const RocketLoader = ({ children }) => {
                 setTransitionPhase("complete");
                 // Only NOW allow the app to render
                 setShouldRenderApp(true);
-            }, 1500);
-        }, 1000); // Hold at 100% for 1 second
+            }, 400);
+        }, 300); // Hold at 100% briefly
     };
 
     // Asset preloading with progress tracking
@@ -144,17 +142,6 @@ const RocketLoader = ({ children }) => {
     // Show loader
     return (
         <div className={styles.loaderWrapper}>
-            {/* Starfield background */}
-            <LoaderBackground />
-
-            {/* Rocket animation - hide during fade out */}
-            {transitionPhase !== "fading-out" && (
-                <RocketAnimation
-                    progress={smoothProgress}
-                    isBlastingOff={false}
-                />
-            )}
-
             {/* Progress display */}
             <ProgressDisplay
                 progress={smoothProgress}

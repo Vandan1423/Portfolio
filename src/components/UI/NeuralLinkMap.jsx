@@ -8,12 +8,10 @@
  * - Interactive nodes (click to navigate)
  * - Confirmation modal for system travel
  * - Locked planets in other systems
- * - "Ask Sagittarius" button for help
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useStarSystem } from '../../context/StarSystemContext';
-import { useAI } from '../../context/AIContext';
 import { STAR_SYSTEMS } from '../../data/starSystemsData';
 import useGraphLayout from '../../hooks/useGraphLayout';
 import GraphNode from './GraphNode';
@@ -22,7 +20,6 @@ import styles from './NeuralLinkMap.module.css';
 
 export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPlanetSelect }) {
   const { currentSystemId } = useStarSystem();
-  const { openTerminal } = useAI();
   const [hoveredNode, setHoveredNode] = useState(null);
   const [confirmSystem, setConfirmSystem] = useState(null); // System awaiting confirmation
 
@@ -148,12 +145,6 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
     setConfirmSystem(null);
   }, []);
 
-  // Handle "Ask Sagittarius" button
-  const handleAskSagittarius = () => {
-    onClose();
-    openTerminal();
-  };
-
   if (!isVisible) return null;
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
@@ -164,14 +155,16 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
         {/* Header */}
         <div className={styles.mapHeader}>
           <div className={styles.headerTitle}>
-            NEURAL LINK MAP - NAVIGATION INTERFACE
+            Map
           </div>
           <button
             className={styles.closeButton}
             onClick={onClose}
             aria-label="Close map"
           >
-            ✕
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
@@ -180,8 +173,7 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
           {/* Navigation Guide Panel */}
           <div className={styles.guidePanel}>
             <div className={styles.guidePanelHeader}>
-              <span className={styles.guidePanelIcon}>🧭</span>
-              <span className={styles.guidePanelTitle}>How to Navigate</span>
+              <span className={styles.guidePanelTitle}>How to navigate</span>
             </div>
             
             <div className={styles.guidePanelItems}>
@@ -190,8 +182,8 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
                   <span className={styles.systemDot}></span>
                 </div>
                 <div className={styles.itemText}>
-                  <span className={styles.itemTitle}>Star Systems</span>
-                  <span className={styles.itemDesc}>Large nodes = Pages. Click to warp.</span>
+                  <span className={styles.itemTitle}>Star systems</span>
+                  <span className={styles.itemDesc}>Large circles are pages. Click one to travel there.</span>
                 </div>
               </div>
 
@@ -201,7 +193,7 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
                 </div>
                 <div className={styles.itemText}>
                   <span className={styles.itemTitle}>Planets</span>
-                  <span className={styles.itemDesc}>Small nodes = Sections. Green = accessible.</span>
+                  <span className={styles.itemDesc}>Small circles are sections. Click one to open it.</span>
                 </div>
               </div>
 
@@ -211,7 +203,7 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
                 </div>
                 <div className={styles.itemText}>
                   <span className={styles.itemTitle}>Locked</span>
-                  <span className={styles.itemDesc}>Travel to system first to unlock sections.</span>
+                  <span className={styles.itemDesc}>Travel to that system first to open its sections.</span>
                 </div>
               </div>
             </div>
@@ -221,32 +213,23 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
               <div className={styles.controlsSectionTitle}>Controls</div>
               <div className={styles.controlsList}>
                 <div className={styles.controlItem}>
-                  <span className={styles.controlKey}>🖱️ Drag</span>
+                  <span className={styles.controlKey}>Drag</span>
                   <span className={styles.controlAction}>Pan around</span>
                 </div>
                 <div className={styles.controlItem}>
-                  <span className={styles.controlKey}>⚙️ Scroll</span>
-                  <span className={styles.controlAction}>Zoom in/out</span>
+                  <span className={styles.controlKey}>Scroll</span>
+                  <span className={styles.controlAction}>Zoom</span>
                 </div>
                 <div className={styles.controlItem}>
-                  <span className={styles.controlKey}>👆 Click</span>
+                  <span className={styles.controlKey}>Click</span>
                   <span className={styles.controlAction}>Visit node</span>
                 </div>
                 <div className={styles.controlItem}>
-                  <span className={styles.controlKey}>⎋ ESC</span>
+                  <span className={styles.controlKey}>Esc</span>
                   <span className={styles.controlAction}>Close map</span>
                 </div>
               </div>
             </div>
-
-            {/* Ask Sagittarius Button */}
-            <button
-              className={styles.sagittariusButton}
-              onClick={handleAskSagittarius}
-            >
-              <span className={styles.sagittariusIcon}>💬</span>
-              Lost in space? Ask Sagittarius
-            </button>
           </div>
 
           {/* SVG Graph */}
@@ -255,7 +238,7 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
             <div className={styles.calculating}>
               <div className={styles.spinner}></div>
               <div className={styles.calculatingText}>
-                Calculating neural pathways...
+                Loading the map…
               </div>
             </div>
           ) : (
@@ -282,7 +265,7 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
                   <path
                     d="M 50 0 L 0 0 0 50"
                     fill="none"
-                    stroke="rgba(0, 255, 65, 0.05)"
+                    stroke="rgb(255 255 255 / 0.03)"
                     strokeWidth="1"
                   />
                 </pattern>
@@ -320,7 +303,7 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
                 cx="0"
                 cy="0"
                 r="2"
-                fill="rgba(0, 255, 65, 0.5)"
+                fill="rgb(255 255 255 / 0.2)"
                 className={styles.centerMarker}
               />
             </svg>
@@ -334,18 +317,15 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3>Initiate Wormhole Jump?</h3>
+              <h3>Travel to {confirmSystem.data?.page}?</h3>
             </div>
             <div className={styles.modalBody}>
-              <p>
-                You are about to travel to:
-              </p>
               <div className={styles.systemInfo}>
                 <div className={styles.systemName}>{confirmSystem.label}</div>
                 <div className={styles.systemPage}>{confirmSystem.data?.page}</div>
               </div>
               <p className={styles.warning}>
-                This will trigger a wormhole sequence.
+                The ship jumps through a wormhole to get there.
               </p>
             </div>
             <div className={styles.modalFooter}>
@@ -359,15 +339,12 @@ export default function NeuralLinkMap({ isVisible, onClose, onSystemTravel, onPl
                 className={styles.confirmButton}
                 onClick={handleConfirmTravel}
               >
-                Initiate Jump
+                Travel
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Scanline effect overlay */}
-      <div className={styles.scanline}></div>
     </div>
   );
 }

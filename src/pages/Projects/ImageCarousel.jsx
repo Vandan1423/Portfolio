@@ -146,7 +146,6 @@ const ImageCarousel = ({ screenshots, projectName }) => {
     if (!screenshots || screenshots.length === 0) {
         return (
             <div className={styles.noImages}>
-                <span className={styles.noImagesIcon}>🖼️</span>
                 <p>No screenshots available</p>
             </div>
         );

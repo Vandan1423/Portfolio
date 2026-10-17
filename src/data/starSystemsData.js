@@ -1,19 +1,37 @@
 /**
  * Star Systems Data
  *
- * Centralized data for all 6 star systems in the portfolio
+ * Centralized data for all 4 star systems in the portfolio
  * Each star system represents a different page/section
  * Each system contains planets that represent sub-sections or content items
  */
 
+import { projects, experience, positions } from './profile';
+
+// Projects and Experience planets take their label and content from profile.js:
+// the first planet shows the first item, and so on. A planet with no matching
+// item shows an empty panel, so keep the counts in step when adding planets.
+const featuredProjects = projects.filter((project) => project.featured);
+const roles = [...experience, ...positions];
+
+const projectPlanet = (index) => ({
+    name: featuredProjects[index]?.name ?? `Project ${index + 1}`,
+    sectionId: featuredProjects[index]?.id ?? null,
+});
+
+const rolePlanet = (index) => ({
+    name: roles[index]?.org ?? `Role ${index + 1}`,
+    sectionId: roles[index]?.id ?? null,
+});
+
 export const STAR_SYSTEMS = {
     "alpha-centauri": {
         id: "alpha-centauri",
-        name: "ALPHA CENTAURI",
+        name: "Alpha Centauri",
         code: "SYS-01",
         page: "About Me",
         description: "Personal information & introduction",
-        color: "cyan",
+        color: "amber", // wormhole colour, see Wormhole.jsx
         // Surface configuration for planet exploration
         surface: {
             theme: 'rocky',
@@ -57,23 +75,6 @@ export const STAR_SYSTEMS = {
                 detailOffset: [0, -2.8, 0],
             },
             {
-                id: "interests",
-                name: "Interests & Hobbies",
-                modelPath: "/models/Planet2.glb",
-                scale: 3,
-                size: 1,
-                orbitRadius: 40,
-                orbitSpeed: 0.055,
-                rotationSpeed: 0.0025,
-                color: "#c084fc",
-                emissive: "#c084fc",
-                emissiveIntensity: 0.27,
-                rings: false,
-                sectionId: "interests",
-                orbitColor: "#c084fc",
-                detailOffset: [0, 0, 0],
-            },
-            {
                 id: "tech-stack",
                 name: "Tech Stack",
                 modelPath: "/models/Planet1.glb",
@@ -108,23 +109,6 @@ export const STAR_SYSTEMS = {
                 detailOffset: [0, 0, 0],
             },
             {
-                id: "resume",
-                name: "Resume",
-                modelPath: "/models/Pluto.glb",
-                scale: 2.0,
-                size: 1.2,
-                orbitRadius: 95,
-                orbitSpeed: 0.03,
-                rotationSpeed: 0.0023,
-                color: "#8b5cf6",
-                emissive: "#8b5cf6",
-                emissiveIntensity: 0.29,
-                rings: false,
-                sectionId: "resume",
-                orbitColor: "#8b5cf6",
-                detailOffset: [0, 0, 0],
-            },
-            {
                 id: "certifications",
                 name: "Certifications",
                 modelPath: "/models/Pluto.glb",
@@ -146,11 +130,11 @@ export const STAR_SYSTEMS = {
     },
     sirius: {
         id: "sirius",
-        name: "SIRIUS",
+        name: "Sirius",
         code: "SYS-02",
         page: "Projects",
         description: "Portfolio & project showcase",
-        color: "blue",
+        color: "amber", // wormhole colour, see Wormhole.jsx
         surface: {
             theme: 'tech',
             groundColor: '#1a1a2e',
@@ -160,7 +144,7 @@ export const STAR_SYSTEMS = {
         planets: [
             {
                 id: "project-1",
-                name: "Immersive 3D Portfolio",
+                ...projectPlanet(0),
                 modelPath: "/models/Planet2.glb",
                 scale: 3,
                 size: 1.3,
@@ -171,13 +155,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#a855f7",
                 emissiveIntensity: 0.35,
                 rings: true,
-                sectionId: "project-1",
                 orbitColor: "#a855f7",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "project-2",
-                name: "Airbnb Replica",
+                ...projectPlanet(1),
                 modelPath: "/models/Earth.glb",
                 scale: 2.2,
                 size: 1.25,
@@ -188,13 +171,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#3b82f6",
                 emissiveIntensity: 0.33,
                 rings: false,
-                sectionId: "project-2",
                 orbitColor: "#3b82f6",
                 detailOffset: [0, -2.8, 0],
             },
             {
                 id: "project-3",
-                name: "Gaming Club Website",
+                ...projectPlanet(2),
                 modelPath: "/models/Planet1.glb",
                 scale: 3,
                 size: 1.1,
@@ -205,13 +187,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#8b5cf6",
                 emissiveIntensity: 0.32,
                 rings: false,
-                sectionId: "project-3",
                 orbitColor: "#8b5cf6",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "project-4",
-                name: "Astronomy Club Website",
+                ...projectPlanet(3),
                 modelPath: "/models/Planet2.glb",
                 scale: 3,
                 size: 1.2,
@@ -222,13 +203,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#06b6d4",
                 emissiveIntensity: 0.33,
                 rings: true,
-                sectionId: "project-4",
                 orbitColor: "#06b6d4",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "project-5",
-                name: "EduConnect - Academic Portal",
+                ...projectPlanet(4),
                 modelPath: "/models/Pluto.glb",
                 scale: 2.0,
                 size: 1.2,
@@ -239,13 +219,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#10b981",
                 emissiveIntensity: 0.3,
                 rings: false,
-                sectionId: "project-5",
                 orbitColor: "#10b981",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "project-6",
-                name: "Simon Says Game",
+                ...projectPlanet(5),
                 modelPath: "/models/Planet1.glb",
                 scale: 3,
                 size: 1.0,
@@ -256,13 +235,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#f59e0b",
                 emissiveIntensity: 0.31,
                 rings: false,
-                sectionId: "project-6",
                 orbitColor: "#f59e0b",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "project-7",
-                name: "Spotify Clone",
+                ...projectPlanet(6),
                 modelPath: "/models/Pluto.glb",
                 scale: 2.0,
                 size: 1.15,
@@ -273,13 +251,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#22c55e",
                 emissiveIntensity: 0.29,
                 rings: false,
-                sectionId: "project-7",
                 orbitColor: "#22c55e",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "project-8",
-                name: "Amazon Clone",
+                ...projectPlanet(7),
                 modelPath: "/models/Planet2.glb",
                 scale: 3,
                 size: 1.05,
@@ -290,7 +267,6 @@ export const STAR_SYSTEMS = {
                 emissive: "#fb923c",
                 emissiveIntensity: 0.28,
                 rings: false,
-                sectionId: "project-8",
                 orbitColor: "#fb923c",
                 detailOffset: [0, 0, 0],
             },
@@ -299,11 +275,11 @@ export const STAR_SYSTEMS = {
 
     vega: {
         id: "vega",
-        name: "VEGA",
+        name: "Vega",
         code: "SYS-03",
         page: "Experience",
         description: "Professional journey & timeline",
-        color: "purple",
+        color: "amber", // wormhole colour, see Wormhole.jsx
         surface: {
             theme: 'crystal',
             groundColor: '#2a0040',
@@ -313,7 +289,7 @@ export const STAR_SYSTEMS = {
         planets: [
             {
                 id: "exp-1",
-                name: "Head of Web Dev - Astronomy Club",
+                ...rolePlanet(0),
                 modelPath: "/models/Earth.glb",
                 scale: 2.2,
                 size: 1.3,
@@ -324,13 +300,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#a855f7",
                 emissiveIntensity: 0.35,
                 rings: false,
-                sectionId: "exp-01",
                 orbitColor: "#a855f7",
                 detailOffset: [0, -2.8, 0],
             },
             {
                 id: "exp-2",
-                name: "Head of Technicals - Gaming Club",
+                ...rolePlanet(1),
                 modelPath: "/models/Planet1.glb",
                 scale: 3,
                 size: 1.2,
@@ -341,13 +316,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#ec4899",
                 emissiveIntensity: 0.33,
                 rings: false,
-                sectionId: "exp-02",
                 orbitColor: "#ec4899",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "exp-3",
-                name: "PRIUS Fellowship",
+                ...rolePlanet(2),
                 modelPath: "/models/Planet2.glb",
                 scale: 3,
                 size: 1.1,
@@ -358,13 +332,12 @@ export const STAR_SYSTEMS = {
                 emissive: "#8b5cf6",
                 emissiveIntensity: 0.31,
                 rings: true,
-                sectionId: "exp-03",
                 orbitColor: "#8b5cf6",
                 detailOffset: [0, 0, 0],
             },
             {
                 id: "exp-4",
-                name: "ISRO-NRSC Challenge",
+                ...rolePlanet(3),
                 modelPath: "/models/Planet2.glb",
                 scale: 3,
                 size: 1.0,
@@ -375,77 +348,7 @@ export const STAR_SYSTEMS = {
                 emissive: "#06b6d4",
                 emissiveIntensity: 0.3,
                 rings: false,
-                sectionId: "exp-04",
                 orbitColor: "#06b6d4",
-                detailOffset: [0, 0, 0],
-            },
-            {
-                id: "exp-5",
-                name: "Web Dev Course - Apna College",
-                modelPath: "/models/Pluto.glb",
-                scale: 2.0,
-                size: 1.2,
-                orbitRadius: 85,
-                orbitSpeed: 0.035,
-                rotationSpeed: 0.0027,
-                color: "#10b981",
-                emissive: "#10b981",
-                emissiveIntensity: 0.29,
-                rings: false,
-                sectionId: "exp-05",
-                orbitColor: "#10b981",
-
-                detailOffset: [0, 0, 0],
-            },
-        ],
-    },
-
-    betelgeuse: {
-        id: "betelgeuse",
-        name: "BETELGEUSE",
-        code: "SYS-04",
-        page: "Contact",
-        description: "Communication & social links",
-        color: "orange",
-        surface: {
-            theme: 'desert',
-            groundColor: '#c2a366',
-            atmosphereColor: '#f97316',
-            skyColor: '#1a1000',
-        },
-        planets: [
-            {
-                id: "contact-form",
-                name: "Send Message",
-                modelPath: "/models/Earth.glb",
-                scale: 2.2,
-                size: 1.2,
-                orbitRadius: 20,
-                orbitSpeed: 0.065,
-                rotationSpeed: 0.0021,
-                color: "#f97316",
-                emissive: "#f97316",
-                emissiveIntensity: 0.38,
-                rings: false,
-                sectionId: "contact-form",
-                orbitColor: "#f97316",
-                detailOffset: [0, -2.8, 0],
-            },
-            {
-                id: "contact-info",
-                name: "Contact Information",
-                modelPath: "/models/Planet1.glb",
-                scale: 3,
-                size: 1.0,
-                orbitRadius: 40,
-                orbitSpeed: 0.05,
-                rotationSpeed: 0.0024,
-                color: "#fb923c",
-                emissive: "#fb923c",
-                emissiveIntensity: 0.34,
-                rings: false,
-                sectionId: "contact-info",
-                orbitColor: "#fb923c",
                 detailOffset: [0, 0, 0],
             },
         ],
@@ -453,11 +356,11 @@ export const STAR_SYSTEMS = {
 
     polaris: {
         id: "polaris",
-        name: "POLARIS",
-        code: "SYS-05",
+        name: "Polaris",
+        code: "SYS-04",
         page: "Journey",
         description: "Career path & milestones",
-        color: "indigo",
+        color: "amber", // wormhole colour, see Wormhole.jsx
         surface: {
             theme: 'ice',
             groundColor: '#e0f7fa',
@@ -497,74 +400,6 @@ export const STAR_SYSTEMS = {
                 rings: false,
                 sectionId: "journey-achievements",
                 orbitColor: "#818cf8",
-                detailOffset: [0, 0, 0],
-            },
-        ],
-    },
-
-    rigel: {
-        id: "rigel",
-        name: "RIGEL",
-        code: "SYS-06",
-        page: "Technologies",
-        description: "Skills & technical expertise",
-        color: "teal",
-        surface: {
-            theme: 'circuit',
-            groundColor: '#0d1117',
-            atmosphereColor: '#14b8a6',
-            skyColor: '#000a0a',
-        },
-        planets: [
-            {
-                id: "frontend-tech",
-                name: "Frontend",
-                modelPath: "/models/Earth.glb",
-                scale: 2.2,
-                size: 1.15,
-                orbitRadius: 15,
-                orbitSpeed: 0.068,
-                rotationSpeed: 0.0023,
-                color: "#14b8a6",
-                emissive: "#14b8a6",
-                emissiveIntensity: 0.33,
-                rings: false,
-                sectionId: "frontend",
-                orbitColor: "#14b8a6",
-                detailOffset: [0, -2.8, 0],
-            },
-            {
-                id: "backend-tech",
-                name: "Backend",
-                modelPath: "/models/Planet1.glb",
-                scale: 3,
-                size: 1.05,
-                orbitRadius: 30,
-                orbitSpeed: 0.052,
-                rotationSpeed: 0.0025,
-                color: "#0d9488",
-                emissive: "#0d9488",
-                emissiveIntensity: 0.31,
-                rings: false,
-                sectionId: "backend",
-                orbitColor: "#0d9488",
-                detailOffset: [0, 0, 0],
-            },
-            {
-                id: "tools-tech",
-                name: "Tools & Dev Ops",
-                modelPath: "/models/Planet2.glb",
-                scale: 3,
-                size: 1.0,
-                orbitRadius: 45,
-                orbitSpeed: 0.045,
-                rotationSpeed: 0.0027,
-                color: "#06b6d4",
-                emissive: "#06b6d4",
-                emissiveIntensity: 0.3,
-                rings: true,
-                sectionId: "tools",
-                orbitColor: "#06b6d4",
                 detailOffset: [0, 0, 0],
             },
         ],

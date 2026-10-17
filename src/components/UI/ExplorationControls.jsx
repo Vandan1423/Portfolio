@@ -31,19 +31,13 @@ const ExplorationControls = ({ isVisible, isNavigationOpen }) => {
     <div className={styles.container}>
       <div className={styles.panel}>
         <div className={styles.header}>
-          <span className={styles.icon}>🎮</span>
-          <span className={styles.title}>CONTROLS</span>
+          <span className={styles.title}>Controls</span>
         </div>
         
         <div className={styles.controlsList}>
           <div className={styles.controlItem}>
-            <span className={styles.key}>Left Click + Drag</span>
+            <span className={styles.key}>Drag</span>
             <span className={styles.action}>Rotate</span>
-          </div>
-          
-          <div className={styles.controlItem}>
-            <span className={styles.key}>Right Click + Drag</span>
-            <span className={styles.action}>Pan</span>
           </div>
           
           <div className={styles.controlItem}>
@@ -55,14 +49,12 @@ const ExplorationControls = ({ isVisible, isNavigationOpen }) => {
           
           <div className={styles.controlItem}>
             <span className={styles.keyHighlight}>N</span>
-            <span className={styles.action}>Navigation</span>
+            <span className={styles.action}>Map</span>
           </div>
-
-          <div className={styles.divider} />
 
           <div className={styles.controlItem}>
             <span className={styles.keyHighlight}>P</span>
-            <span className={styles.action}>Pilot Ship</span>
+            <span className={styles.action}>Pilot the ship</span>
           </div>
         </div>
       </div>

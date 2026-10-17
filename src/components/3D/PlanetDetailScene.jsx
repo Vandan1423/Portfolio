@@ -1,15 +1,13 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { useRef, useState, useEffect, useMemo, Suspense, lazy } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import {Vector3, BufferGeometry} from "three";
-import { getSectionData } from "../../data/sectionData";
-import { useAI } from "../../context/AIContext";
+import { getSectionData } from "../../data/planetPanels";
 import PlanetInfoPanel from "../UI/PlanetInfoPanel";
 import useKeyboardShortcut from "../../hooks/useKeyboardShortcut";
 import DockingSpacecraft from "./DockingSpacecraft";
-
-// Lazy load Sagittarius Terminal
-const SagittariusTerminal = lazy(() => import("../AI/SagittariusTerminal"));
+import { theme } from "../../styles/theme";
+import styles from "./PlanetDetailScene.module.css";
 
 // Camera configuration
 const CAMERA_POSITION = [0, 0, 15];
@@ -21,14 +19,14 @@ const CAMERA_FAR = 1000;
 const LIGHTS = {
     ambient: { intensity: 2 },
     key: { position: [10, 5, 10], intensity: 1.5, color: "#ffffff" },
-    rim: { position: [-10, 0, -5], intensity: 0.8, color: "#00ffff" },
+    rim: { position: [-10, 0, -5], intensity: 0.8, color: theme.text },
 };
 
 // Planet positioning
 const PLANET_GROUP_OFFSET = [-4, 0, 0];
 const LINE_START_POINT = [0, 0, 0];
 const LINE_END_POINT = [8, 0, 0];
-const LINE_COLOR = "#00ffff";
+const LINE_COLOR = theme.accent;
 
 // Planet rotation settings
 const ROTATION_SENSITIVITY = 0.005;
@@ -41,34 +39,11 @@ const SMALL_PLANET_MULTIPLIER = 200; // For planets with scale < 1
 const NORMAL_PLANET_MULTIPLIER = 1.2;
 const SMALL_PLANET_THRESHOLD = 1;
 
-// Corner frame configuration
-const CORNER_SIZE = 80;
-const CORNER_OFFSET = 4; // Tailwind units (top-4, left-4, etc.)
-const CORNER_STROKE_PRIMARY = 2;
-const CORNER_STROKE_SECONDARY = 1;
-const CORNER_OPACITY_PRIMARY = 0.7;
-const CORNER_OPACITY_SECONDARY = 0.3;
-const CORNER_COLOR = "#00ffff";
-
-// Corner frame path data
-const CORNER_PATHS = [
-    {
-        d: "M 0 30 L 0 0 L 30 0",
-        strokeWidth: CORNER_STROKE_PRIMARY,
-        opacity: CORNER_OPACITY_PRIMARY,
-    },
-    {
-        d: "M 0 50 L 0 0 L 50 0",
-        strokeWidth: CORNER_STROKE_SECONDARY,
-        opacity: CORNER_OPACITY_SECONDARY,
-    },
-];
-
 /**
  * PlanetDetailScene Component
  *
  * Isolated scene showing a single planet with detailed information
- * Features interactive planet rotation, docking sequence, and cyberpunk UI
+ * Features interactive planet rotation and the docking sequence
  *
  * @param {object} planet - Planet object with name, modelPath, scale, orbitColor
  * @param {string} systemId - Star system ID
@@ -78,9 +53,6 @@ const CORNER_PATHS = [
 const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
     // Get section data using both systemId and planet's sectionId
     const planetData = getSectionData(systemId, planet?.sectionId);
-
-    // AI context for terminal
-    const { openTerminal } = useAI();
 
     // Keyboard shortcut for docking sequence (D key)
     const { isActive: isDockTriggered, setIsActive: setDockTriggered } =
@@ -92,22 +64,6 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
 
     // Docking state
     const [isDocking, setIsDocking] = useState(false);
-
-    // Keyboard shortcut for opening Sagittarius Terminal (T key)
-    useEffect(() => {
-        const handleKeyPress = (e) => {
-            if (e.key === 't' || e.key === 'T') {
-                // Ignore if user is typing in an input field
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                    return;
-                }
-                openTerminal();
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyPress);
-        return () => window.removeEventListener("keydown", handleKeyPress);
-    }, [openTerminal]);
 
     // Handle docking trigger
     useEffect(() => {
@@ -143,23 +99,14 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
 
     if (!planet || !planetData) {
         return (
-            <div className="w-full h-screen bg-black flex items-center justify-center">
-                <p className="text-cyan-400 font-mono">No planet selected</p>
+            <div className={styles.empty}>
+                <p>No planet selected</p>
             </div>
         );
     }
 
     return (
-        <div
-            className="w-full h-screen relative overflow-hidden"
-            style={{
-                backgroundImage:
-                    "url(/images/SpaceCubeMap/Star2.jpeg)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-            }}
-        >
+        <div className={styles.scene}>
             {/* Three.js Canvas */}
             <Canvas
                 camera={{
@@ -180,148 +127,44 @@ const PlanetDetailScene = ({ planet, systemId, onBack, onDockComplete }) => {
                 />
             </Canvas>
 
-            {/* Corner Frame Overlay (HTML) */}
-            <CornerFrame />
-
             {/* Info Panel (HTML Overlay) */}
-            <PlanetInfoPanel
-                planetData={planetData}
-                planetColor={planet.orbitColor}
-                onBack={onBack}
-            />
+            <PlanetInfoPanel planetData={planetData} onBack={onBack} />
 
             {/* Back Button */}
-            <button
-                onClick={onBack}
-                className="absolute top-8 left-8 z-50 group"
-            >
-                <div
-                    className="flex items-center space-x-3 px-4 py-2 bg-black/50 backdrop-blur-sm
-                    border border-cyan-500/50 rounded transition-all duration-300
-                    hover:border-cyan-400 hover:bg-cyan-500/10 hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]"
-                >
-                    <span className="text-cyan-400 text-xl group-hover:text-cyan-300 transition-colors">
-                        ←
-                    </span>
-                    <span className="text-cyan-400 font-mono text-sm uppercase tracking-wider group-hover:text-cyan-300">
-                        Return to System
-                    </span>
-                </div>
+            <button onClick={onBack} className={styles.backButton}>
+                ← Back to the system
             </button>
 
             {/* Planet Name Header */}
-            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-40">
-                <div className="text-center">
-                    <p className="text-cyan-500/70 font-mono text-xs tracking-[0.3em] uppercase mb-1">
-                        Analyzing
-                    </p>
-                    <h1
-                        className="text-3xl font-bold text-cyan-400 font-mono tracking-wider"
-                        style={{
-                            textShadow: `0 0 20px ${planet.orbitColor}, 0 0 40px ${planet.orbitColor}50`,
-                        }}
-                    >
-                        {planet.name.toUpperCase()}
-                    </h1>
-                    <p className="text-cyan-400/60 font-mono text-sm mt-1">
-                        {planet.section}
-                    </p>
-                </div>
+            <div className={styles.planetHeader}>
+                <h1 className={styles.planetName}>{planet.name}</h1>
+                {planet.section && <p className={styles.planetSection}>{planet.section}</p>}
             </div>
 
-            {/* Docking Hint - Sleek & Eye-Catching */}
-            {!isDocking && (
-                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40 docking-hint">
-                    <div className="relative group">
-                        {/* Animated gradient background */}
-                        <div className="absolute -inset-1 bg-linear-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-xl opacity-75 blur group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
-
-                        {/* Main card */}
-                        <div className="relative bg-linear-to-br from-gray-900 via-black to-gray-900 p-4 rounded-xl border border-cyan-400/50 shadow-2xl">
-                            {/* Main action */}
-                            <div className="flex items-center justify-center gap-4 mb-2">
-                                <div className="flex items-center gap-3">
-                                    {/* Key visual */}
-                                    <div className="relative">
-                                        <div className="absolute inset-0 bg-cyan-400 blur-lg opacity-50 animate-pulse"></div>
-                                        <kbd className="relative inline-flex items-center justify-center w-10 h-10 font-bold text-xl text-black bg-linear-to-br from-cyan-300 to-cyan-500 rounded-lg shadow-lg transform hover:scale-110 transition-transform">
-                                            D
-                                        </kbd>
-                                    </div>
-
-                                    {/* Text */}
-                                    <div className="text-left">
-                                        <p className="text-sm text-cyan-300/70 leading-tight">
-                                            Press D to
-                                        </p>
-                                        <p className="text-lg font-bold text-white leading-tight">
-                                            Dock with Planet
-                                        </p>
-                                        <p className="text-xs text-cyan-300/60 mt-0.5">
-                                            and explore content
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Divider */}
-                            <div className="h-px bg-linear-to-r from-transparent via-cyan-400/30 to-transparent my-3"></div>
-
-                            {/* Secondary action */}
-                            <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
-                                <span>Press</span>
-                                <kbd className="px-2 py-1 font-mono font-bold text-white bg-gray-800 border border-gray-600 rounded shadow-sm">
-                                    X
-                                </kbd>
-                                <span>to cancel</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Docking Status - Sleek Progress Indicator */}
-            {isDocking && (
-                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-40">
-                    <div className="relative">
-                        {/* Animated gradient background */}
-                        <div className="absolute -inset-1 bg-linear-to-r from-orange-500 via-red-500 to-orange-600 rounded-xl opacity-75 blur animate-pulse"></div>
-
-                        {/* Main card */}
-                        <div className="relative bg-linear-to-br from-gray-900 via-black to-gray-900 px-8 py-5 rounded-xl border border-orange-400/50 shadow-2xl">
-                            {/* Status message */}
-                            <div className="flex items-center justify-center gap-3 mb-3 p-4">
-                                <div className="relative">
-                                    <div className="w-3 h-3 bg-orange-400 rounded-full animate-ping absolute"></div>
-                                    <div className="w-3 h-3 bg-orange-500 rounded-full relative"></div>
-                                </div>
-                                <p className="text-lg font-bold text-white">
-                                    Docking Sequence Active
-                                </p>
-                            </div>
-
-                            {/* Progress bar */}
-                            <div className="w-64 h-1 bg-gray-800 rounded-full overflow-hidden mb-3">
-                                <div className="h-full bg-linear-to-r from-orange-400 to-red-500 rounded-full animate-pulse" style={{ width: '100%' }}></div>
-                            </div>
-
-                            {/* Cancel action */}
-                            <div className="flex items-center justify-center gap-2 text-xs text-gray-400 p-4">
-                                <span>Press</span>
-                                <kbd className="px-2 py-1 font-mono font-bold text-white bg-gray-800 border border-orange-600 rounded shadow-sm">
-                                    X
-                                </kbd>
-                                <span>to abort docking</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Sagittarius Terminal - Opens with T key */}
-            <Suspense fallback={null}>
-                <SagittariusTerminal />
-            </Suspense>
+            {/* Docking hint, then docking status */}
+            <div className={styles.dockBar}>
+                {isDocking ? (
+                    <>
+                        <span className={styles.dockStatus}>Docking…</span>
+                        <span className={styles.dockMeta}>
+                            <kbd className={styles.key}>X</kbd> to cancel
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        <button
+                            type="button"
+                            className={styles.dockButton}
+                            onClick={() => setIsDocking(true)}
+                        >
+                            <kbd className={styles.key}>D</kbd> Dock and open this section
+                        </button>
+                        <span className={styles.dockMeta}>
+                            <kbd className={styles.key}>Esc</kbd> to go back
+                        </span>
+                    </>
+                )}
+            </div>
         </div>
     );
 };
@@ -498,7 +341,7 @@ const InteractivePlanet = ({ planet, planetData }) => {
 /**
  * ConnectingLine3D - 3D line connecting planet to info panel
  */
-const ConnectingLine3D = ({ startPoint, endPoint, color = "#00ffff" }) => {
+const ConnectingLine3D = ({ startPoint, endPoint, color = theme.accent }) => {
     const lineRef = useRef();
 
     // Create line geometry
@@ -536,61 +379,6 @@ const ConnectingLine3D = ({ startPoint, endPoint, color = "#00ffff" }) => {
                 />
             </line>
         </group>
-    );
-};
-
-/**
- * Corner SVG - Reusable corner decoration
- *
- * @param {string} corner - Corner position ("topLeft" | "topRight" | "bottomLeft" | "bottomRight")
- */
-const CornerSVG = ({ corner }) => {
-    const paths = {
-        topLeft: ["M 0 30 L 0 0 L 30 0", "M 0 50 L 0 0 L 50 0"],
-        topRight: ["M 50 0 L 80 0 L 80 30", "M 30 0 L 80 0 L 80 50"],
-        bottomLeft: ["M 0 50 L 0 80 L 30 80", "M 0 30 L 0 80 L 50 80"],
-        bottomRight: ["M 80 50 L 80 80 L 50 80", "M 80 30 L 80 80 L 30 80"],
-    };
-
-    return (
-        <svg
-            width={CORNER_SIZE}
-            height={CORNER_SIZE}
-            viewBox={`0 0 ${CORNER_SIZE} ${CORNER_SIZE}`}
-        >
-            {CORNER_PATHS.map((pathConfig, index) => (
-                <path
-                    key={index}
-                    d={paths[corner][index]}
-                    stroke={CORNER_COLOR}
-                    strokeWidth={pathConfig.strokeWidth}
-                    fill="none"
-                    opacity={pathConfig.opacity}
-                />
-            ))}
-        </svg>
-    );
-};
-
-/**
- * CornerFrame - Cyberpunk corner frame overlay
- */
-const CornerFrame = () => {
-    const corners = [
-        { position: "top-4 left-4", type: "topLeft" },
-        { position: "top-4 right-4", type: "topRight" },
-        { position: "bottom-4 left-4", type: "bottomLeft" },
-        { position: "bottom-4 right-4", type: "bottomRight" },
-    ];
-
-    return (
-        <div className="absolute inset-0 pointer-events-none z-30">
-            {corners.map(({ position, type }) => (
-                <div key={type} className={`absolute ${position}`}>
-                    <CornerSVG corner={type} />
-                </div>
-            ))}
-        </div>
     );
 };
 

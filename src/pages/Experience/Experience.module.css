@@ -1,29 +1,22 @@
-/* ===== EXPERIENCE SECTION ===== */
 .experienceSection {
     position: relative;
-    z-index: 2;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem 4rem;
+    padding: 0 0 var(--s-16);
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1024px) {
-    .experienceSection {
-        padding: 0 1.5rem 3rem;
-        max-width: 900px;
-    }
+/* Heading above the club roles: the same size as the page title, since it
+   names a group as big as "Experience" itself */
+.groupTitle {
+    margin: var(--s-16) 0 var(--s-8);
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.01em;
+    color: var(--text);
 }
 
-@media (max-width: 768px) {
-    .experienceSection {
-        padding: 0 1rem 2rem;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .experienceSection {
-        padding: 0 0.75rem 1.5rem;
+/* bp: phone */
+@media (max-width: 699.98px) {
+    .groupTitle {
+        margin: var(--s-12) 0 var(--s-6);
     }
 }

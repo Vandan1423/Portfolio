@@ -6,19 +6,10 @@ import { useNavigation } from '../../context/NavigationContext';
 
 // Import all section components
 import PersonalInfoSection from './sections/PersonalInfoSection';
-import AvatarVisualization from './sections/AvatarVisualization';
 import EducationSection from './sections/EducationSection';
-import OrbitalSystem from './sections/OrbitalSystem';
-import InterestsSection from './sections/InterestsSection';
-import HobbyOrbs from './sections/HobbyOrbs';
 import TechStackSection from './sections/TechStackSection';
-import CodeEditor from './sections/CodeEditor';
 import AchievementsSection from './sections/AchievementsSection';
-import AchievementTimeline from './sections/AchievementTimeline';
-import ResumeSection from './sections/ResumeSection';
-import ResumeVisualization from './sections/ResumeVisualization';
 import CertificationsSection from './sections/CertificationsSection';
-import CertificateBadge from './sections/CertificateBadge';
 
 const AboutMe = () => {
     const { scrollTarget, onScrollComplete } = useNavigation();
@@ -27,76 +18,50 @@ const AboutMe = () => {
     return (
         <PageTemplate
             title="About Me"
-            subtitle="Journey through my universe of skills, passions, and achievements"
         >
-            {/* Section 1: Personal Info + Avatar */}
+            {/* Section 1: Personal Info */}
             <TwoColumnSection
                 ref={registerRef('personal-info')}
                 id="personal-info"
                 sectionNumber="01"
-                sectionTitle="PERSONAL INFO"
+                sectionTitle="Personal info"
                 leftContent={<PersonalInfoSection />}
-                rightContent={<AvatarVisualization />}
             />
 
-            {/* Section 2: Education + Orbital Animation */}
+            {/* Section 2: Education */}
             <TwoColumnSection
                 ref={registerRef('education')}
                 id="education"
                 sectionNumber="02"
-                sectionTitle="EDUCATION"
+                sectionTitle="Education"
                 leftContent={<EducationSection />}
-                rightContent={<OrbitalSystem />}
             />
 
-            {/* Section 3: Interests + Hobby Orbs */}
-            <TwoColumnSection
-                ref={registerRef('interests')}
-                id="interests"
-                sectionNumber="03"
-                sectionTitle="INTERESTS & HOBBIES"
-                leftContent={<InterestsSection />}
-                rightContent={<HobbyOrbs />}
-            />
-
-            {/* Section 4: Tech Stack + Code Editor */}
+            {/* Section 3: Tech Stack */}
             <TwoColumnSection
                 ref={registerRef('tech-stack')}
                 id="tech-stack"
-                sectionNumber="04"
-                sectionTitle="TECH STACK"
+                sectionNumber="03"
+                sectionTitle="Tech stack"
                 leftContent={<TechStackSection />}
-                rightContent={<CodeEditor />}
             />
 
-            {/* Section 5: Achievements + Timeline */}
+            {/* Section 4: Achievements */}
             <TwoColumnSection
                 ref={registerRef('achievements')}
                 id="achievements"
-                sectionNumber="05"
-                sectionTitle="ACHIEVEMENTS"
+                sectionNumber="04"
+                sectionTitle="Achievements"
                 leftContent={<AchievementsSection />}
-                rightContent={<AchievementTimeline />}
             />
 
-            {/* Section 6: Resume + Visualization */}
-            <TwoColumnSection
-                ref={registerRef('resume')}
-                id="resume"
-                sectionNumber="06"
-                sectionTitle="RESUME"
-                leftContent={<ResumeSection />}
-                rightContent={<ResumeVisualization />}
-            />
-
-            {/* Section 7: Certifications + Certificate Badge */}
+            {/* Section 5: Certifications */}
             <TwoColumnSection
                 ref={registerRef('certifications')}
                 id="certifications"
-                sectionNumber="07"
-                sectionTitle="CERTIFICATIONS"
+                sectionNumber="05"
+                sectionTitle="Certifications"
                 leftContent={<CertificationsSection />}
-                rightContent={<CertificateBadge />}
             />
         </PageTemplate>
     );

@@ -3,12 +3,39 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import compression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { person, links, skills } from './src/data/profile.js';
+
+const escapeHtml = (text) =>
+    String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// Fills the %PROFILE_*% placeholders in index.html from src/data/profile.js,
+// so the page title and share previews never drift from the profile.
+const profileMeta = () => {
+    const values = {
+        NAME: person.name,
+        TITLE: `${person.name} · ${person.role}`,
+        DESCRIPTION: `Portfolio of ${person.name}: ${person.headline}. Projects, experience and skills, as a 3D space to fly through or a plain website.`,
+        KEYWORDS: [person.name, person.role, ...skills.flatMap((group) => group.items).slice(0, 10)].join(', '),
+        URL: links.website,
+    };
+    return {
+        name: 'profile-meta',
+        transformIndexHtml: {
+            order: 'pre',
+            handler: (html) =>
+                html.replace(/%PROFILE_(\w+)%/g, (match, key) =>
+                    key in values ? escapeHtml(values[key]) : match
+                ),
+        },
+    };
+};
 
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [
         react(),
         tailwindcss(),
+        profileMeta(),
         // Brotli compression (better than gzip, 65% reduction)
         compression({
             algorithm: 'brotliCompress',

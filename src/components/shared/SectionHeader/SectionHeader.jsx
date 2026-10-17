@@ -1,6 +1,4 @@
 import React from 'react';
-import SectionNumber from '../../common/SectionNumber/SectionNumber';
-import GlitchTitle from '../../common/GlitchTitle/GlitchTitle';
 import styles from './SectionHeader.module.css';
 
 const SectionHeader = ({
@@ -12,8 +10,8 @@ const SectionHeader = ({
 }) => {
     return (
         <div className={`${styles.sectionHeader} ${className}`} {...props}>
-            <SectionNumber number={number} />
-            <GlitchTitle text={title} className={styles.title} />
+            {number && <span className={styles.number}>{String(number).padStart(2, '0')}</span>}
+            <h2 className={styles.title}>{title}</h2>
             {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         </div>
     );

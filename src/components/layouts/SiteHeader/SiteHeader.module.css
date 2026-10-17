@@ -1,0 +1,118 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    gap: var(--s-8);
+    max-width: var(--content-w);
+    height: var(--header-h);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+}
+
+.name {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nav {
+    display: flex;
+    gap: var(--s-6);
+}
+
+.navLink,
+.action {
+    font-size: var(--fs-small);
+    color: var(--text-2);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--t-fast) var(--ease);
+}
+
+.navLink:hover,
+.action:hover {
+    color: var(--text);
+}
+
+.navLink[aria-current="page"] {
+    color: var(--accent);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-left: auto;
+}
+
+.action {
+    padding: var(--s-1) var(--s-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-1);
+}
+
+.action:hover {
+    border-color: var(--text-3);
+}
+
+.menuButton {
+    display: none;
+    margin-left: auto;
+    padding: var(--s-1) var(--s-3);
+    font: inherit;
+    font-size: var(--fs-small);
+    color: var(--text);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-1);
+    cursor: pointer;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-2) var(--gutter) var(--s-4);
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+}
+
+.menu .navLink,
+.menu .action {
+    padding: var(--s-3) 0;
+    font-size: var(--fs-body);
+    border: none;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+}
+
+.menu > :last-child {
+    border-bottom: none;
+}
+
+/* bp: phone */
+@media (max-width: 699.98px) {
+    .nav,
+    .actions {
+        display: none;
+    }
+
+    .menuButton {
+        display: block;
+    }
+}
+
+/* The menu only exists on phones */
+@media (min-width: 700px) {
+    .menu {
+        display: none;
+    }
+}

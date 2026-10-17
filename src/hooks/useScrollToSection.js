@@ -1,8 +1,10 @@
 import { useRef, useEffect, useCallback } from 'react';
 
+// Space left between the sticky header and the section it scrolls to
+const HEADER_GAP = 16;
+
 /**
  * Custom hook to handle scroll-to-section functionality
- * Replaces duplicated scroll logic across all pages (saves ~240 lines)
  *
  * @param {string|null} scrollTarget - The section ID to scroll to
  * @param {function} onScrollComplete - Callback function called after scroll completes
@@ -22,10 +24,10 @@ const useScrollToSection = (scrollTarget, onScrollComplete) => {
                 setTimeout(() => {
                     const element = sectionRefs.current[scrollTarget];
                     if (element) {
-                        element.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+                        const header = document.querySelector('[data-site-header]');
+                        const offset = (header?.offsetHeight ?? 0) + HEADER_GAP;
+                        const top = element.getBoundingClientRect().top + window.scrollY - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
 
                         if (onScrollComplete) {
                             onScrollComplete();

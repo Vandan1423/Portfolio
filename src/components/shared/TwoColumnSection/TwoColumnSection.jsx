@@ -27,13 +27,19 @@ const TwoColumnSection = forwardRef(({
                     subtitle={sectionSubtitle}
                 />
             )}
-            <div className={`${styles.twoColumn} ${reverseOnMobile ? styles.reverseOnMobile : ''}`}>
+            <div
+                className={`${styles.twoColumn} ${rightContent ? '' : styles.singleColumn} ${
+                    reverseOnMobile ? styles.reverseOnMobile : ''
+                }`}
+            >
                 <div className={styles.leftContent}>
                     {leftContent}
                 </div>
-                <div className={styles.rightContent}>
-                    {rightContent}
-                </div>
+                {rightContent && (
+                    <div className={styles.rightContent}>
+                        {rightContent}
+                    </div>
+                )}
             </div>
         </section>
     );

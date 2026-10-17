@@ -31,7 +31,5 @@ export const preloadAllComponents = () => {
     import("../pages/AboutMe/AboutMe");
     import("../pages/Projects/Projects");
     import("../pages/Experience/Experience");
-    import("../pages/Contact/Contact");
-    import("../pages/Technologies/Technologies");
     import("../pages/Journey/Journey");
 };

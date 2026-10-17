@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { Vector3 } from 'three';
 import { useGameMode } from '../../context/GameModeContext';
+import { theme } from '../../styles/theme';
 
 // Spacecraft model path
 const SPACECRAFT_MODEL_PATH = '/models/SpaceshipCockpit.glb';
@@ -46,7 +47,7 @@ const EngineGlow = ({ thrustLevel, isBoosting }) => {
         glowRef.current.material.emissiveIntensity = intensity;
     });
 
-    const glowColor = isBoosting ? '#ff6600' : '#00ffff';
+    const glowColor = isBoosting ? theme.accent : theme.text;
 
     return (
         <group position={[0, 0, 2.5]}>
@@ -98,6 +99,7 @@ const PilotableSpaceship = () => {
 
     // Clone scene to avoid conflicts
     const clonedScene = useMemo(() => scene.clone(), [scene]);
+    const glowColor = isBoosting ? theme.accent : theme.text;
 
     // Track previous yaw for delta calculation
     const prevYawRef = useRef(shipRotation.y);
@@ -143,7 +145,7 @@ const PilotableSpaceship = () => {
                 {/* Engine lights (left and right) */}
                 <group position={[-1.0, -0.3, 2.0]}>
                     <pointLight
-                        color={isBoosting ? '#ff6600' : '#00ffff'}
+                        color={glowColor}
                         intensity={1 + thrustLevel * 2}
                         distance={6}
                         decay={2}
@@ -151,7 +153,7 @@ const PilotableSpaceship = () => {
                 </group>
                 <group position={[1.0, -0.3, 2.0]}>
                     <pointLight
-                        color={isBoosting ? '#ff6600' : '#00ffff'}
+                        color={glowColor}
                         intensity={1 + thrustLevel * 2}
                         distance={6}
                         decay={2}

@@ -1,6 +1,7 @@
 import { useGLTF } from "@react-three/drei";
 import { Suspense } from "react";
 import HolographicTerminal from "./HolographicTerminal";
+import { theme } from "../../styles/theme";
 
 // Cockpit model configuration
 const COCKPIT_MODEL_PATH = "/models/SpaceshipCockpit.glb";
@@ -12,12 +13,13 @@ const COCKPIT_SCALE = 1.5;
 const TERMINAL_POSITION = [0, -0.3, -2];
 
 // Lighting configuration - array of light settings for easier management
+// One warm accent light from the terminal, neutral light everywhere else
 const COCKPIT_LIGHTS = [
-    { position: [0, 0, -2], color: "#00ff88", intensity: 2, distance: 5 },      // Terminal green glow
-    { position: [1.5, -0.5, -2], color: "#06b6d4", intensity: 1.5, distance: 3 }, // Cyan right
-    { position: [-1.5, -0.5, -2], color: "#3b82f6", intensity: 1.5, distance: 3 }, // Blue left
-    { position: [0, 1.5, 0], color: "#ffffff", intensity: 1, distance: 4 },      // White overhead
-    { position: [0, 0, 2], color: "#6366f1", intensity: 0.8, distance: 3 },      // Indigo rear
+    { position: [0, 0, -2], color: theme.accent, intensity: 1.5, distance: 5 },  // Terminal glow
+    { position: [1.5, -0.5, -2], color: theme.text, intensity: 1.2, distance: 3 }, // Right
+    { position: [-1.5, -0.5, -2], color: theme.text, intensity: 1.2, distance: 3 }, // Left
+    { position: [0, 1.5, 0], color: "#ffffff", intensity: 1, distance: 4 },      // Overhead
+    { position: [0, 0, 2], color: theme.text2, intensity: 0.8, distance: 3 },     // Rear
 ];
 
 /**

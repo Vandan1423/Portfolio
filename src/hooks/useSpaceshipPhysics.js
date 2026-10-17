@@ -36,7 +36,7 @@ const PHYSICS_CONFIG = {
  * @returns {Object} Current physics state and methods
  */
 export function useSpaceshipPhysics(controls, enabled = true, planets = []) {
-    const { updateShipState, setThrustLevel, setIsBoosting, shipPositionRef, shipVelocityRef, shipRotationRef, planetWorldPositionsRef } = useGameMode();
+    const { updateShipState, setThrustLevel, setIsBoosting, shipPositionRef, shipVelocityRef, shipRotationRef, planetWorldPositionsRef, sunWorldPositionRef } = useGameMode();
 
     // Reusable objects to avoid garbage collection
     const tempVec = useRef(new Vector3());
@@ -193,8 +193,8 @@ export function useSpaceshipPhysics(controls, enabled = true, planets = []) {
         position.current.addScaledVector(velocity.current, dt);
 
         // ===== SUN COLLISION PREVENTION =====
-        // Sun is at (0, 0, -10) with scale 4.0
-        const sunPos = tempVec.current.set(0, 0, -10);
+        // Sun world position is published by StarSystem (scale 4.0)
+        const sunPos = sunWorldPositionRef.current;
         const sunCollisionRadius = 12; // Sun scale 4 * 2.5 + buffer
         const sunDist = position.current.distanceTo(sunPos);
         if (sunDist < sunCollisionRadius) {

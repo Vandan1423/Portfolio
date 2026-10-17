@@ -86,30 +86,20 @@ export default function GraphNode({ node, nodes, onClick, isHovered, onHover, on
         r={node.type === 'system' ? 60 : 30}
       />
 
-      {/* Current system glow effect */}
+      {/* Current system: one plain outer ring */}
       {node.type === 'system' && node.isCurrent && (
-        <>
-          <circle
-            className={styles.currentSystemGlow}
-            r={80}
-          />
-          <circle
-            className={styles.currentSystemPulse}
-            r={100}
-          />
-        </>
+        <circle
+          className={styles.currentSystemGlow}
+          r={74}
+        />
       )}
 
       {/* Locked icon for locked planets */}
       {node.type === 'planet' && node.isLocked && (
-        <text
+        <path
           className={styles.lockIcon}
-          textAnchor="middle"
-          dy="0.35em"
-          fontSize="22"
-        >
-          🔒
-        </text>
+          d="M-7 -1 h14 v10 h-14 z M-4.5 -1 v-4 a4.5 4.5 0 0 1 9 0 v4"
+        />
       )}
 
       {/* System page name label - inside the circle */}
@@ -163,7 +153,7 @@ export default function GraphNode({ node, nodes, onClick, isHovered, onHover, on
               fontWeight="400"
               opacity="0.7"
             >
-              Click to warp
+              Click to travel
             </text>
           )}
         </>
@@ -196,8 +186,8 @@ export default function GraphNode({ node, nodes, onClick, isHovered, onHover, on
             fontSize="13"
           >
             {node.type === 'system' ?
-              (node.isCurrent ? `Current: ${node.data?.page || 'System'}` : `${node.data?.page || 'System'} - Click to warp`) :
-              (node.isLocked ? `Locked - Go to ${getParentSystemPage()} first` : 'Click to visit')
+              (node.isCurrent ? `You are here: ${node.data?.page || 'System'}` : `${node.data?.page || 'System'}. Click to travel`) :
+              (node.isLocked ? `Locked. Go to ${getParentSystemPage()} first` : 'Click to visit')
             }
           </text>
         </g>

@@ -1,0 +1,19 @@
+.link {
+    position: absolute;
+    top: var(--s-6);
+    right: var(--s-6);
+    z-index: 20;
+    padding: var(--s-1) var(--s-3);
+    font-family: var(--font-sans);
+    font-size: var(--fs-small);
+    color: var(--text);
+    text-decoration: none;
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-1);
+    transition: border-color var(--t-fast) var(--ease);
+}
+
+.link:hover {
+    border-color: var(--text-3);
+}

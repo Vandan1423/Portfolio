@@ -1,14 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import { getAllStarSystems } from '../data/starSystemsData';
+import { readLastView } from '../utils/lastView';
 
 const StarSystemContext = createContext(undefined);
 
 const starSystems = getAllStarSystems();
 
 export function StarSystemProvider({ children }) {
-    const [currentSystemId, setCurrentSystemId] = useState('alpha-centauri');
-    const [selectedPlanet, setSelectedPlanet] = useState(null);
+    // Where the visitor last was in 3D during this tab's visit, or null
+    const [initialView] = useState(readLastView);
+    const [currentSystemId, setCurrentSystemId] = useState(initialView?.systemId ?? 'alpha-centauri');
+    const [selectedPlanet, setSelectedPlanet] = useState(initialView?.planet ?? null);
     const [travelDestination, setTravelDestination] = useState(null);
     const [travelPhase, setTravelPhase] = useState(null);
 
@@ -37,6 +40,7 @@ export function StarSystemProvider({ children }) {
     }, []);
 
     const value = {
+        initialView,
         currentSystemId,
         selectedPlanet,
         travelDestination,

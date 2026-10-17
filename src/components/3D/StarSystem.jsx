@@ -3,9 +3,10 @@ import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import {Object3D, Vector3} from "three";
 import { useGameMode } from "../../context/GameModeContext";
+import { SUN_POSITION } from "../../constants/scene";
+import { theme } from "../../styles/theme";
 
 // Sun configuration
-const SUN_POSITION = [0, 0, -10];
 const SUN_SCALE = 4.0;
 const SUN_ROTATION_SPEED = 0.05;
 const SUN_COLOR = "#ffaa00";
@@ -56,7 +57,8 @@ const HEMISPHERE_GROUND_COLOR = "#000033";
 
 // Orbit line configuration
 const ORBIT_LINE_SEGMENTS = 128;
-const ORBIT_LINE_OPACITY = 0.3;
+const ORBIT_LINE_COLOR = theme.text3; // one neutral for every orbit
+const ORBIT_LINE_OPACITY = 0.35;
 const ORBIT_LINE_WIDTH = 1;
 
 // Planet rotation speed
@@ -83,6 +85,7 @@ const StarSystem = ({
 }) => {
     const groupRef = useRef();
     const centralStarRef = useRef();
+    const { sunWorldPositionRef } = useGameMode();
 
     // Models are preloaded during initial loading screen via useAssetPreloader
     // No need for lazy loading here - models are ready when component mounts
@@ -91,6 +94,12 @@ const StarSystem = ({
         // Pause system rotation when animations are paused
         if (groupRef.current && !animationsPaused) {
             groupRef.current.rotation.y = state.clock.elapsedTime * SYSTEM_ROTATION_SPEED;
+        }
+
+        // Publish the sun's world position for piloting (aiming and collision)
+        if (groupRef.current) {
+            groupRef.current.updateWorldMatrix(true, false);
+            groupRef.current.localToWorld(sunWorldPositionRef.current.set(...SUN_POSITION));
         }
 
         // Keep sun pulsing even when paused
@@ -120,7 +129,7 @@ const StarSystem = ({
                 <OrbitLine
                     key={`orbit-${planet.id}`}
                     radius={planet.orbitRadius}
-                    color={planet.orbitColor}
+                    color={ORBIT_LINE_COLOR}
                     sunPosition={SUN_POSITION}
                     yOffset={planet.yOffset}
                 />

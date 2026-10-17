@@ -1,69 +1,33 @@
 /**
  * ProgressDisplay Component
  *
- * Displays loading progress with a vertical altitude gauge and asset information.
- * Features:
- * - Vertical gauge with percentage markers (0%, 25%, 50%, 75%, 100%)
- * - Moving indicator showing current progress
- * - Asset counter and current asset name
- *
- * Matches the space/rocket theme with altitude-based visualization.
+ * The first-visit loading screen: name, a thin progress bar and the asset count.
  */
 
+import { person } from '../../data/profile';
 import styles from './RocketLoader.module.css';
 
-const ProgressDisplay = ({ progress, currentAsset, loadedAssets, totalAssets }) => {
+const ProgressDisplay = ({ progress, loadedAssets, totalAssets }) => {
+    const percent = Math.round(progress);
+
     return (
         <div className={styles.progressContainer}>
-            {/* Vertical Altitude Gauge (Left Side) */}
-            <div className={styles.altitudeGauge}>
-                {/* Gauge track */}
-                <div className={styles.gaugeTrack}>
-                    {/* Filled portion */}
-                    <div
-                        className={styles.gaugeFill}
-                        style={{ height: `${progress}%` }}
-                    />
-
-                    {/* Moving marker with percentage */}
-                    <div
-                        className={styles.gaugeMarker}
-                        style={{ bottom: `${progress}%` }}
-                    >
-                        <span className={styles.percentageText}>
-                            {Math.round(progress)}%
-                        </span>
-                    </div>
-                </div>
-
-                {/* Gauge scale labels */}
-                <div className={styles.gaugeLabels}>
-                    <span>100%</span>
-                    <span>75%</span>
-                    <span>50%</span>
-                    <span>25%</span>
-                    <span>0%</span>
-                </div>
+            <p className={styles.name}>{person.name}</p>
+            <div
+                className={styles.bar}
+                role="progressbar"
+                aria-label="Loading the 3D scene"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={percent}
+            >
+                <div className={styles.barFill} style={{ width: `${progress}%` }} />
             </div>
-
-            {/* Asset Information (Bottom Center) */}
-            <div className={styles.assetInfo}>
-                {/* Asset counter */}
-                <div className={styles.loadingText}>
-                    LOADING ASSETS
-                </div>
-
-                {/* Asset count display */}
-                <div className={styles.assetCount}>
-                    {loadedAssets} / {totalAssets}
-                </div>
-
-                {/* Loading indicator dots */}
-                <div className={styles.loadingDots}>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+            <div className={styles.meta}>
+                <span>Loading the 3D scene</span>
+                <span className={styles.count}>
+                    {loadedAssets} / {totalAssets} · {percent}%
+                </span>
             </div>
         </div>
     );

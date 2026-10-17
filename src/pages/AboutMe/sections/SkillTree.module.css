@@ -1,0 +1,112 @@
+/* Skill tree: hairline lines, small dots, one accent for what is highlighted */
+.tree {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+}
+
+.line {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1.25;
+    transition: stroke var(--t-base) var(--ease), opacity var(--t-base) var(--ease);
+}
+
+.lineLit {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+}
+
+.node {
+    cursor: pointer;
+    outline: none;
+    transition: opacity 0.2s ease;
+}
+
+.dimmed {
+    opacity: 0.28;
+}
+
+/* Invisible box behind each label, so the whole row is clickable */
+.hit {
+    fill: transparent;
+}
+
+.node:focus-visible .hit {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+}
+
+.dot {
+    fill: var(--text-3);
+    transition: fill 0.2s ease;
+}
+
+.dotBasic {
+    fill: none;
+    stroke: var(--text-3);
+    stroke-width: 1.25;
+    transition: stroke 0.2s ease;
+}
+
+.label,
+.groupLabel,
+.rootLabel {
+    transition: fill 0.2s ease;
+}
+
+.label {
+    fill: var(--text-2);
+    font-size: 14px;
+}
+
+.groupLabel {
+    fill: var(--text);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.rootLabel {
+    fill: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+.node:hover .label,
+.node:hover .groupLabel {
+    fill: var(--text);
+}
+
+.lit .dot {
+    fill: var(--accent);
+}
+
+.lit .dotBasic {
+    stroke: var(--accent);
+}
+
+.lit .label,
+.lit .groupLabel {
+    fill: var(--text);
+}
+
+.caption {
+    margin: 0.75rem 0 0;
+    min-height: 1.5em;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .line,
+    .node,
+    .dot,
+    .dotBasic,
+    .label,
+    .groupLabel,
+    .rootLabel {
+        transition: none;
+    }
+}

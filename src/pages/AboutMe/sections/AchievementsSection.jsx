@@ -1,18 +1,25 @@
 import React from 'react';
+import { achievements } from '../../../data/profile';
 import styles from './AchievementsSection.module.css';
-import achievementData from "../../../data/achievementData.js"
 
 const AchievementsSection = () => {
     return (
         <div className={styles.infoBox}>
             <div className={styles.achievementsList}>
-                {achievementData.map((achievement, index) => (
-                    <div key={index} className={styles.achievementItem}>
-                        <div className={styles.achievementIcon}>{achievement.icon}</div>
-                        <div className={styles.achievementContent}>
-                            <h4 className={styles.achievementTitle}>{achievement.title}</h4>
-                            <p className={styles.achievementDesc}>{achievement.description}</p>
-                        </div>
+                {achievements.map((achievement) => (
+                    <div key={achievement.title} className={styles.achievementItem}>
+                        <h4 className={styles.achievementTitle}>{achievement.title}</h4>
+                        <p className={styles.achievementDesc}>{achievement.detail}</p>
+                        {achievement.link && (
+                            <a
+                                href={achievement.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.achievementLink}
+                            >
+                                View certificate
+                            </a>
+                        )}
                     </div>
                 ))}
             </div>

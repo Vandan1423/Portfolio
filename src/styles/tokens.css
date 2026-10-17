@@ -1,0 +1,108 @@
+/*
+ * Design tokens: the colours, sizes and timings the website uses.
+ * Components read these instead of holding raw values of their own.
+ *
+ * Restrained dark: a near-black neutral, off-white text, hairline borders
+ * and ONE accent (muted amber), used only for small marks: the current nav
+ * item, links on hover, focus, dots and the selected item. The static pages
+ * and the 3D overlays share this palette. No glows, blur or gradients.
+ *
+ * src/styles/theme.js repeats these values for three.js; keep both in step.
+ *
+ * Breakpoints cannot be variables, so they are written out where they are
+ * used, each with a "bp:" comment:
+ *   phone    up to 699px
+ *   tablet   700 to 1024px  (the 3D view is off at this width and below)
+ *   desktop  1025px and up
+ */
+
+:root {
+    color-scheme: dark;
+
+    /* ── Colour ── */
+    --bg: #0e0f11; /* the page */
+    --surface: #15171a; /* what sits on the page: cards, menus, the header */
+    --surface-2: #1c1f23; /* hover on a surface */
+
+    --line: #25282d; /* hairlines */
+    --line-strong: #363a41; /* control borders */
+
+    --text: #ece9e4; /* body text */
+    --text-2: #aaa59d; /* secondary text */
+    --text-3: #8a857d; /* meta, dates. 4.5:1 or better on --bg and --surface. */
+
+    /* Muted amber, the one accent */
+    --accent: #d6a65c;
+    --accent-soft: rgb(214 166 92 / 0.12);
+
+    /* The filled button: off-white, so the accent stays a small mark */
+    --button: var(--text);
+    --button-hover: #ffffff;
+    --on-button: var(--bg);
+
+    --focus: var(--accent);
+    --scrim: rgb(0 0 0 / 0.6); /* behind dialogs. Dimmed, never blurred. */
+    /* Panels drawn over the 3D scene: the page colour, slightly see-through */
+    --overlay: rgb(14 15 17 / 0.9);
+
+    /* ── Space: a 4px grid ── */
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 20px;
+    --s-6: 24px;
+    --s-8: 32px;
+    --s-10: 40px;
+    --s-12: 48px;
+    --s-16: 64px;
+
+    /* ── Radius ── */
+    --r-1: 4px; /* controls */
+    --r-2: 6px; /* cards */
+    --r-3: 10px; /* dialogs */
+
+    /* ── Type ── */
+    --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* Dates, stack labels, keys */
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    /* In rem, so text follows the reader's browser font size. Pixel values assume 16. */
+    --fs-meta: 0.8125rem; /* 13 */
+    --fs-small: 0.875rem; /* 14 */
+    --fs-body: 1rem; /* 16 */
+    --fs-lead: 1.125rem; /* 18 */
+    --fs-h3: 1.25rem; /* 20 */
+    --fs-h2: 1.5rem; /* 24 */
+    --fs-h1: 2rem; /* 32 */
+
+    --lh-tight: 1.25;
+    --lh-body: 1.6;
+
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+
+    /* ── Motion: only on interaction ── */
+    --t-fast: 120ms;
+    --t-base: 200ms;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* ── Shell ── */
+    --header-h: 56px;
+    --content-w: 1400px; /* the widest the page content runs. Phase 5 may narrow it. */
+    --gutter: 32px; /* between the screen edge and the content */
+
+    /* ── Layers ── */
+    --z-header: 50;
+    --z-menu: 60;
+    --z-dialog: 1000;
+}
+
+/* bp: phone */
+@media (max-width: 699.98px) {
+    :root {
+        --fs-h1: 1.625rem; /* 26 */
+        --gutter: 16px;
+    }
+}

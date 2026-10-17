@@ -31,8 +31,7 @@ const PilotingHUD = () => {
             <div className={styles.leftPanel}>
                 <div className={styles.panel}>
                     <div className={styles.header}>
-                        <span className={styles.icon}>&#9650;</span>
-                        <span className={styles.title}>VELOCITY</span>
+                        <span className={styles.title}>Speed</span>
                     </div>
 
                     <div className={styles.speedDisplay}>
@@ -49,15 +48,13 @@ const PilotingHUD = () => {
 
                     {isBoosting && (
                         <div className={styles.boostIndicator}>
-                            <span className={styles.boostIcon}>&#9889;</span>
-                            <span>BOOST ACTIVE</span>
+                            <span>Boost on</span>
                         </div>
                     )}
 
                     {thrustLevel > 0 && !isBoosting && (
                         <div className={styles.thrustIndicator}>
-                            <span className={styles.thrustIcon}>&#8593;</span>
-                            <span>THRUST</span>
+                            <span>Thrust</span>
                         </div>
                     )}
                 </div>
@@ -68,8 +65,7 @@ const PilotingHUD = () => {
                 {nearestPlanet && (
                     <div className={styles.panel}>
                         <div className={styles.header}>
-                            <span className={styles.icon}>&#9679;</span>
-                            <span className={styles.title}>PROXIMITY</span>
+                            <span className={styles.title}>Nearest planet</span>
                         </div>
 
                         <div className={styles.planetInfo}>
@@ -82,7 +78,7 @@ const PilotingHUD = () => {
                         {canLand && (
                             <div className={styles.landingPrompt}>
                                 <span className={styles.landKey}>L</span>
-                                <span>INITIATE LANDING</span>
+                                <span>Land here</span>
                             </div>
                         )}
                     </div>
@@ -93,37 +89,31 @@ const PilotingHUD = () => {
             <div className={styles.bottomPanel}>
                 <div className={styles.controlsHint}>
                     <div className={styles.controlGroup}>
-                        <span className={styles.key}>MOUSE</span>
+                        <span className={styles.key}>Mouse</span>
                         <span className={styles.action}>Look / Steer</span>
                     </div>
-                    <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
                         <span className={styles.key}>W S</span>
                         <span className={styles.action}>Thrust</span>
                     </div>
-                    <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
                         <span className={styles.key}>A D</span>
                         <span className={styles.action}>Strafe</span>
                     </div>
-                    <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
-                        <span className={styles.key}>SHIFT</span>
+                        <span className={styles.key}>Shift</span>
                         <span className={styles.action}>Boost</span>
                     </div>
-                    <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
-                        <span className={styles.key}>SPACE</span>
+                        <span className={styles.key}>Space</span>
                         <span className={styles.action}>Brake</span>
                     </div>
-                    <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
                         <span className={styles.key}>Q E</span>
                         <span className={styles.action}>Roll</span>
                     </div>
-                    <div className={styles.controlDivider}>|</div>
                     <div className={styles.controlGroup}>
-                        <span className={styles.key}>ESC</span>
+                        <span className={styles.key}>Esc</span>
                         <span className={styles.action}>Exit</span>
                     </div>
                 </div>

@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import {Vector3, Quaternion, Matrix4} from "three";
 import SpacecraftModel from "./SpacecraftModel";
+import { theme } from "../../styles/theme";
 
 // Docking animation configuration
 const DOCK_DURATION = 7; // seconds
@@ -41,13 +42,13 @@ const SPACECRAFT_LIGHTS = [
         position: [0, 0.3, 0],
         intensity: 1.5,
         distanceMultiplier: LIGHT_TOP_DISTANCE,
-        color: "#00ffff",
+        color: theme.text,
     },
     {
         position: [0, -0.2, 0],
         intensity: 2,
         distanceMultiplier: LIGHT_BOTTOM_DISTANCE,
-        color: "#ff6600",
+        color: theme.accent,
     },
 ];
 

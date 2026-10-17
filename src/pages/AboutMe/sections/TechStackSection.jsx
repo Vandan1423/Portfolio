@@ -1,45 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { skills } from '../../../data/profile';
+import skillsData from '../../../data/skillsData';
+import SkillTree from './SkillTree';
 import styles from './TechStackSection.module.css';
 
+const VIEWS = [
+    { id: 'list', label: 'List' },
+    { id: 'tree', label: 'Tree' },
+];
+
 const TechStackSection = () => {
-    const techStack = {
-        languages: ["Python", "C/C++", "JavaScript"],
-        webDev: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS", "Bootstrap"],
-        tools: ["Git/GitHub", "SQL", "EJS"]
-    };
+    const [view, setView] = useState('list');
+    const showTree = view === 'tree';
 
     return (
         <div className={styles.infoBox}>
-            <div className={styles.skillCategory}>
-                <h4 className={styles.categoryTitle}>Languages</h4>
-                <div className={styles.skillTags}>
-                    {techStack.languages.map((skill) => (
-                        <span key={skill} className={styles.skillTag}>
-                            {skill}
-                        </span>
-                    ))}
-                </div>
+            {/* The tree needs a wide screen, so the switch only shows there */}
+            <div className={styles.viewSwitch} role="group" aria-label="Show skills as">
+                {VIEWS.map(({ id, label }) => (
+                    <button
+                        key={id}
+                        type="button"
+                        className={styles.viewButton}
+                        aria-pressed={view === id}
+                        onClick={() => setView(id)}
+                    >
+                        {label}
+                    </button>
+                ))}
             </div>
-            <div className={styles.skillCategory}>
-                <h4 className={styles.categoryTitle}>Web Development</h4>
-                <div className={styles.skillTags}>
-                    {techStack.webDev.map((skill) => (
-                        <span key={skill} className={styles.skillTag}>
-                            {skill}
-                        </span>
-                    ))}
+
+            {/* On narrow screens the list stays visible even in tree view */}
+            <dl className={`${styles.groups} ${showTree ? styles.hiddenWhenWide : ''}`}>
+                {skills.map((group) => (
+                    <div key={group.group} className={styles.row}>
+                        <dt className={styles.groupName}>{group.group}</dt>
+                        <dd className={styles.groupSkills}>
+                            <ul className={styles.skillList}>
+                                {(group.items || []).map((skill) => (
+                                    <li key={skill}>{skill}</li>
+                                ))}
+                            </ul>
+                            {group.basic?.length > 0 && (
+                                <p className={styles.basic}>
+                                    <span className={styles.basicLabel}>Basic</span>
+                                    {group.basic.join(', ')}
+                                </p>
+                            )}
+                        </dd>
+                    </div>
+                ))}
+            </dl>
+
+            {showTree && (
+                <div className={styles.treeWrap}>
+                    <SkillTree skillsData={skillsData} />
                 </div>
-            </div>
-            <div className={styles.skillCategory}>
-                <h4 className={styles.categoryTitle}>Tools & Others</h4>
-                <div className={styles.skillTags}>
-                    {techStack.tools.map((skill) => (
-                        <span key={skill} className={styles.skillTag}>
-                            {skill}
-                        </span>
-                    ))}
-                </div>
-            </div>
+            )}
         </div>
     );
 };

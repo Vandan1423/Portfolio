@@ -10,6 +10,7 @@ import {
     BackSide 
 } from "three";
 import { shaderMaterial } from "@react-three/drei";
+import { theme } from "../../styles/theme";
 
 // Geometry configuration
 const THROAT_SEGMENTS = 64;
@@ -469,38 +470,19 @@ const Wormhole = forwardRef(({
 
     const colors = useMemo(() => {
         const schemes = {
-            cyan: {
-                core: "#001a33",
-                mid: "#00aaff",
-                outer: "#00ffff",
-                highlight: "#ffffff",
-                corona: "#ffffff",
-                throat1: "#00ffff",
-                throat2: "#0066ff",
-                tunnel: "#0088ff",
-            },
-            purple: {
-                core: "#1a0033",
-                mid: "#8800ff",
-                outer: "#cc66ff",
-                highlight: "#ffffff",
-                corona: "#aa00ff",
-                throat1: "#cc66ff",
-                throat2: "#6600aa",
-                tunnel: "#8844cc",
-            },
-            orange: {
-                core: "#331a00",
-                mid: "#ff6600",
-                outer: "#ffaa00",
-                highlight: "#ffffff",
-                corona: "#ff8800",
-                throat1: "#ffaa00",
-                throat2: "#ff4400",
-                tunnel: "#ff6622",
+            // The site accent (src/styles/theme.js). Every system uses this one.
+            amber: {
+                core: "#160f06",
+                mid: theme.accentDeep,
+                outer: theme.accent,
+                highlight: "#fff4e2",
+                corona: "#f0d9b0",
+                throat1: theme.accent,
+                throat2: "#5e4219",
+                tunnel: "#9c7238",
             },
         };
-        return schemes[colorScheme] || schemes.cyan;
+        return schemes[colorScheme] || schemes.amber;
     }, [colorScheme]);
 
     // Throat geometry (hourglass)

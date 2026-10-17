@@ -2,7 +2,6 @@ import { StrictMode, Component } from 'react';
 import { createRoot } from 'react-dom/client';
 import { NavigationProvider } from './context/NavigationContext';
 import { StarSystemProvider } from './context/StarSystemContext';
-import { AIProvider } from './context/AIContext';
 import { TutorialProvider } from './context/TutorialContext';
 import { GameModeProvider } from './context/GameModeContext';
 import RocketLoader from './components/Loader/RocketLoader';
@@ -33,27 +32,28 @@ class ErrorBoundary extends Component {
           alignItems: 'center',
           justifyContent: 'center',
           height: '100vh',
-          background: '#0a0a0f',
-          color: '#fff',
-          fontFamily: 'system-ui, sans-serif',
           padding: '20px',
-          textAlign: 'center'
+          textAlign: 'center',
+          background: 'var(--bg)',
+          color: 'var(--text)',
+          fontFamily: 'var(--font-sans)',
         }}>
-          <h1 style={{ color: '#ff6b6b', marginBottom: '16px' }}>Something went wrong</h1>
-          <p style={{ color: '#aaa', marginBottom: '24px' }}>The portfolio encountered an error.</p>
-          <button 
+          <h1 style={{ fontSize: 'var(--fs-h3)', fontWeight: 600, marginBottom: '8px' }}>Something went wrong</h1>
+          <p style={{ color: 'var(--text-2)', marginBottom: '24px' }}>The page hit an error. Reloading usually fixes it.</p>
+          <button
             onClick={() => window.location.reload()}
             style={{
-              padding: '12px 24px',
-              background: '#3b82f6',
-              color: '#fff',
+              padding: '8px 20px',
+              font: 'inherit',
+              fontWeight: 500,
+              color: 'var(--on-button)',
+              background: 'var(--button)',
               border: 'none',
-              borderRadius: '8px',
+              borderRadius: 'var(--r-1)',
               cursor: 'pointer',
-              fontSize: '16px'
             }}
           >
-            Reload Page
+            Reload
           </button>
         </div>
       );
@@ -69,13 +69,11 @@ createRoot(document.getElementById('root')).render(
       <RocketLoader>
         <NavigationProvider>
           <StarSystemProvider>
-            <AIProvider>
-              <TutorialProvider>
-                <GameModeProvider>
-                  <App />
-                </GameModeProvider>
-              </TutorialProvider>
-            </AIProvider>
+            <TutorialProvider>
+              <GameModeProvider>
+                <App />
+              </GameModeProvider>
+            </TutorialProvider>
           </StarSystemProvider>
         </NavigationProvider>
       </RocketLoader>

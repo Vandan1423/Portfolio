@@ -1,13 +1,13 @@
 import { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
+import { theme } from "../../styles/theme";
 
-// Terminal styling constants
-const TERMINAL_COLOR = "#00ff88";
-const TERMINAL_BG = "rgba(10, 25, 47, 0.98)";
-const TERMINAL_BORDER = "rgba(0, 255, 136, 0.3)";
-const TERMINAL_SHADOW_GLOW = "0 0 30px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.05)";
-const TEXT_SHADOW = "0 0 5px rgba(0, 255, 136, 0.8)";
+// Terminal styling: the site palette (src/styles/tokens.css). The terminal is
+// DOM inside the scene, so it can read the CSS variables directly.
+const TERMINAL_COLOR = "var(--text)";
+const TERMINAL_BG = "var(--bg)";
+const TERMINAL_BORDER = "var(--line-strong)";
 
 // Terminal dimensions
 const TERMINAL_WIDTH = "600px";
@@ -43,7 +43,7 @@ const BOOT_SEQUENCE = [
     "",
     "Type 'clear' to clear the screen",
     "Type 'status' for getting status of the spacecraft",
-    "Type 'launch' to begin your journey",
+    "Type 'launch' or press Launch to begin your journey",
     "",
 ];
 
@@ -62,6 +62,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
     const [currentInput, setCurrentInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [cursorVisible, setCursorVisible] = useState(true);
+    const [isLaunching, setIsLaunching] = useState(false);
 
     // Typing animation effect for boot sequence
     useEffect(() => {
@@ -157,6 +158,8 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
         // Command processing
         switch (command) {
             case "launch": {
+                if (isLaunching) return;
+                setIsLaunching(true);
                 addTerminalLines("INITIATING LAUNCH SEQUENCE...", "");
 
                 // Play countdown audio
@@ -232,11 +235,10 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                         border: `1px solid ${TERMINAL_BORDER}`,
                         borderRadius: "4px",
                         padding: "16px",
-                        fontFamily: '"Courier New", monospace',
+                        fontFamily: "var(--font-mono)",
                         fontSize: TERMINAL_FONT_SIZE,
                         color: TERMINAL_COLOR,
                         overflow: "auto",
-                        boxShadow: TERMINAL_SHADOW_GLOW,
                         cursor: "text",
                     }}
                     onClick={(e) => {
@@ -249,10 +251,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                         {terminalLines.map((line, index) => (
                             <div
                                 key={index}
-                                style={{
-                                    marginBottom: "4px",
-                                    textShadow: TEXT_SHADOW,
-                                }}
+                                style={{ marginBottom: "4px" }}
                             >
                                 {line}
                             </div>
@@ -262,7 +261,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                     {/* Input line */}
                     {!isTyping && (
                         <div style={{ display: "flex", alignItems: "center" }}>
-                            <span style={{ marginRight: "8px" }}>{">"}</span>
+                            <span style={{ marginRight: "8px", color: "var(--accent)" }}>{">"}</span>
                             <div style={{ position: "relative", flex: 1 }}>
                                 <input
                                     id="terminal-input"
@@ -280,7 +279,6 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                                         color: TERMINAL_COLOR,
                                         fontFamily: "inherit",
                                         fontSize: "inherit",
-                                        textShadow: TEXT_SHADOW,
                                         caretColor: "transparent",
                                     }}
                                 />
@@ -296,6 +294,29 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
                                     █
                                 </span>
                             </div>
+                            {!isLaunching && (
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleCommand("launch");
+                                    }}
+                                    style={{
+                                        marginLeft: "12px",
+                                        padding: "4px 14px",
+                                        fontFamily: "inherit",
+                                        fontSize: "inherit",
+                                        fontWeight: 500,
+                                        color: "var(--on-button)",
+                                        backgroundColor: "var(--button)",
+                                        border: "none",
+                                        borderRadius: "3px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Launch
+                                </button>
+                            )}
                         </div>
                     )}
 
@@ -312,7 +333,7 @@ const HolographicTerminal = ({ position = [0, 0, -2], onCommand }) => {
             {/* Screen glow light */}
             <pointLight
                 position={[0, 0, 0.5]}
-                color={TERMINAL_COLOR}
+                color={theme.accent}
                 intensity={0.8}
                 distance={2}
             />

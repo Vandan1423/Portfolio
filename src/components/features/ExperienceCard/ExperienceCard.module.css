@@ -1,234 +1,148 @@
 .experienceCard {
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: rgba(26, 31, 58, 0.4);
-    border: 1px solid rgba(0, 217, 255, 0.2);
-    border-radius: 16px;
-    transition: all 0.3s ease;
+    margin-bottom: var(--s-8);
+    padding: var(--s-8);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-3);
+    transition: border-color var(--t-base) var(--ease);
 }
 
 .experienceCard:hover {
-    border-color: rgba(0, 217, 255, 0.4);
-    box-shadow: 0 0 30px rgba(0, 217, 255, 0.2);
+    border-color: var(--line-strong);
 }
 
 .experienceHeader {
     display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    align-items: baseline;
+    gap: var(--s-4);
+    margin-bottom: var(--s-6);
+    padding-bottom: var(--s-4);
+    border-bottom: 1px solid var(--line);
 }
 
 .experienceNumber {
-    font-size: 3rem;
-    font-weight: 700;
-    color: rgba(0, 217, 255, 0.3);
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--text-3);
 }
 
 .experienceTitleWrapper {
     flex: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    flex-wrap: wrap;
 }
 
 .titleSection {
-    flex: 1;
-    min-width: 250px;
+    min-width: 0;
 }
 
 .experienceTitle {
-    font-size: 1.8rem;
-    color: #e0e6ed;
-    margin: 0 0 0.5rem 0;
+    margin-bottom: var(--s-1);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-tight);
+    color: var(--text);
 }
 
 .organization {
-    font-size: 1.1rem;
-    color: #00d9ff;
-    margin: 0;
+    color: var(--text-2);
 }
 
-.badges {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+.meta {
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-meta);
+    color: var(--text-3);
 }
 
 .experienceInfo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-}
-
-.metaInfo {
-    padding: 1rem;
-    background: rgba(10, 14, 39, 0.4);
-    border-radius: 8px;
+    gap: var(--s-5);
 }
 
 .experienceDescription {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #8892b0;
+    font-size: var(--fs-lead);
+    color: var(--text);
 }
 
-.techSection,
-.responsibilitiesSection {
+.techSection {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-}
-
-.sectionTitle {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.1rem;
-    color: #e0e6ed;
-    margin: 0;
-}
-
-.sectionIcon {
-    font-size: 1.3rem;
 }
 
 .responsibilitiesList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--s-3);
+    list-style: none;
 }
 
 .responsibilityItem {
     display: flex;
-    gap: 0.75rem;
-    color: #8892b0;
-    line-height: 1.6;
+    gap: var(--s-3);
+    color: var(--text-2);
+}
+
+.responsibilityItem strong {
+    font-weight: var(--fw-medium);
+    color: var(--text);
+}
+
+.responsibilityItem a {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 3px;
+    transition: color var(--t-fast) var(--ease), text-decoration-color var(--t-fast) var(--ease);
+}
+
+.responsibilityItem a:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
 }
 
 .responsibilityBullet {
-    color: #00d9ff;
-    font-size: 1.2rem;
     flex-shrink: 0;
-}
-
-.expandedDetails {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: rgba(10, 14, 39, 0.4);
-    border-radius: 12px;
-    border: 1px solid rgba(0, 217, 255, 0.1);
-}
-
-.detailSection {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.detailText {
-    color: #8892b0;
-    line-height: 1.6;
-    margin: 0;
-}
-
-.noteSection {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255, 170, 0, 0.1);
-    border: 1px solid rgba(255, 170, 0, 0.3);
-    border-radius: 8px;
-}
-
-.noteIcon {
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
-
-.noteText {
-    color: #ffaa00;
-    margin: 0;
-    line-height: 1.6;
-}
-
-.readMoreBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.btnArrow {
-    font-size: 1.2rem;
+    width: 5px;
+    height: 5px;
+    margin-top: 0.7em;
+    border-radius: 50%;
+    background: var(--accent);
 }
 
 .actionButtons {
     display: flex;
-    gap: 1rem;
     flex-wrap: wrap;
-    margin-top: 1rem;
+    gap: var(--s-2);
 }
 
 .actionBtn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: rgba(0, 217, 255, 0.1);
-    border: 1px solid rgba(0, 217, 255, 0.3);
-    border-radius: 8px;
-    color: #00d9ff;
+    padding: var(--s-2) var(--s-4);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: var(--text);
     text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-1);
+    transition: border-color var(--t-fast) var(--ease);
 }
 
 .actionBtn:hover {
-    background: rgba(0, 217, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
-    transform: translateY(-2px);
+    border-color: var(--text-3);
 }
 
-.btnIcon {
-    font-size: 1.2rem;
-}
-
-@media (max-width: 768px) {
+/* bp: phone */
+@media (max-width: 699.98px) {
     .experienceCard {
-        padding: 1.5rem;
-    }
-
-    .experienceHeader {
-        flex-direction: column;
-    }
-
-    .experienceTitleWrapper {
-        flex-direction: column;
-    }
-
-    .experienceTitle {
-        font-size: 1.5rem;
+        padding: var(--s-5);
     }
 
     .actionButtons {
         flex-direction: column;
-        width: 100%;
     }
 
     .actionBtn {
-        width: 100%;
         justify-content: center;
     }
 }
